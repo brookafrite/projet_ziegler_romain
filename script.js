@@ -157,3 +157,4 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });   // ← la fonction ne se ferme qu'ICI, tout à la fin
+
