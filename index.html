@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <!-- ===== SECTION FORMULAIRE ===== -->
+        <section id="form-section" class="card">
+            <h1>Créer un compte</h1>
+
+            <!-- Zone où JavaScript affichera les erreurs -->
+            <div id="error-box" class="error-box hidden">
+            <ul id="error-list"></ul>
+            </div>
+
+            <form id="signup-form" novalidate>
+
+                <div class="field">
+                    <label for="login">Login</label>
+                    <input type="text" id="login" name="login" required>
+                </div>
+
+                <div class="field">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="field">
+                    <label for="confirm">Confirmation du mot de passe</label>
+                    <input type="password" id="confirm" name="confirm" required>
+                </div>
+
+                <div class="field">
+                    <label for="lastname">Nom</label>
+                    <input type="text" id="lastname" name="lastname" required>
+                </div>
+
+                <div class="field">
+                    <label for="firstname">Prénom</label>
+                    <input type="text" id="firstname" name="firstname" required>
+                </div>
+
+                <div class="field">
+                    <label for="address">Adresse</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="field">
+                    <label for="phone">Téléphone</label>
+                    <input type="text" id="phone" name="phone" required>
+                </div>
+
+                <div class="field">
+                    <label for="birthdate">Date de naissance</label>
+                    <input type="date" id="birthdate" name="birthdate" required>
+                </div>
+
+                <button type="submit" class="btn">S'inscrire</button>
+
+            </form>
+        </section>
+
+        <!-- ===== SECTION RÉCAPITULATIF (cachée au départ) ===== -->
+        <section id="summary-section" class="card hidden">
+            <h1>Inscription réussie !</h1>
+            <p class="subtitle">Voici le récapitulatif de vos informations :</p>
+
+            <ul class="summary-list">
+                <li><span>Login</span><strong id="r-login"></strong></li>
+                <li><span>Nom</span><strong id="r-lastname"></strong></li>
+                <li><span>Prénom</span><strong id="r-firstname"></strong></li>
+                <li><span>Adresse</span><strong id="r-address"></strong></li>
+                <li><span>Email</span><strong id="r-email"></strong></li>
+                <li><span>Téléphone</span><strong id="r-phone"></strong></li>
+                <li><span>Date de naissance</span><strong id="r-birthdate"></strong></li>
+            </ul>
+
+            <button type="button" class="btn btn-secondary" id="btn-back">
+                Modifier mes informations
+            </button>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+ 
