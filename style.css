@@ -1,0 +1,207 @@
+/* ========================================
+   1. VARIABLES DE COULEURS
+   ======================================== */
+:root {
+    --bleu: #2563eb;
+    --bleu-fonce: #1d4ed8;
+    --gris-texte: #374151;
+    --gris-clair: #f3f4f6;
+    --gris-bordure: #d1d5db;
+    --rouge: #dc2626;
+    --rouge-clair: #fee2e2;
+    --vert: #16a34a;
+    --blanc: #ffffff;
+}
+
+/* ========================================
+   2. RESET
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* ========================================
+   3. PAGE
+   ======================================== */
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: var(--gris-texte);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+}
+/* ========================================
+   4. CARTE (conteneur blanc)
+   ======================================== */
+.container {
+    width: 100%;
+    max-width: 560px;
+}
+
+.card {
+    background: var(--blanc);
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+/* ========================================
+   5. TITRES
+   ======================================== */
+h1 {
+    font-size: 1.75rem;
+    color: #111827;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.subtitle {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #6b7280;
+}
+/* ========================================
+   6. CHAMPS
+   ======================================== */
+.field {
+    margin-bottom: 1.15rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--gris-texte);
+    border: 2px solid var(--gris-bordure);
+    border-radius: 8px;
+    background: var(--blanc);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--bleu);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+/* ========================================
+   7. BOUTON
+   ======================================== */
+.btn {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--blanc);
+    background: var(--bleu);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn:hover {
+    background: var(--bleu-fonce);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    background: #6b7280;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+/* ========================================
+   8. MESSAGES D'ERREUR
+   ======================================== */
+.error-box {
+    background: var(--rouge-clair);
+    color: var(--rouge);
+    border-left: 4px solid var(--rouge);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+}
+
+.error-box ul {
+    list-style: none;
+}
+
+.error-box li::before {
+    content: "⚠ ";
+}
+
+input.invalid {
+    border-color: var(--rouge);
+    background: var(--rouge-clair);
+}
+
+/* ========================================
+   9. RÉCAPITULATIF
+   ======================================== */
+.summary-list {
+    list-style: none;
+}
+
+.summary-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--gris-clair);
+}
+
+.summary-list li:last-child {
+    border-bottom: none;
+}
+
+.summary-list span {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.summary-list strong {
+    text-align: right;
+    word-break: break-word;
+}
+/* ========================================
+   10. UTILITAIRE : CACHER UN ÉLÉMENT
+   ======================================== */
+.hidden {
+    display: none;
+}
+/* ========================================
+   11. RESPONSIVE
+   ======================================== */
+@media (max-width: 480px) {
+    body {
+        padding: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+}
