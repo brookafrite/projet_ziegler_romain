@@ -1,0 +1,118 @@
+<main class="page">
+  <section class="card">
+    @if (!submitted) {
+      <header class="card-header">
+        <h1>Créer un compte</h1>
+        <p>Tous les champs sont obligatoires.</p>
+      </header>
+
+      <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="prenom">Prénom</label>
+            <input id="prenom" name="prenom" type="text" autocomplete="given-name" required
+                   [(ngModel)]="model.prenom" #prenom="ngModel"
+                   [attr.aria-invalid]="prenom.invalid && (prenom.touched || f.submitted)" />
+            @if (prenom.invalid && (prenom.touched || f.submitted)) {
+              <small class="error" role="alert">Saisissez votre prénom.</small>
+            }
+          </div>
+
+          <div class="field">
+            <label for="nom">Nom</label>
+            <input id="nom" name="nom" type="text" autocomplete="family-name" required
+                   [(ngModel)]="model.nom" #nom="ngModel"
+                   [attr.aria-invalid]="nom.invalid && (nom.touched || f.submitted)" />
+            @if (nom.invalid && (nom.touched || f.submitted)) {
+              <small class="error" role="alert">Saisissez votre nom.</small>
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required email
+                 placeholder="prenom.nom@exemple.fr"
+                 [(ngModel)]="model.email" #email="ngModel"
+                 [attr.aria-invalid]="email.invalid && (email.touched || f.submitted)" />
+          @if (email.touched || f.submitted) {
+            @if (email.hasError('required')) {
+              <small class="error" role="alert">Saisissez votre adresse email.</small>
+            } @else if (email.hasError('email')) {
+              <small class="error" role="alert">Cette adresse email n'est pas valide.</small>
+            }
+          }
+        </div>
+
+        <div class="field">
+          <label for="login">Login</label>
+          <input id="login" name="login" type="text" autocomplete="username" required
+                 [(ngModel)]="model.login" #login="ngModel"
+                 [attr.aria-invalid]="login.invalid && (login.touched || f.submitted)" />
+          @if (login.invalid && (login.touched || f.submitted)) {
+            <small class="error" role="alert">Choisissez un login.</small>
+          }
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="password">Mot de passe</label>
+            <button type="button" class="link" (click)="toggleShowPassword()"
+                    [attr.aria-pressed]="showPassword">
+              {{ showPassword ? 'Masquer' : 'Afficher' }}
+            </button>
+          </div>
+          <input id="password" name="password" autocomplete="new-password" required minlength="8"
+                 [type]="showPassword ? 'text' : 'password'"
+                 [(ngModel)]="model.password" #password="ngModel"
+                 [attr.aria-invalid]="password.invalid && (password.touched || f.submitted)" />
+
+          <div class="meter" [attr.data-level]="strength">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <small class="hint">
+            @if (strength) {
+              Force : {{ strengthLabel }}
+            } @else {
+              8 caractères minimum, avec majuscules, chiffres et symboles pour plus de sécurité.
+            }
+          </small>
+
+          @if (password.touched || f.submitted) {
+            @if (password.hasError('required')) {
+              <small class="error" role="alert">Saisissez un mot de passe.</small>
+            } @else if (password.hasError('minlength')) {
+              <small class="error" role="alert">Le mot de passe doit contenir au moins 8 caractères.</small>
+            }
+          }
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirmer le mot de passe</label>
+          <input id="confirmPassword" name="confirmPassword" autocomplete="new-password" required
+                 [type]="showPassword ? 'text' : 'password'"
+                 [(ngModel)]="model.confirmPassword" #confirm="ngModel"
+                 [appMatchPassword]="model.password"
+                 [attr.aria-invalid]="confirm.invalid && (confirm.touched || f.submitted)" />
+          @if (confirm.touched || f.submitted) {
+            @if (confirm.hasError('required')) {
+              <small class="error" role="alert">Confirmez votre mot de passe.</small>
+            } @else if (confirm.hasError('passwordMismatch')) {
+              <small class="error" role="alert">Les deux mots de passe ne sont pas identiques.</small>
+            }
+          }
+        </div>
+
+        <!-- Soumission verrouillée tant que le formulaire est invalide -->
+        <button type="submit" class="primary" [disabled]="f.invalid">Créer mon compte</button>
+      </form>
+    } @else {
+      <div class="success" role="status">
+        <div class="check" aria-hidden="true">✓</div>
+        <h1>Compte créé</h1>
+        <p>Bienvenue {{ model.prenom }} ! Votre inscription a bien été enregistrée.</p>
+        <button type="button" class="primary" (click)="newSignUp()">Créer un autre compte</button>
+      </div>
+    }
+  </section>
+</main>
