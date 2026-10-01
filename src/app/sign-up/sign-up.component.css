@@ -1,8 +1,128 @@
-.signup { max-width: 420px; margin: 2rem auto; display: grid; gap: 1rem; font-family: system-ui, sans-serif; }
-.field { display: grid; gap: .25rem; }
-input { padding: .5rem; border: 1px solid #bbb; border-radius: 4px; }
-input.ng-invalid.ng-touched { border-color: #c0392b; }
-.error { color: #c0392b; }
-.success { color: #27ae60; }
-button { padding: .6rem; border: 0; border-radius: 4px; background: #1976d2; color: #fff; cursor: pointer; }
-button:disabled { background: #9e9e9e; cursor: not-allowed; }
+:host {
+  --bg: #e9edf3;
+  --card: #ffffff;
+  --ink: #1b2333;
+  --muted: #5b6577;
+  --line: #c9d1de;
+  --accent: #0e7c7b;
+  --accent-dark: #0a5f5e;
+  --error: #b3261e;
+  --warn: #b7791f;
+  --ok: #1e7a4c;
+  display: block;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* padding et bordures inclus dans la largeur des éléments */
+:host *,
+:host *::before,
+:host *::after {
+  box-sizing: border-box;
+}
+
+.page {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 460px;
+  padding: 2.25rem 2rem;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(27, 35, 51, 0.1);
+}
+
+.card-header { margin-bottom: 1.5rem; }
+h1 { margin: 0 0 .35rem; font-size: 1.6rem; line-height: 1.2; }
+.card-header p, .success p { margin: 0; color: var(--muted); }
+
+form { display: grid; gap: 1.1rem; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.field { display: grid; gap: .35rem; align-content: start; }
+
+label { font-size: .9rem; font-weight: 600; }
+.label-row { display: flex; justify-content: space-between; align-items: baseline; }
+
+input {
+  width: 100%;
+  min-width: 0;
+  padding: .65rem .75rem;
+  font: inherit;
+  color: inherit;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  transition: border-color .15s, box-shadow .15s;
+}
+input::placeholder { color: #9aa3b2; }
+input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(14, 124, 123, 0.25);
+}
+/* Erreur visible après interaction ou tentative de soumission */
+input.ng-invalid.ng-touched,
+.ng-submitted input.ng-invalid { border-color: var(--error); }
+
+small { font-size: .82rem; }
+.error { color: var(--error); }
+.hint { color: var(--muted); }
+
+/* Indicateur de force du mot de passe */
+.meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: .15rem; }
+.meter span { height: 5px; border-radius: 3px; background: #dde2ea; transition: background .2s; }
+.meter[data-level='1'] span:nth-child(-n + 1) { background: var(--error); }
+.meter[data-level='2'] span:nth-child(-n + 2) { background: var(--warn); }
+.meter[data-level='3'] span:nth-child(-n + 3) { background: var(--accent); }
+.meter[data-level='4'] span:nth-child(-n + 4) { background: var(--ok); }
+
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid rgba(14, 124, 123, 0.4); outline-offset: 2px; }
+
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: .85rem;
+  font-weight: 600;
+}
+.link:hover { color: var(--accent-dark); text-decoration: underline; }
+
+.primary {
+  margin-top: .4rem;
+  padding: .8rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  transition: background .15s;
+}
+.primary:hover:not(:disabled) { background: var(--accent-dark); }
+.primary:disabled { background: #aeb7c4; cursor: not-allowed; }
+
+/* Écran de confirmation */
+.success { display: grid; gap: .75rem; justify-items: center; text-align: center; padding: 1rem 0; }
+.check {
+  display: grid; place-items: center;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--ok); color: #fff; font-size: 1.8rem;
+}
+
+@media (max-width: 520px) {
+  .card { padding: 1.75rem 1.25rem; }
+  .row { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
