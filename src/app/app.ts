@@ -1,12 +1,13 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { SignUpComponent } from './sign-up/sign-up.component';
 
 @Component({
-  imports: [RouterOutlet],
+  imports: [SignUpComponent],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
-export class App {
+export class App 
+{
   protected readonly title = signal('projet_ZIEGLER_Romain');
 }

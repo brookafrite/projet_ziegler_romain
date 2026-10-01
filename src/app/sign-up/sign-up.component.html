@@ -1,0 +1,73 @@
+<form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate class="signup">
+  <h2>Inscription</h2>
+
+  <div class="field">
+    <label for="login">Login</label>
+    <input id="login" name="login" type="text" required
+           [(ngModel)]="model.login" #login="ngModel" />
+    @if (login.invalid && (login.touched || f.submitted)) {
+      <small class="error">Le login est requis.</small>
+    }
+  </div>
+
+  <div class="field">
+    <label for="password">Mot de passe</label>
+    <input id="password" name="password" type="password" required
+           [(ngModel)]="model.password" #password="ngModel" />
+    @if (password.invalid && (password.touched || f.submitted)) {
+      <small class="error">Le mot de passe est requis.</small>
+    }
+  </div>
+
+  <div class="field">
+    <label for="confirmPassword">Confirmation du mot de passe</label>
+    <input id="confirmPassword" name="confirmPassword" type="password" required
+           [(ngModel)]="model.confirmPassword" #confirm="ngModel"
+           [appMatchPassword]="model.password" />
+    @if (confirm.touched || f.submitted) {
+      @if (confirm.hasError('required')) {
+        <small class="error">La confirmation est requise.</small>
+      } @else if (confirm.hasError('passwordMismatch')) {
+        <small class="error">Les mots de passe ne correspondent pas.</small>
+      }
+    }
+  </div>
+
+  <div class="field">
+    <label for="nom">Nom</label>
+    <input id="nom" name="nom" type="text" required
+           [(ngModel)]="model.nom" #nom="ngModel" />
+    @if (nom.invalid && (nom.touched || f.submitted)) {
+      <small class="error">Le nom est requis.</small>
+    }
+  </div>
+
+  <div class="field">
+    <label for="prenom">Prénom</label>
+    <input id="prenom" name="prenom" type="text" required
+           [(ngModel)]="model.prenom" #prenom="ngModel" />
+    @if (prenom.invalid && (prenom.touched || f.submitted)) {
+      <small class="error">Le prénom est requis.</small>
+    }
+  </div>
+
+  <div class="field">
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required email
+           [(ngModel)]="model.email" #email="ngModel" />
+    @if (email.touched || f.submitted) {
+      @if (email.hasError('required')) {
+        <small class="error">L'email est requis.</small>
+      } @else if (email.hasError('email')) {
+        <small class="error">Format d'email invalide.</small>
+      }
+    }
+  </div>
+
+  <!-- Soumission verrouillée tant que le formulaire est invalide -->
+  <button type="submit" [disabled]="f.invalid">S'inscrire</button>
+
+  @if (submitted) {
+    <p class="success">Inscription envoyée ✔</p>
+  }
+</form>
