@@ -1,38 +1,28 @@
-/* Variables partagées par le formulaire et le récapitulatif (héritées) */
-:host {
-  --bg: #e9edf3;
-  --card: #ffffff;
-  --ink: #1b2333;
-  --muted: #5b6577;
-  --line: #c9d1de;
-  --accent: #0e7c7b;
-  --accent-dark: #0a5f5e;
-  --error: #b3261e;
-  --ok: #1e7a4c;
-  display: block;
-  min-height: 100vh;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-}
-:host *, :host *::before, :host *::after { box-sizing: border-box; }
+:host { display: block; padding: 2rem 1rem 3rem; }
 
-.page { display: grid; justify-items: center; padding: 2rem 1rem; }
-
-.card {
-  width: 100%;
-  max-width: 760px;
-  padding: 2.25rem 2rem;
+/* Une page de carnet : fond clair, trait de marge vertical à gauche */
+.sheet {
+  position: relative;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2.25rem 2rem 2.25rem 3.75rem;
   background: var(--card);
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(27, 35, 51, 0.1);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 14px 28px -22px rgba(31, 42, 38, 0.45);
+}
+.sheet::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2.25rem;
+  width: 1px;
+  background: var(--margin);
 }
 
-@media (max-width: 520px) {
-  .page { padding: 1rem .75rem; }
-  .card { padding: 1.5rem 1.1rem; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :host * { transition: none !important; }
+@media (max-width: 560px) {
+  :host { padding: 1rem .5rem 2rem; }
+  .sheet { padding: 1.5rem 1rem 1.5rem 2rem; }
+  .sheet::before { left: 1rem; }
 }

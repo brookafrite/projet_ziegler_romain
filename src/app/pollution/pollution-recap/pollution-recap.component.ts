@@ -13,7 +13,12 @@ export class PollutionRecapComponent implements OnChanges {
   imageError = false;
 
   ngOnChanges(): void {
-    this.imageError = false; // nouvelle déclaration : on retente l'affichage de l'image
+    this.imageError = false; // nouvelle fiche : on retente l'affichage de l'image
+  }
+
+  /** Numéro de fiche sur 3 chiffres : 1 → "001". */
+  get numero(): string {
+    return String(this.pollution.id ?? 1).padStart(3, '0');
   }
 
   get formattedDate(): string {
