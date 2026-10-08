@@ -1,0 +1,38 @@
+/* Variables partagées par le formulaire et le récapitulatif (héritées) */
+:host {
+  --bg: #e9edf3;
+  --card: #ffffff;
+  --ink: #1b2333;
+  --muted: #5b6577;
+  --line: #c9d1de;
+  --accent: #0e7c7b;
+  --accent-dark: #0a5f5e;
+  --error: #b3261e;
+  --ok: #1e7a4c;
+  display: block;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+:host *, :host *::before, :host *::after { box-sizing: border-box; }
+
+.page { display: grid; justify-items: center; padding: 2rem 1rem; }
+
+.card {
+  width: 100%;
+  max-width: 760px;
+  padding: 2.25rem 2rem;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(27, 35, 51, 0.1);
+}
+
+@media (max-width: 520px) {
+  .page { padding: 1rem .75rem; }
+  .card { padding: 1.5rem 1.1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host * { transition: none !important; }
+}

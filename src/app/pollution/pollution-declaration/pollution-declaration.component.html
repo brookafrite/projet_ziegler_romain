@@ -1,0 +1,9 @@
+<main class="page">
+  <section class="card">
+    @if (declaration(); as pollution) {
+      <app-pollution-recap [pollution]="pollution" (newDeclaration)="reset()" />
+    } @else {
+      <app-pollution-form (declared)="onDeclared($event)" />
+    }
+  </section>
+</main>

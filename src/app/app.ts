@@ -1,13 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { SignUpComponent } from './sign-up/sign-up.component';
+import { PollutionDeclarationComponent } from './pollution/pollution-declaration/pollution-declaration.component';
 
 @Component({
-  imports: [SignUpComponent],
+  imports: [PollutionDeclarationComponent],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
-export class App 
-{
+export class App {
   protected readonly title = signal('projet_ZIEGLER_Romain');
 }

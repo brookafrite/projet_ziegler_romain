@@ -1,0 +1,113 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <header class="form-header">
+    <h1>Déclarer une pollution</h1>
+    <p>Les champs marqués d'un astérisque sont obligatoires.</p>
+  </header>
+
+  <fieldset>
+    <legend>La pollution</legend>
+
+    <div class="field">
+      <label for="titre">Titre <span aria-hidden="true">*</span></label>
+      <input id="titre" type="text" formControlName="titre"
+             placeholder="Ex. : Bidons abandonnés au bord du canal"
+             [attr.aria-invalid]="showError('titre')" />
+      @if (showError('titre')) {
+        <small class="error" role="alert">
+          @if (hasError('titre', 'maxlength')) { 100 caractères maximum. }
+          @else { Donnez un titre à la déclaration. }
+        </small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="type">Type de pollution <span aria-hidden="true">*</span></label>
+      <select id="type" formControlName="type" [attr.aria-invalid]="showError('type')">
+        <option value="" disabled>Choisir un type</option>
+        @for (t of types; track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+      @if (showError('type')) {
+        <small class="error" role="alert">Choisissez un type de pollution.</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="description">Description <span aria-hidden="true">*</span></label>
+      <textarea id="description" rows="4" formControlName="description"
+                placeholder="Ce que vous avez vu, l'étendue, ce qui est touché…"
+                [attr.aria-invalid]="showError('description')"></textarea>
+      @if (showError('description')) {
+        <small class="error" role="alert">Décrivez la pollution observée.</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="dateObservation">Date de l'observation <span aria-hidden="true">*</span></label>
+      <input id="dateObservation" type="date" formControlName="dateObservation" [max]="today"
+             [attr.aria-invalid]="showError('dateObservation')" />
+      @if (showError('dateObservation')) {
+        <small class="error" role="alert">
+          @if (hasError('dateObservation', 'futureDate')) { La date ne peut pas être dans le futur. }
+          @else if (hasError('dateObservation', 'invalidDate')) { Cette date n'est pas valide. }
+          @else { Indiquez la date de l'observation. }
+        </small>
+      }
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Localisation</legend>
+
+    <div class="field">
+      <label for="lieu">Lieu <span aria-hidden="true">*</span></label>
+      <input id="lieu" type="text" formControlName="lieu"
+             placeholder="Ex. : Quai des Bateliers, Strasbourg"
+             [attr.aria-invalid]="showError('lieu')" />
+      @if (showError('lieu')) {
+        <small class="error" role="alert">Indiquez le lieu.</small>
+      }
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="latitude">Latitude <span aria-hidden="true">*</span></label>
+        <input id="latitude" type="number" step="any" inputmode="decimal" formControlName="latitude"
+               placeholder="48.5734" [attr.aria-invalid]="showError('latitude')" />
+        @if (showError('latitude')) {
+          <small class="error" role="alert">
+            @if (hasError('latitude', 'required')) { Saisissez une latitude (nombre). }
+            @else { Entre -90 et 90. }
+          </small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="longitude">Longitude <span aria-hidden="true">*</span></label>
+        <input id="longitude" type="number" step="any" inputmode="decimal" formControlName="longitude"
+               placeholder="7.7521" [attr.aria-invalid]="showError('longitude')" />
+        @if (showError('longitude')) {
+          <small class="error" role="alert">
+            @if (hasError('longitude', 'required')) { Saisissez une longitude (nombre). }
+            @else { Entre -180 et 180. }
+          </small>
+        }
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Photo</legend>
+    <div class="field">
+      <label for="photoUrl">URL de la photo <span class="optional">(facultatif)</span></label>
+      <input id="photoUrl" type="url" formControlName="photoUrl" placeholder="https://…"
+             [attr.aria-invalid]="showError('photoUrl')" />
+      @if (showError('photoUrl')) {
+        <small class="error" role="alert">L'URL doit commencer par http:// ou https://.</small>
+      }
+    </div>
+  </fieldset>
+
+  <button type="submit" class="primary">Déclarer</button>
+</form>

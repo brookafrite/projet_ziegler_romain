@@ -1,0 +1,54 @@
+<article class="recap">
+  <header class="recap-header">
+    <p class="status" role="status">✓ Déclaration enregistrée</p>
+    <h1>{{ pollution.titre }}</h1>
+    <span class="badge">{{ pollution.type }}</span>
+  </header>
+
+  <div class="layout" [class.with-photo]="pollution.photoUrl && !imageError">
+    @if (pollution.photoUrl && !imageError) {
+      <figure class="photo">
+        <img [src]="pollution.photoUrl" [alt]="'Photo : ' + pollution.titre"
+             (error)="imageError = true" />
+      </figure>
+    }
+
+    <dl class="details">
+      <div class="item wide">
+        <dt>Description</dt>
+        <dd class="description">{{ pollution.description }}</dd>
+      </div>
+      <div class="item">
+        <dt>Date de l'observation</dt>
+        <dd>{{ formattedDate }}</dd>
+      </div>
+      <div class="item">
+        <dt>Lieu</dt>
+        <dd>{{ pollution.lieu }}</dd>
+      </div>
+      <div class="item">
+        <dt>Coordonnées</dt>
+        <dd>
+          {{ pollution.latitude }}, {{ pollution.longitude }}
+          <a [href]="mapUrl" target="_blank" rel="noopener">Voir sur la carte</a>
+        </dd>
+      </div>
+      <div class="item">
+        <dt>Photo</dt>
+        <dd>
+          @if (!pollution.photoUrl) {
+            Aucune photo fournie
+          } @else if (imageError) {
+            Image introuvable à cette adresse
+          } @else {
+            <a [href]="pollution.photoUrl" target="_blank" rel="noopener">Ouvrir l'image</a>
+          }
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <button type="button" class="primary" (click)="newDeclaration.emit()">
+    Déclarer une autre pollution
+  </button>
+</article>
