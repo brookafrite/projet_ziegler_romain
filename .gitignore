@@ -1,3 +1,37 @@
-.angular/
+# Ignoré dans tous les dossiers du dépôt (Front, api, ex02, ...)
+
+# Dépendances
 node_modules/
+
+# Builds et caches
+dist/
+out-tsc/
+tmp/
+.angular/
+.sass-cache/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Variables d'environnement locales (secrets)
+.env
+.env.*
+!.env.example
+
+# Fichiers système (macOS, Windows)
 .DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# IDE et éditeurs
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*.sublime-workspace
