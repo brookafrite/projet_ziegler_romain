@@ -1,0 +1,7 @@
+<section class="sheet">
+  @if (declaration(); as pollution) {
+    <app-pollution-recap [pollution]="pollution" (newDeclaration)="reset()" />
+  } @else {
+    <app-pollution-form (declared)="onDeclared($event)" />
+  }
+</section>

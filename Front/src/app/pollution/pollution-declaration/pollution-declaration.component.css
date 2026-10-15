@@ -1,0 +1,28 @@
+:host { display: block; padding: 2rem 1rem 3rem; }
+
+/* Une page de carnet : fond clair, trait de marge vertical à gauche */
+.sheet {
+  position: relative;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2.25rem 2rem 2.25rem 3.75rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 14px 28px -22px rgba(31, 42, 38, 0.45);
+}
+.sheet::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2.25rem;
+  width: 1px;
+  background: var(--margin);
+}
+
+@media (max-width: 560px) {
+  :host { padding: 1rem .5rem 2rem; }
+  .sheet { padding: 1.5rem 1rem 1.5rem 2rem; }
+  .sheet::before { left: 1rem; }
+}

@@ -1,0 +1,58 @@
+<article class="fiche">
+  <header class="fiche-header">
+    <div class="heading">
+      <p class="numero">Fiche n° {{ numero }}</p>
+      <h1>{{ pollution.titre }}</h1>
+      <p class="meta">
+        <span class="badge">{{ pollution.type }}</span>
+        <span>Observée le {{ formattedDate }}</span>
+      </p>
+    </div>
+    <p class="stamp" role="status">Signalement<br />enregistré</p>
+  </header>
+
+  <div class="layout" [class.with-photo]="pollution.photoUrl && !imageError">
+    @if (pollution.photoUrl && !imageError) {
+      <figure class="photo">
+        <img [src]="pollution.photoUrl" [alt]="'Photo : ' + pollution.titre"
+             (error)="imageError = true" />
+      </figure>
+    }
+
+    <dl class="details">
+      <div class="item">
+        <dt>Description</dt>
+        <dd class="description">{{ pollution.description }}</dd>
+      </div>
+      <div class="item">
+        <dt>Lieu</dt>
+        <dd>{{ pollution.lieu }}</dd>
+      </div>
+      <div class="item">
+        <dt>Coordonnées</dt>
+        <dd>
+          <span class="coords">{{ pollution.latitude }}, {{ pollution.longitude }}</span>
+          <a [href]="mapUrl" target="_blank" rel="noopener">Voir sur la carte</a>
+        </dd>
+      </div>
+      <div class="item">
+        <dt>Photo</dt>
+        <dd>
+          @if (!pollution.photoUrl) {
+            Aucune photo fournie
+          } @else if (imageError) {
+            Image introuvable à cette adresse
+          } @else {
+            <a [href]="pollution.photoUrl" target="_blank" rel="noopener">Ouvrir l'image en grand</a>
+          }
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="primary" (click)="newDeclaration.emit()">
+      Nouveau signalement
+    </button>
+  </div>
+</article>

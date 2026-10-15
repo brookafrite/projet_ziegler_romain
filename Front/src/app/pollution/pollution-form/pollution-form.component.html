@@ -1,0 +1,144 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <header class="form-header">
+    <h1>Nouveau signalement</h1>
+    <p>Notez ce que vous avez observé. Les champs marqués d'un astérisque sont obligatoires.</p>
+  </header>
+
+  <fieldset>
+    <legend>Observation</legend>
+
+    <div class="field">
+      <label for="titre">Titre <span class="req" aria-hidden="true">*</span></label>
+      <input id="titre" type="text" formControlName="titre"
+             placeholder="Ex. : Bidons abandonnés au bord du canal"
+             [attr.aria-invalid]="showError('titre')" />
+      @if (showError('titre')) {
+        <small class="error" role="alert">
+          @if (hasError('titre', 'maxlength')) { 100 caractères maximum. }
+          @else { Donnez un titre au signalement. }
+        </small>
+      }
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="type">Type de pollution <span class="req" aria-hidden="true">*</span></label>
+        <select id="type" formControlName="type" [attr.aria-invalid]="showError('type')">
+          <option value="" disabled>Choisir un type</option>
+          @for (t of types; track t) {
+            <option [value]="t">{{ t }}</option>
+          }
+        </select>
+        @if (showError('type')) {
+          <small class="error" role="alert">Choisissez un type de pollution.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="dateObservation">Date de l'observation <span class="req" aria-hidden="true">*</span></label>
+        <input id="dateObservation" type="date" formControlName="dateObservation" [max]="today"
+               [attr.aria-invalid]="showError('dateObservation')" />
+        @if (showError('dateObservation')) {
+          <small class="error" role="alert">
+            @if (hasError('dateObservation', 'futureDate')) { La date ne peut pas être dans le futur. }
+            @else if (hasError('dateObservation', 'invalidDate')) { Cette date n'est pas valide. }
+            @else { Indiquez la date de l'observation. }
+          </small>
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="description">Description <span class="req" aria-hidden="true">*</span></label>
+      <textarea id="description" rows="4" formControlName="description"
+                placeholder="Ce que vous avez vu, l'étendue, ce qui est touché…"
+                [attr.aria-invalid]="showError('description')"></textarea>
+      @if (showError('description')) {
+        <small class="error" role="alert">Décrivez la pollution observée.</small>
+      }
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Localisation</legend>
+
+    <div class="field">
+      <label for="lieu">Lieu <span class="req" aria-hidden="true">*</span></label>
+      <input id="lieu" type="text" formControlName="lieu"
+             placeholder="Ex. : Berge nord, à 200 m du pont"
+             [attr.aria-invalid]="showError('lieu')" />
+      @if (showError('lieu')) {
+        <small class="error" role="alert">Indiquez le lieu.</small>
+      }
+    </div>
+
+    <div class="geo">
+      <button type="button" class="secondary" (click)="useMyPosition()" [disabled]="locating()">
+        <svg class="icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <circle cx="12" cy="12" r="7" />
+          <circle cx="12" cy="12" r="2" />
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+        </svg>
+        {{ locating() ? 'Recherche de votre position…' : 'Utiliser ma position' }}
+      </button>
+      @if (geoMessage(); as msg) {
+        <small [class]="msg.kind === 'error' ? 'error' : 'hint'"
+               [attr.role]="msg.kind === 'error' ? 'alert' : 'status'">{{ msg.text }}</small>
+      }
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="latitude">Latitude <span class="req" aria-hidden="true">*</span></label>
+        <input id="latitude" type="number" step="any" inputmode="decimal" formControlName="latitude"
+               placeholder="Ex. : 45.7640" [attr.aria-invalid]="showError('latitude')" />
+        @if (showError('latitude')) {
+          <small class="error" role="alert">
+            @if (hasError('latitude', 'required')) { Saisissez une latitude (nombre). }
+            @else { La latitude va de -90 à 90. }
+          </small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="longitude">Longitude <span class="req" aria-hidden="true">*</span></label>
+        <input id="longitude" type="number" step="any" inputmode="decimal" formControlName="longitude"
+               placeholder="Ex. : 4.8357" [attr.aria-invalid]="showError('longitude')" />
+        @if (showError('longitude')) {
+          <small class="error" role="alert">
+            @if (hasError('longitude', 'required')) { Saisissez une longitude (nombre). }
+            @else { La longitude va de -180 à 180. }
+          </small>
+        }
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Photo</legend>
+
+    <div class="field">
+      <label for="photoUrl">Adresse de la photo <span class="optional">(facultatif)</span></label>
+      <input id="photoUrl" type="url" formControlName="photoUrl" placeholder="https://…"
+             [attr.aria-invalid]="showError('photoUrl')" />
+      @if (showError('photoUrl')) {
+        <small class="error" role="alert">L'adresse doit commencer par http:// ou https://.</small>
+      }
+    </div>
+
+    @if (photoPreview(); as url) {
+      @if (!previewError()) {
+        <figure class="preview">
+          <img [src]="url" alt="Aperçu de la photo" (error)="previewError.set(true)" />
+          <figcaption>Aperçu</figcaption>
+        </figure>
+      } @else {
+        <small class="hint">Aucune image trouvée à cette adresse. Vérifiez le lien.</small>
+      }
+    }
+  </fieldset>
+
+  <div class="actions">
+    <button type="submit" class="primary">Déclarer</button>
+  </div>
+</form>
