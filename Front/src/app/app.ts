@@ -1,8 +1,8 @@
 import { Component, signal } from '@angular/core';
-import { PollutionDeclarationComponent } from './pollution/pollution-declaration/pollution-declaration.component';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [PollutionDeclarationComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

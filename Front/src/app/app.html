@@ -11,11 +11,16 @@
         <span class="brand-sub">Signalement de pollutions</span>
       </div>
     </div>
+
+    <nav class="nav" aria-label="Navigation principale">
+      <a routerLink="/signalement" routerLinkActive="active" ariaCurrentWhenActive="page">Signaler une pollution</a>
+      <a routerLink="/inscription" routerLinkActive="active" ariaCurrentWhenActive="page">Créer un compte</a>
+    </nav>
   </div>
 </header>
 
 <main class="site-main">
-  <app-pollution-declaration />
+  <router-outlet />
 </main>
 
 <footer class="site-footer">

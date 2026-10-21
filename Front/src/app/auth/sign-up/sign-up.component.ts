@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { MatchPasswordDirective } from './match-password.directive';
+import { MatchPasswordDirective } from '../validators/match-password.directive';
 
 interface SignUpModel {
   login: string;

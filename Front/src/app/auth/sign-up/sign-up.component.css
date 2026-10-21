@@ -1,0 +1,26 @@
+/* Les styles communs (feuille, champs, boutons, tampon...) sont dans src/styles.css */
+
+.label-row { display: flex; justify-content: space-between; align-items: baseline; }
+
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: .85rem;
+  font-weight: 600;
+}
+.link:hover { color: var(--accent-dark); text-decoration: underline; }
+
+/* Indicateur de force du mot de passe */
+.meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: .15rem; }
+.meter span { height: 5px; border-radius: 3px; background: var(--line); transition: background .2s; }
+.meter[data-level='1'] span:nth-child(-n + 1) { background: var(--error); }
+.meter[data-level='2'] span:nth-child(-n + 2) { background: #b7791f; }
+.meter[data-level='3'] span:nth-child(-n + 3) { background: var(--margin); }
+.meter[data-level='4'] span:nth-child(-n + 4) { background: var(--accent); }
+
+/* Écran de confirmation */
+.fiche-header p { margin: 0; }
+
+.actions { padding-top: 1.5rem; border-top: 1px solid var(--line); }
