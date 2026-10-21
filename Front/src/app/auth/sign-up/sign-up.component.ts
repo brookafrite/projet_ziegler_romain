@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { User } from '../models/user.model';
+import { AuthService } from '../services/auth.service';
 import { MatchPasswordDirective } from '../validators/match-password.directive';
 
 interface SignUpModel {
@@ -27,9 +30,15 @@ const EMPTY_MODEL: SignUpModel = {
   styleUrl: './sign-up.component.css',
 })
 export class SignUpComponent {
+  private readonly authService = inject(AuthService);
+
   model: SignUpModel = { ...EMPTY_MODEL };
   showPassword = false;
-  submitted = false;
+
+  // État de l'appel API, piloté par des signals
+  readonly loading = signal(false);
+  readonly createdUser = signal<User | null>(null);
+  readonly errorMessage = signal<string | null>(null);
 
   /** Force du mot de passe : de 0 (vide) à 4 (excellent). */
   get strength(): number {
@@ -52,16 +61,35 @@ export class SignUpComponent {
   }
 
   onSubmit(form: NgForm): void {
-    if (form.invalid) return; // sécurité en plus du bouton désactivé
+    if (form.invalid || this.loading()) return; // sécurité en plus du bouton désactivé
 
     const { confirmPassword, ...payload } = this.model;
-    console.log('Inscription :', payload);
-    this.submitted = true;
+    this.loading.set(true);
+    this.errorMessage.set(null);
+
+    // Requête HTTP « one-shot » : l'Observable se termine tout seul, pas besoin d'unsubscribe.
+    this.authService.signUp(payload).subscribe({
+      next: (user) => {
+        this.createdUser.set(user);
+        this.loading.set(false);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.errorMessage.set(this.toMessage(err));
+        this.loading.set(false);
+      },
+    });
   }
 
   newSignUp(): void {
     this.model = { ...EMPTY_MODEL };
     this.showPassword = false;
-    this.submitted = false;
+    this.createdUser.set(null);
+    this.errorMessage.set(null);
+  }
+
+  private toMessage(err: HttpErrorResponse): string {
+    if (err.status === 0) return "Impossible de joindre l'API. Réessayez plus tard.";
+    if (err.status === 409) return 'Ce login ou cet email est déjà utilisé.';
+    return err.error?.message ?? `Erreur ${err.status} lors de l'inscription.`;
   }
 }

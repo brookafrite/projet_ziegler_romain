@@ -1,5 +1,25 @@
 <section class="sheet">
-  @if (!submitted) {
+  @if (createdUser(); as user) {
+    <article class="fiche">
+      <header class="fiche-header">
+        <div>
+          <h1>Bienvenue {{ user.prenom }} !</h1>
+          <p class="hint">Votre compte a bien été créé.</p>
+        </div>
+        <p class="stamp" role="status">Inscription<br />enregistrée</p>
+      </header>
+
+      <dl class="details">
+        <div class="item"><dt>Login</dt><dd>{{ user.login }}</dd></div>
+        <div class="item"><dt>Nom</dt><dd>{{ user.prenom }} {{ user.nom }}</dd></div>
+        <div class="item"><dt>Email</dt><dd>{{ user.email }}</dd></div>
+      </dl>
+
+      <div class="actions">
+        <button type="button" class="primary" (click)="newSignUp()">Créer un autre compte</button>
+      </div>
+    </article>
+  } @else {
     <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
       <header class="form-header">
         <h1>Créer un compte</h1>
@@ -112,30 +132,16 @@
         </div>
       </fieldset>
 
+      @if (errorMessage(); as message) {
+        <p class="error api-error" role="alert">{{ message }}</p>
+      }
+
       <div class="actions">
-        <!-- Soumission verrouillée tant que le formulaire est invalide -->
-        <button type="submit" class="primary" [disabled]="f.invalid">Créer mon compte</button>
+        <!-- Soumission verrouillée tant que le formulaire est invalide ou que l'appel API est en cours -->
+        <button type="submit" class="primary" [disabled]="f.invalid || loading()">
+          {{ loading() ? 'Création en cours…' : 'Créer mon compte' }}
+        </button>
       </div>
     </form>
-  } @else {
-    <article class="fiche">
-      <header class="fiche-header">
-        <div>
-          <h1>Bienvenue {{ model.prenom }} !</h1>
-          <p class="hint">Votre compte a bien été créé.</p>
-        </div>
-        <p class="stamp" role="status">Inscription<br />enregistrée</p>
-      </header>
-
-      <dl class="details">
-        <div class="item"><dt>Login</dt><dd>{{ model.login }}</dd></div>
-        <div class="item"><dt>Nom</dt><dd>{{ model.prenom }} {{ model.nom }}</dd></div>
-        <div class="item"><dt>Email</dt><dd>{{ model.email }}</dd></div>
-      </dl>
-
-      <div class="actions">
-        <button type="button" class="primary" (click)="newSignUp()">Créer un autre compte</button>
-      </div>
-    </article>
   }
 </section>

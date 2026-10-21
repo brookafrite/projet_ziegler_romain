@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgForm } from '@angular/forms';
 
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { SignUpComponent } from './sign-up.component';
 
 describe('SignUpComponent', () => {
