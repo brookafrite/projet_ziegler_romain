@@ -25,10 +25,10 @@ describe('App', () => {
     expect(compiled.querySelector('.brand-name')?.textContent).toContain('Carnet de terrain');
   });
 
-  it('should link to both pages', async () => {
+  it('should link to every page', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const links = [...(fixture.nativeElement as HTMLElement).querySelectorAll('.nav a')];
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/signalement', '/inscription']);
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/pollutions', '/pollutions/nouvelle', '/inscription']);
   });
 });

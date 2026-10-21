@@ -1,0 +1,91 @@
+<section class="sheet">
+  <header class="list-header">
+    <div class="form-header">
+      <h1>Pollutions signalées</h1>
+      <p>Retrouvez les signalements, filtrez-les et consultez leur fiche.</p>
+    </div>
+    <a class="primary" routerLink="/pollutions/nouvelle">Signaler une pollution</a>
+  </header>
+
+  <!-- Filtres : chaque critère est un signal, la liste se met à jour en direct -->
+  <fieldset class="filters" role="search">
+    <legend>Filtrer</legend>
+
+    <div class="field search">
+      <label for="search">Recherche</label>
+      <input id="search" type="search" placeholder="Titre, type, lieu, description…"
+             [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    </div>
+
+    <div class="field">
+      <label for="type">Type</label>
+      <select id="type" [ngModel]="type()" (ngModelChange)="type.set($event)">
+        <option value="">Tous les types</option>
+        @for (t of types; track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="from">Observée depuis le</label>
+      <input id="from" type="date" [max]="to() || null"
+             [ngModel]="from()" (ngModelChange)="from.set($event)" />
+    </div>
+
+    <div class="field">
+      <label for="to">Jusqu'au</label>
+      <input id="to" type="date" [min]="from() || null"
+             [ngModel]="to()" (ngModelChange)="to.set($event)" />
+    </div>
+  </fieldset>
+
+  @if (errorMessage(); as message) {
+    <p class="error api-error" role="alert">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <p class="hint" role="status">Chargement des pollutions…</p>
+  } @else {
+    <div class="summary">
+      <p class="hint" role="status">
+        {{ filtered().length }} pollution{{ filtered().length > 1 ? 's' : '' }}
+        @if (hasFilters()) { sur {{ pollutions().length }} }
+      </p>
+      @if (hasFilters()) {
+        <button type="button" class="link" (click)="resetFilters()">Effacer les filtres</button>
+      }
+    </div>
+
+    @if (filtered().length) {
+      <ul class="list">
+        @for (pollution of filtered(); track pollution.id) {
+          <li class="entry">
+            <div class="entry-main">
+              <a class="entry-title" [routerLink]="['/pollutions', pollution.id]">{{ pollution.titre }}</a>
+              <p class="entry-meta">
+                <span class="badge">{{ pollution.type }}</span>
+                <span>{{ formatDate(pollution.dateObservation) }}</span>
+                <span>{{ pollution.lieu }}</span>
+              </p>
+            </div>
+            <div class="entry-actions">
+              <a class="secondary" [routerLink]="['/pollutions', pollution.id]">Voir</a>
+              <button type="button" class="danger" (click)="remove(pollution)"
+                      [disabled]="deletingId() === pollution.id">
+                {{ deletingId() === pollution.id ? 'Suppression…' : 'Supprimer' }}
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else if (pollutions().length) {
+      <p class="empty">Aucune pollution ne correspond à ces filtres.</p>
+    } @else {
+      <p class="empty">
+        Aucune pollution signalée pour l'instant.
+        <a routerLink="/pollutions/nouvelle">Signaler la première</a>
+      </p>
+    }
+  }
+</section>
