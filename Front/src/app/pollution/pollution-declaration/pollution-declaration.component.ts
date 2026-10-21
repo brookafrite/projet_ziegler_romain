@@ -12,7 +12,6 @@ import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.comp
   selector: 'app-pollution-declaration',
   imports: [PollutionFormComponent, PollutionRecapComponent],
   templateUrl: './pollution-declaration.component.html',
-  styleUrl: './pollution-declaration.component.css',
 })
 export class PollutionDeclarationComponent {
   private readonly pollutionService = inject(PollutionService);

@@ -19,7 +19,11 @@
 }
 .brand-sub { display: block; color: var(--muted); font-size: .88rem; }
 
-.site-main { flex: 1; }
+.site-main { flex: 1; padding: 2rem 1rem 3rem; }
 
 .site-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
 .site-footer p { margin: 0; }
+
+@media (max-width: 560px) {
+  .site-main { padding: 1rem .5rem 2rem; }
+}
