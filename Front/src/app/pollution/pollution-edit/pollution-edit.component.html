@@ -1,0 +1,16 @@
+<section class="sheet">
+  @if (loading()) {
+    <p class="hint" role="status">Chargement de la fiche…</p>
+  } @else if (pollution(); as pollution) {
+    <app-pollution-form [pollution]="pollution" heading="Modifier le signalement"
+                        submitLabel="Enregistrer les modifications" [saving]="saving()"
+                        (declared)="onSave($event)" />
+    @if (errorMessage(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+    <p><a class="secondary" [routerLink]="['/pollutions', pollution.id]">Annuler</a></p>
+  } @else {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+    <p><a class="secondary" routerLink="/pollutions">Retour à la liste</a></p>
+  }
+</section>

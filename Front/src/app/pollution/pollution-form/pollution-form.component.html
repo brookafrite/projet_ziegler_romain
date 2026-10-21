@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
   <header class="form-header">
-    <h1>Nouveau signalement</h1>
+    <h1>{{ heading }}</h1>
     <p>Notez ce que vous avez observé. Les champs marqués d'un astérisque sont obligatoires.</p>
   </header>
 
@@ -139,6 +139,8 @@
   </fieldset>
 
   <div class="actions">
-    <button type="submit" class="primary">Déclarer</button>
+    <button type="submit" class="primary" [disabled]="saving">
+      {{ saving ? 'Enregistrement…' : submitLabel }}
+    </button>
   </div>
 </form>

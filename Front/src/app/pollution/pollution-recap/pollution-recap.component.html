@@ -8,7 +8,9 @@
         <span>Observée le {{ formattedDate }}</span>
       </p>
     </div>
-    <p class="stamp" role="status">Signalement<br />enregistré</p>
+    @if (showStamp) {
+      <p class="stamp" role="status">Signalement<br />enregistré</p>
+    }
   </header>
 
   <div class="layout" [class.with-photo]="pollution.photoUrl && !imageError">
@@ -50,9 +52,8 @@
     </dl>
   </div>
 
+  <!-- Les boutons sont fournis par le composant parent (déclaration ou détail) -->
   <div class="actions">
-    <button type="button" class="primary" (click)="newDeclaration.emit()">
-      Nouveau signalement
-    </button>
+    <ng-content />
   </div>
 </article>

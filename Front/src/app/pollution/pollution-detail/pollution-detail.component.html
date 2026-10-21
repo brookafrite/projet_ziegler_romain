@@ -1,0 +1,19 @@
+<section class="sheet">
+  @if (loading()) {
+    <p class="hint" role="status">Chargement de la fiche…</p>
+  } @else if (pollution(); as pollution) {
+    <app-pollution-recap [pollution]="pollution">
+      <a class="primary" [routerLink]="['/pollutions', pollution.id, 'modifier']">Modifier</a>
+      <button type="button" class="danger" (click)="remove(pollution)" [disabled]="deleting()">
+        {{ deleting() ? 'Suppression…' : 'Supprimer' }}
+      </button>
+      <a class="secondary" routerLink="/pollutions">Retour à la liste</a>
+    </app-pollution-recap>
+    @if (errorMessage(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+  } @else {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+    <p><a class="secondary" routerLink="/pollutions">Retour à la liste</a></p>
+  }
+</section>

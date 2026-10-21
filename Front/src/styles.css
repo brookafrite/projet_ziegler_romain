@@ -145,6 +145,38 @@ button:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2p
 .secondary:hover:not(:disabled) { background: var(--accent-soft); }
 .secondary:disabled { opacity: .65; cursor: progress; }
 
+.danger {
+  padding: .5rem .9rem;
+  background: transparent;
+  color: var(--error);
+  border: 1px solid var(--error);
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background .15s, color .15s;
+}
+.danger:hover:not(:disabled) { background: var(--error); color: #fff; }
+.danger:disabled { opacity: .65; cursor: progress; }
+
+/* Un lien peut prendre l'apparence d'un bouton */
+a.primary, a.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+/* Étiquette (type de pollution) */
+.badge {
+  display: inline-block;
+  padding: .15rem .65rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: .85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 /* Fiches récapitulatives : en-tête, tampon et liste de détails */
 .fiche { display: grid; gap: 1.75rem; }
 

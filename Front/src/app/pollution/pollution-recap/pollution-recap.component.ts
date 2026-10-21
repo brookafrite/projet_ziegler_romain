@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Pollution } from '../models/pollution.model';
 
 @Component({
@@ -8,7 +8,8 @@ import { Pollution } from '../models/pollution.model';
 })
 export class PollutionRecapComponent implements OnChanges {
   @Input({ required: true }) pollution!: Pollution;
-  @Output() newDeclaration = new EventEmitter<void>();
+  /** Affiche le tampon « Signalement enregistré » (juste après une déclaration). */
+  @Input() showStamp = false;
 
   imageError = false;
 
@@ -18,7 +19,7 @@ export class PollutionRecapComponent implements OnChanges {
 
   /** Numéro de fiche sur 3 chiffres : 1 → "001". */
   get numero(): string {
-    return String(this.pollution.id ?? 1).padStart(3, '0');
+    return String(this.pollution.id ?? 0).padStart(3, '0');
   }
 
   get formattedDate(): string {
