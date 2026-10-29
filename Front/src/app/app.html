@@ -13,7 +13,9 @@
     </div>
 
     <nav class="nav" aria-label="Navigation principale">
-      <a routerLink="/signalement" routerLinkActive="active" ariaCurrentWhenActive="page">Signaler une pollution</a>
+      <a routerLink="/pollutions" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+         ariaCurrentWhenActive="page">Pollutions</a>
+      <a routerLink="/pollutions/nouvelle" routerLinkActive="active" ariaCurrentWhenActive="page">Signaler</a>
       <a routerLink="/inscription" routerLinkActive="active" ariaCurrentWhenActive="page">Créer un compte</a>
     </nav>
   </div>

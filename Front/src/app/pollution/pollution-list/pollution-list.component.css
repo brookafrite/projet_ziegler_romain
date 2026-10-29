@@ -1,0 +1,85 @@
+/* Les styles communs (feuille, champs, boutons, badge...) sont dans src/styles.css */
+
+:host { display: block; }
+.sheet { display: grid; gap: 1.75rem; }
+
+.list-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem 1.5rem;
+}
+
+/* Filtres */
+.filters { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.filters legend { margin-bottom: 0; }
+.search { grid-column: 1 / -1; }
+
+.summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1rem; }
+.summary p { margin: 0; }
+
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: .9rem;
+  font-weight: 600;
+}
+.link:hover { text-decoration: underline; }
+
+.api-error {
+  margin: 0;
+  padding: .65rem .75rem;
+  border-left: 3px solid var(--error);
+  border-radius: 4px;
+  background: rgba(161, 45, 45, 0.07);
+}
+
+/* Liste */
+.list { display: grid; margin: 0; padding: 0; list-style: none; }
+
+.entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px dashed var(--line);
+}
+.entry:first-child { border-top: 1px solid var(--line); }
+.entry:last-child { border-bottom: 1px solid var(--line); }
+
+.entry-main { min-width: 0; }
+.entry-title {
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.entry-title:hover { color: var(--accent); text-decoration: underline; }
+
+.entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .3rem .9rem;
+  margin: .35rem 0 0;
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+.entry-actions { display: flex; flex: none; gap: .5rem; }
+
+.empty { margin: 0; padding: 1.5rem 0; color: var(--muted); text-align: center; }
+.empty a { color: var(--accent); font-weight: 600; }
+
+@media (max-width: 560px) {
+  .list-header .primary { width: 100%; }
+  .filters { grid-template-columns: 1fr; }
+  .entry { flex-direction: column; align-items: stretch; }
+  .entry-actions > * { flex: 1; }
+}

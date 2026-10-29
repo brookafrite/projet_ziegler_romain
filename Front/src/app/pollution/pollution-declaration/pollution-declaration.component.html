@@ -1,7 +1,14 @@
 <section class="sheet">
   @if (declaration(); as pollution) {
-    <app-pollution-recap [pollution]="pollution" (newDeclaration)="reset()" />
+    <app-pollution-recap [pollution]="pollution" [showStamp]="true">
+      <button type="button" class="primary" (click)="reset()">Nouveau signalement</button>
+      <a class="secondary" [routerLink]="['/pollutions', pollution.id]">Voir la fiche</a>
+      <a class="secondary" routerLink="/pollutions">Toutes les pollutions</a>
+    </app-pollution-recap>
   } @else {
-    <app-pollution-form (declared)="onDeclared($event)" />
+    <app-pollution-form [saving]="saving()" (declared)="onDeclared($event)" />
+    @if (errorMessage(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
   }
 </section>

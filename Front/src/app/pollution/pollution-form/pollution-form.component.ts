@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution.model';
@@ -31,7 +31,14 @@ function round6(n: number): number {
   templateUrl: './pollution-form.component.html',
   styleUrl: './pollution-form.component.css',
 })
-export class PollutionFormComponent {
+export class PollutionFormComponent implements OnInit {
+  /** Pollution à modifier : si elle est fournie, le formulaire est pré-rempli. */
+  @Input() pollution: Pollution | null = null;
+  @Input() heading = 'Nouveau signalement';
+  @Input() submitLabel = 'Déclarer';
+  /** Vrai pendant l'enregistrement : le bouton est désactivé. */
+  @Input() saving = false;
+
   @Output() declared = new EventEmitter<Pollution>();
 
   private readonly fb = inject(NonNullableFormBuilder);
@@ -73,6 +80,13 @@ export class PollutionFormComponent {
       this.previewError.set(false);
       this.photoPreview.set(url && this.form.controls.photoUrl.valid ? url : null);
     });
+  }
+
+  ngOnInit(): void {
+    if (this.pollution) {
+      const { id, ...values } = this.pollution;
+      this.form.patchValue({ ...values, photoUrl: values.photoUrl ?? '' });
+    }
   }
 
   /** Vrai si le champ est invalide et que l'utilisateur l'a déjà touché. */
