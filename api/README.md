@@ -76,7 +76,7 @@ les trois services du projet, et Render les crée tous d'un coup.
 ### Tester l'API GET pollution
 
 L'adresse de l'API est affichée en haut de la page du service `pollution-api`
-(par exemple `https://pollution-api.onrender.com`). Ouvrir dans le navigateur :
+(par exemple `https://pollution-api-cplq.onrender.com`). Ouvrir dans le navigateur :
 
 - `https://<adresse-de-l-api>/health` → `{"status":"OK"}`
 - `https://<adresse-de-l-api>/api/pollutions` → la liste des pollutions en JSON
@@ -84,10 +84,10 @@ L'adresse de l'API est affichée en haut de la page du service `pollution-api`
 
 ### Relier le Front à l'API
 
-Le Front appelle l'adresse écrite dans `Front/src/environments/environment.ts` (`apiUrl`).
-Si Render a donné une autre adresse que `https://pollution-api.onrender.com` (nom déjà pris),
-la recopier dans `apiUrl` (en gardant `/api` à la fin), committer et pousser : Render
-redéploie le Front tout seul.
+Le Front appelle l'adresse écrite dans `Front/src/environments/environment.ts` (`apiUrl`),
+ici `https://pollution-api-cplq.onrender.com/api`. Render ajoute un suffixe (`-cplq`) quand le
+nom est déjà pris : si l'adresse de l'API change, la recopier dans `apiUrl` (en gardant `/api`
+à la fin), committer et pousser. Render redéploie le Front tout seul.
 
 ### Si le Blueprint échoue
 
@@ -115,6 +115,24 @@ redéploie le Front tout seul.
 - L'API **s'endort** après 15 minutes sans visite : la première requête peut prendre
   près d'une minute, le temps qu'elle redémarre. L'ouvrir avant une présentation.
 - La base gratuite **expire au bout de 30 jours** : il faut alors en recréer une.
+
+## Lancer l'API sur son ordinateur
+
+Il n'y a pas de PostgreSQL sur l'ordinateur : l'API locale se connecte à la base **Render**.
+
+1. Sur Render, ouvrir la base `pollution-db` → **Connect** → copier l'**External Database URL**.
+2. Dans `api/`, copier `.env.example` en `.env` et y coller l'adresse après `DATABASE_URL=`.
+   `.env` contient le mot de passe : il est ignoré par Git et ne doit jamais être commité.
+3. Lancer :
+
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+   On doit lire `Synced db.`. Sans `.env`, l'API démarre mais affiche
+   `Failed to sync db: SequelizeConnectionRefusedError ECONNREFUSED` : elle ne trouve pas de base.
+4. Tester : <http://localhost:3000/api/pollutions>, puis le Front avec `npm start` dans `Front/`.
 
 ## Variables d'environnement
 

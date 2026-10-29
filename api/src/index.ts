@@ -45,7 +45,10 @@ db.sequelize
     }
   })
   .catch((err: Error) => {
-    console.log("Failed to sync db: " + err.message);
+    // Une connexion refusée a un message vide : on affiche aussi le code de la cause (ex. ECONNREFUSED)
+    const cause = (err as { parent?: { code?: string } }).parent?.code;
+    console.log(`Failed to sync db: ${err.name} ${err.message} ${cause ?? ""}`.trim());
+    console.log("Vérifier DATABASE_URL (fichier api/.env en local, voir api/README.md).");
   });
 
 
