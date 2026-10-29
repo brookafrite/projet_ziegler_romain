@@ -1,6 +1,10 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.monsite.com/api',
-  // Tant que le vrai backend n'existe pas, l'API est simulée dans le navigateur
-  mockApi: true,
+  // API déployée sur Render (service pollution-api)
+  apiUrl: 'https://pollution-api.onrender.com/api',
+  // Parties de l'API simulées dans le navigateur (true) ou appelées sur apiUrl (false)
+  mockApi: {
+    pollutions: false, // fournie par la vraie API depuis l'exercice 3
+    auth: true, // l'inscription n'existe pas encore côté API
+  },
 };

@@ -20,13 +20,19 @@ const LATENCY_MS = 300;
  * Backend simulé : intercepte les requêtes HttpClient vers environment.apiUrl
  * et y répond comme le ferait une vraie API REST.
  * Les services ne savent pas que l'API est simulée : ils font de vrais appels HTTP.
+ * Seules les ressources marquées true dans environment.mockApi sont simulées.
  */
 export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
-  if (!environment.mockApi || !req.url.startsWith(environment.apiUrl)) {
-    return next(req); // requête normale, envoyée sur le réseau
+  if (!req.url.startsWith(environment.apiUrl)) {
+    return next(req);
   }
 
   const path = req.url.slice(environment.apiUrl.length); // ex. : /pollutions/3
+  const resource = path.split('/')[1] as keyof typeof environment.mockApi;
+  if (!environment.mockApi[resource]) {
+    return next(req); // requête normale, envoyée à la vraie API
+  }
+
   return handle(req, path).pipe(delay(LATENCY_MS));
 };
 

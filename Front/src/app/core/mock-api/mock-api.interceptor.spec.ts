@@ -11,6 +11,9 @@ describe('mockApiInterceptor (backend simulé)', () => {
   const url = `${environment.apiUrl}/pollutions`;
 
   beforeEach(() => {
+    // On force la simulation, quelle que soit la configuration de l'environnement
+    environment.mockApi.pollutions = true;
+    environment.mockApi.auth = true;
     TestBed.configureTestingModule({
       providers: [provideHttpClient(withInterceptors([mockApiInterceptor]))],
     });

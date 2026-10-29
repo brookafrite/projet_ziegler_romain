@@ -39,9 +39,9 @@ services:
   - type: web
     name: pollution-front
     runtime: static
-    rootDir: front/pollution
+    rootDir: Front
     buildCommand: npm install && npm run build
-    staticPublishPath: dist/pollution/browser
+    staticPublishPath: dist/projet_ZIEGLER_Romain/browser
     routes:
       - type: rewrite
         source: /*
@@ -49,11 +49,6 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 22.22.3
-      - key: API_HOST
-        fromService:
-          type: web
-          name: pollution-api
-          property: host
 
 
 
