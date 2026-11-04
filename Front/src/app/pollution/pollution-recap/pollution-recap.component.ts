@@ -1,8 +1,10 @@
+import { DatePipe } from '@angular/common';
 import { Component, Input, OnChanges } from '@angular/core';
 import { Pollution } from '../models/pollution.model';
 
 @Component({
   selector: 'app-pollution-recap',
+  imports: [DatePipe],
   templateUrl: './pollution-recap.component.html',
   styleUrl: './pollution-recap.component.css',
 })
@@ -20,16 +22,6 @@ export class PollutionRecapComponent implements OnChanges {
   /** Numéro de fiche sur 3 chiffres : 1 → "001". */
   get numero(): string {
     return String(this.pollution.id ?? 0).padStart(3, '0');
-  }
-
-  get formattedDate(): string {
-    const [y, m, d] = this.pollution.dateObservation.split('-').map(Number);
-    return new Date(y, m - 1, d).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
   }
 
   get mapUrl(): string {
