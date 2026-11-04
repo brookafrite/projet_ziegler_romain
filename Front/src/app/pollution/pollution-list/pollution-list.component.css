@@ -1,8 +1,5 @@
 /* Les styles communs (feuille, champs, boutons, badge, liste...) sont dans src/styles.css */
 
-:host { display: block; }
-.sheet { display: grid; gap: 1.75rem; }
-
 /* Filtres */
 .filters { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
 .filters legend { margin-bottom: 0; }

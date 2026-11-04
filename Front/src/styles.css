@@ -58,6 +58,9 @@ h1, h2, h3, legend { font-family: var(--font-title); }
   background: var(--margin);
 }
 
+/* Page dont les blocs sont espacés régulièrement (listes) */
+.stack { display: grid; gap: 1.75rem; }
+
 /* Formulaires */
 form { display: grid; gap: 2rem; }
 

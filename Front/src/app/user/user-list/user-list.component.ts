@@ -8,7 +8,6 @@ import { UserService } from '../services/user.service';
   selector: 'app-user-list',
   imports: [RouterLink],
   templateUrl: './user-list.component.html',
-  styles: ':host { display: block; } .sheet { display: grid; gap: 1.75rem; }',
 })
 export class UserListComponent implements OnInit {
   private readonly userService = inject(UserService);

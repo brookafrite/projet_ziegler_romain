@@ -31,11 +31,6 @@ describe('UserService', () => {
     expect(result).toEqual([user]);
   });
 
-  it('should GET one user by id', () => {
-    service.getById(1).subscribe();
-    expect(httpMock.expectOne(`${url}/1`).request.method).toBe('GET');
-  });
-
   it('should POST the sign-up payload', () => {
     const payload = { login: 'brook', password: 'Secret123!', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr' };
     let result: unknown;

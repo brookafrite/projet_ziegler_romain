@@ -16,11 +16,6 @@ export class UserService {
     return this.http.get<User[]>(this.baseUrl);
   }
 
-  /** GET {apiUrl}/users/:id : détail d'un utilisateur. */
-  getById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/${id}`);
-  }
-
   /** POST {apiUrl}/users : crée un compte et renvoie l'utilisateur créé. */
   create(payload: SignUpRequest): Observable<User> {
     return this.http.post<User>(this.baseUrl, payload);
