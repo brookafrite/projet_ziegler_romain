@@ -1,25 +1,17 @@
 import express, { Application, Request, Response } from "express";
-import cors, { CorsOptions } from "cors";
+import cors from "cors";
 import db from "./models";
 import initRoutes from "./routes";
 import { POLLUTIONS_SEED } from "./seed";
 
 const app: Application = express();
 
-const corsOptions: CorsOptions = {
-  origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: "Content-Type, Authorization",
-  exposedHeaders: "Authorization"
-};
+// CORS : autorise le Front (hébergé sur une autre adresse) à appeler l'API.
+// Par défaut, cors() accepte toutes les origines et les méthodes GET, POST, PUT, DELETE...
+app.use(cors());
 
-app.use(cors(corsOptions));
-
-// parse requests of content-type - application/json
+// Lit le corps JSON des requêtes (req.body), envoyé par HttpClient côté Angular
 app.use(express.json());
-
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
 
 // health checks
 app.get("/", (_req: Request, res: Response) => {
@@ -50,7 +42,6 @@ db.sequelize
     console.log(`Failed to sync db: ${err.name} ${err.message} ${cause ?? ""}`.trim());
     console.log("Vérifier DATABASE_URL (fichier api/.env en local, voir api/README.md).");
   });
-
 
 initRoutes(app);
 
