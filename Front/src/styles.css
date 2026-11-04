@@ -157,6 +157,15 @@ button:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2p
 .danger:hover:not(:disabled) { background: var(--error); color: #fff; }
 .danger:disabled { opacity: .65; cursor: progress; }
 
+/* Barre de boutons en bas d'un formulaire ou d'une fiche */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
 /* Un lien peut prendre l'apparence d'un bouton */
 a.primary, a.secondary {
   display: inline-flex;

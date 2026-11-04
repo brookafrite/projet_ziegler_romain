@@ -17,6 +17,3 @@
   background: #fff;
 }
 .preview figcaption { margin-top: .3rem; font-size: .82rem; color: var(--muted); }
-
-/* Bouton principal */
-.actions { padding-top: 1.5rem; border-top: 1px solid var(--line); }
