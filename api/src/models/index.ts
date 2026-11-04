@@ -23,9 +23,8 @@ const sequelize = new Sequelize(connectionUrl, {
         }
       }
     : {},
-  define: {
-    timestamps: false
-  }
+  // Pas de colonnes createdAt / updatedAt, pour toutes les tables
+  define: { timestamps: false }
 });
 
 export interface Database {

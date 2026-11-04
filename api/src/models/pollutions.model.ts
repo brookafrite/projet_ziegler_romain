@@ -76,11 +76,7 @@ export default function definePollutions(
         allowNull: true
       }
     },
-    {
-      tableName: "pollution",
-      freezeTableName: true,
-      timestamps: false
-    }
+    { tableName: "pollution" }
   );
 
   return Pollutions;

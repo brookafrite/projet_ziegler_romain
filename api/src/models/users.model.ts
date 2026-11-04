@@ -56,8 +56,6 @@ export default function defineUsers(sequelize: Sequelize, _seq?: typeof Sequeliz
     },
     {
       tableName: "users",
-      freezeTableName: true,
-      timestamps: false,
       // Par défaut, les requêtes ne lisent jamais la colonne password
       defaultScope: { attributes: { exclude: ["password"] } },
       scopes: { withPassword: { attributes: { include: ["password"] } } }
