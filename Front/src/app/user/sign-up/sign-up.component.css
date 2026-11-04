@@ -33,4 +33,4 @@
 /* Écran de confirmation */
 .fiche-header p { margin: 0; }
 
-.actions { padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }

@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
+import { LoginComponent } from './user/login/login.component';
 import { SignUpComponent } from './user/sign-up/sign-up.component';
+import { UserListComponent } from './user/user-list/user-list.component';
 import { PollutionDeclarationComponent } from './pollution/pollution-declaration/pollution-declaration.component';
 import { PollutionDetailComponent } from './pollution/pollution-detail/pollution-detail.component';
 import { PollutionEditComponent } from './pollution/pollution-edit/pollution-edit.component';
@@ -13,6 +15,8 @@ export const routes: Routes = [
   { path: 'pollutions/:id', component: PollutionDetailComponent, title: 'Fiche pollution' },
   { path: 'pollutions/:id/modifier', component: PollutionEditComponent, title: 'Modifier une pollution' },
   { path: 'inscription', component: SignUpComponent, title: 'Créer un compte' },
+  { path: 'connexion', component: LoginComponent, title: 'Connexion' },
+  { path: 'utilisateurs', component: UserListComponent, title: 'Utilisateurs' },
   // Ancienne adresse du TP02
   { path: 'signalement', redirectTo: 'pollutions/nouvelle' },
   { path: '**', redirectTo: 'pollutions' },

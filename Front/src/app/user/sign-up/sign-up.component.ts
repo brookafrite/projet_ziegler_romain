@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { User } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import { MatchPasswordDirective } from '../validators/match-password.directive';
@@ -25,7 +26,7 @@ const EMPTY_MODEL: SignUpModel = {
 
 @Component({
   selector: 'app-sign-up',
-  imports: [FormsModule, MatchPasswordDirective],
+  imports: [FormsModule, RouterLink, MatchPasswordDirective],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css',
 })

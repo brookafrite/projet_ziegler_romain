@@ -1,0 +1,49 @@
+<section class="sheet">
+  <header class="list-header">
+    <div class="form-header">
+      <h1>Utilisateurs</h1>
+      <p>Les comptes enregistrés dans l'application.</p>
+    </div>
+    <a class="primary" routerLink="/inscription">Créer un compte</a>
+  </header>
+
+  @if (errorMessage(); as message) {
+    <p class="error api-error" role="alert">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <p class="hint" role="status">Chargement des utilisateurs…</p>
+  } @else if (users().length) {
+    <p class="hint" role="status">
+      {{ users().length }} utilisateur{{ users().length > 1 ? 's' : '' }}
+    </p>
+
+    <ul class="list">
+      @for (user of users(); track user.id) {
+        <li class="entry">
+          <div class="entry-main">
+            <span class="entry-title">{{ user.prenom }} {{ user.nom }}</span>
+            <p class="entry-meta">
+              @if (isCurrentUser(user)) {
+                <span class="badge">Vous</span>
+              }
+              <span>{{ user.login }}</span>
+              <span>{{ user.email }}</span>
+            </p>
+          </div>
+          <div class="entry-actions">
+            <button type="button" class="danger" (click)="remove(user)"
+                    [disabled]="deletingId() === user.id">
+              {{ deletingId() === user.id ? 'Suppression…' : 'Supprimer' }}
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  } @else if (!errorMessage()) {
+    <p class="empty">
+      Aucun utilisateur pour l'instant.
+      <a routerLink="/inscription">Créer le premier compte</a>
+    </p>
+  }
+</section>
