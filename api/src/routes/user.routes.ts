@@ -1,17 +1,12 @@
 import { Application, Router } from "express";
+import { checkId } from "../utils/http";
 import userController from "../controllers/user.controllers";
 
 export default (app: Application): void => {
   const router = Router();
 
-  // Vérifie le paramètre :id avant chaque route qui l'utilise (ex. /api/users/abc → 400)
-  router.param("id", (_req, res, next, id) => {
-    if (!/^\d+$/.test(id)) {
-      res.status(400).json({ message: `Identifiant invalide : ${id}.` });
-      return;
-    }
-    next();
-  });
+  // Vérifie le paramètre :id avant chaque route qui l'utilise (utils/http.ts)
+  router.param("id", checkId);
 
   // Route POST /api/users/login (authentification fictive)
   router.post("/login", userController.login);

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { ValidationError } from "sequelize";
 import db from "../models";
 import { PollutionCreationAttributes } from "../models/pollutions.model";
+import { sendError } from "../utils/http";
 
 const Pollutions = db.pollutions;
 
@@ -12,22 +12,6 @@ function readBody(body: Record<string, unknown>): PollutionCreationAttributes {
     titre, type, description, dateObservation, lieu, latitude, longitude,
     photoUrl: photoUrl || null
   } as PollutionCreationAttributes;
-}
-
-function readId(req: Request): number {
-  return Number(req.params.id);
-}
-
-/** Erreur de validation → 400, toute autre erreur → 500. */
-function sendError(res: Response, err: unknown, context: string): void {
-  if (err instanceof ValidationError) {
-    res.status(400).json({
-      message: "Données invalides : " + err.errors.map((e) => e.message).join(", ")
-    });
-    return;
-  }
-  const message = err instanceof Error ? err.message : String(err);
-  res.status(500).json({ message: `${context} : ${message}` });
 }
 
 /**
@@ -48,7 +32,7 @@ export const getAll = async (_req: Request, res: Response): Promise<void> => {
  * Récupère une pollution par son identifiant.
  */
 export const getById = async (req: Request, res: Response): Promise<void> => {
-  const id = readId(req);
+  const id = Number(req.params.id);
   try {
     const data = await Pollutions.findByPk(id);
     if (data) {
@@ -79,7 +63,7 @@ export const create = async (req: Request, res: Response): Promise<void> => {
  * Remplace les données d'une pollution existante.
  */
 export const update = async (req: Request, res: Response): Promise<void> => {
-  const id = readId(req);
+  const id = Number(req.params.id);
   try {
     const pollution = await Pollutions.findByPk(id);
     if (!pollution) {
@@ -98,7 +82,7 @@ export const update = async (req: Request, res: Response): Promise<void> => {
  * Supprime une pollution.
  */
 export const remove = async (req: Request, res: Response): Promise<void> => {
-  const id = readId(req);
+  const id = Number(req.params.id);
   try {
     const deleted = await Pollutions.destroy({ where: { id } });
     if (deleted) {

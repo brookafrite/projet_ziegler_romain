@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { UniqueConstraintError, ValidationError } from "sequelize";
 import db from "../models";
 import { UserInstance } from "../models/users.model";
 import { hashPassword, verifyPassword } from "../utils/password";
+import { sendError } from "../utils/http";
 
 const Users = db.users;
 
@@ -10,22 +10,6 @@ const Users = db.users;
 function toPublic(user: UserInstance) {
   const { id, login, nom, prenom, email } = user;
   return { id, login, nom, prenom, email };
-}
-
-/** Login ou email déjà pris → 409, autre erreur de validation → 400, le reste → 500. */
-function sendError(res: Response, err: unknown, context: string): void {
-  if (err instanceof UniqueConstraintError) {
-    res.status(409).json({ message: "Ce login ou cet email est déjà utilisé." });
-    return;
-  }
-  if (err instanceof ValidationError) {
-    res.status(400).json({
-      message: "Données invalides : " + err.errors.map((e) => e.message).join(", ")
-    });
-    return;
-  }
-  const message = err instanceof Error ? err.message : String(err);
-  res.status(500).json({ message: `${context} : ${message}` });
 }
 
 /**
