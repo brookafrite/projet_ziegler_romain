@@ -36,7 +36,7 @@ describe('SignUpComponent', () => {
     component.onSubmit(validForm);
     expect(component.loading()).toBe(true);
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/auth/signup`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/users`);
     expect(req.request.body).toEqual({
       login: 'brook',
       password: 'Secret123!',
@@ -53,7 +53,7 @@ describe('SignUpComponent', () => {
   it('should display an error message when the API fails', () => {
     component.onSubmit(validForm);
     httpMock
-      .expectOne(`${environment.apiUrl}/auth/signup`)
+      .expectOne(`${environment.apiUrl}/users`)
       .flush({}, { status: 409, statusText: 'Conflict' });
 
     expect(component.createdUser()).toBeNull();
@@ -62,6 +62,6 @@ describe('SignUpComponent', () => {
 
   it('should not call the API when the form is invalid', () => {
     component.onSubmit({ invalid: true } as NgForm);
-    httpMock.expectNone(`${environment.apiUrl}/auth/signup`);
+    httpMock.expectNone(`${environment.apiUrl}/users`);
   });
 });

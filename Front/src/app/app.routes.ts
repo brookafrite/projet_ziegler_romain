@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { SignUpComponent } from './auth/sign-up/sign-up.component';
+import { SignUpComponent } from './user/sign-up/sign-up.component';
 import { PollutionDeclarationComponent } from './pollution/pollution-declaration/pollution-declaration.component';
 import { PollutionDetailComponent } from './pollution/pollution-detail/pollution-detail.component';
 import { PollutionEditComponent } from './pollution/pollution-edit/pollution-edit.component';

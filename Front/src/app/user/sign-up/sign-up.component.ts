@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { User } from '../models/user.model';
-import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/user.service';
 import { MatchPasswordDirective } from '../validators/match-password.directive';
 
 interface SignUpModel {
@@ -30,7 +30,7 @@ const EMPTY_MODEL: SignUpModel = {
   styleUrl: './sign-up.component.css',
 })
 export class SignUpComponent {
-  private readonly authService = inject(AuthService);
+  private readonly userService = inject(UserService);
 
   model: SignUpModel = { ...EMPTY_MODEL };
   showPassword = false;
@@ -68,7 +68,7 @@ export class SignUpComponent {
     this.errorMessage.set(null);
 
     // Requête HTTP « one-shot » : l'Observable se termine tout seul, pas besoin d'unsubscribe.
-    this.authService.signUp(payload).subscribe({
+    this.userService.create(payload).subscribe({
       next: (user) => {
         this.createdUser.set(user);
         this.loading.set(false);
