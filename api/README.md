@@ -7,14 +7,19 @@ src/
 ├── index.ts                       démarrage du serveur, CORS, création de la table et données initiales
 ├── config.ts                      paramètres de connexion à la base (variables d'environnement)
 ├── seed.ts                        pollutions insérées au premier démarrage
+├── utils/
+│   └── password.ts                hachage et vérification des mots de passe
 ├── models/
 │   ├── index.ts                   connexion Sequelize à PostgreSQL
-│   └── pollutions.model.ts        table « pollution »
+│   ├── pollutions.model.ts        table « pollution »
+│   └── users.model.ts             table « users »
 ├── controllers/
-│   └── pollution.controllers.ts   logique de chaque route (findAll, findByPk, create, update, destroy)
+│   ├── pollution.controllers.ts   logique de chaque route (findAll, findByPk, create, update, destroy)
+│   └── user.controllers.ts        idem pour les utilisateurs, plus la connexion
 └── routes/
     ├── index.ts                   enregistre toutes les routes
-    └── pollution.routes.ts        URL → contrôleur
+    ├── pollution.routes.ts        URL → contrôleur
+    └── user.routes.ts
 ```
 
 ## Routes
@@ -27,8 +32,18 @@ src/
 | POST    | `/api/pollutions`     | Création                      | 201, 400           |
 | PUT     | `/api/pollutions/:id` | Modification                  | 200, 400, 404      |
 | DELETE  | `/api/pollutions/:id` | Suppression                   | 204, 404           |
+| GET     | `/api/users`          | Liste des utilisateurs        | 200                |
+| GET     | `/api/users/:id`      | Détail d'un utilisateur       | 200, 404           |
+| POST    | `/api/users`          | Création d'un utilisateur     | 201, 400, 409      |
+| DELETE  | `/api/users/:id`      | Suppression                   | 204, 404           |
+| POST    | `/api/users/login`    | Connexion (fictive)           | 200, 400, 401      |
 
 Un id non numérique (`/api/pollutions/abc`) renvoie 400.
+
+Les utilisateurs ne sont jamais renvoyés avec leur mot de passe. Celui-ci est enregistré
+**haché** (`utils/password.ts`, module `crypto` de Node.js) : même en lisant la table dans
+pgAdmin, on ne peut pas le retrouver. La connexion est « fictive » : `/api/users/login`
+vérifie le login et le mot de passe et renvoie l'utilisateur, sans créer de jeton.
 
 ## Table `pollution`
 
@@ -44,7 +59,18 @@ Un id non numérique (`/api/pollutions/abc`) renvoie 400.
 | `longitude`       | float     | oui (-180 à 180) |
 | `photoUrl`        | text      | non |
 
-La table est créée automatiquement au démarrage (`sequelize.sync()`), puis remplie avec `seed.ts` si elle est vide.
+## Table `users`
+
+| Colonne    | Type        | Obligatoire |
+|------------|-------------|-------------|
+| `id`       | integer     | clé primaire, auto-incrémentée |
+| `login`    | varchar(50) | oui, unique |
+| `password` | varchar     | oui (haché) |
+| `nom`      | varchar     | oui |
+| `prenom`   | varchar     | oui |
+| `email`    | varchar     | oui, unique, format email |
+
+Les tables sont créées automatiquement au démarrage (`sequelize.sync()`), puis remplie avec `seed.ts` si elle est vide.
 
 ## Déploiement sur Render
 
