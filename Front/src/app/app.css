@@ -57,19 +57,5 @@
 .site-footer p { margin: 0; }
 
 @media (max-width: 560px) {
-  /* Navigation */
-.nav { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; }
-.nav a {
-  padding: .3rem 0;
-  border-bottom: 2px solid transparent;
-  color: var(--muted);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color .15s, border-color .15s;
-}
-.nav a:hover { color: var(--accent); }
-.nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
-.nav a:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
-
-.site-main { padding: 1rem .5rem 2rem; }
+  .site-main { padding: 1rem .5rem 2rem; }
 }
