@@ -169,6 +169,13 @@ Aucun mot de passe n'est écrit dans le code, car le dépôt est public.
 
 ## Côté Front
 
-Le Front appelle cette API pour les pollutions (`Front/src/environments/environment*.ts`,
-`mockApi.pollutions: false`). L'inscription (`/api/auth/signup`) reste simulée dans le
-navigateur (`mockApi.auth: true`) tant qu'elle n'existe pas dans l'API.
+Le Front appelle cette API à l'adresse `apiUrl` de `Front/src/environments/` :
+`http://localhost:3000/api` en local (`npm start`), l'adresse Render une fois déployé.
+
+| Service Angular   | Fichier                                         | Routes appelées      |
+|-------------------|-------------------------------------------------|----------------------|
+| `PollutionService` | `Front/src/app/pollution/services/pollution.service.ts` | `/api/pollutions` |
+| `UserService`      | `Front/src/app/user/services/user.service.ts`           | `/api/users`      |
+
+L'API simulée dans le navigateur des TP02-TP03 a été retirée : toutes les données
+viennent maintenant de PostgreSQL.
