@@ -1,6 +1,5 @@
 # Blueprint Render pour le déploiement du projet pédagogique Pollution
 # Inclut la base de données PostgreSQL, l'API Node.js/TypeScript et le Frontend Angular
-# Les noms correspondent aux services déjà créés sur Render : le Blueprint les reprend sans les recréer
 
 databases:
   - name: pollution-db

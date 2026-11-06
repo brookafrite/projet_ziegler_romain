@@ -75,15 +75,18 @@ Les tables sont créées automatiquement au démarrage (`sequelize.sync()`), pui
 ## Déploiement sur Render
 
 Le fichier `render.yaml`, à la racine du dépôt, est un **Blueprint** : il décrit en une fois
-les trois services du projet, et Render les crée tous d'un coup. Si un service du même nom
-existe déjà sur le compte, Render ne le recrée pas : il le **reprend** et lui applique la
-configuration du fichier (la base et ses données sont conservées).
+les trois services du projet, et Render les crée tous d'un coup. Le Blueprint ne reprend pas
+les services créés à la main : s'ils existent déjà, Render crée des copies avec un suffixe
+(`pollution-api-xgk5`…). Il faut donc supprimer les services créés à la main avant.
 
 | Service          | Type             | Rôle                                              |
 |------------------|------------------|---------------------------------------------------|
 | `pollution-db`   | PostgreSQL       | la base de données (table `pollution`)            |
 | `pollution-api`  | Web Service Node | cette API, dossier `api/`                         |
 | `projet_ziegler_romain` | Static Site | le site Angular, dossier `Front/`          |
+
+Adresses actuelles : le site <https://projet-ziegler-romain-xgk5.onrender.com> et l'API
+<https://pollution-api-xgk5.onrender.com> (Render ajoute le suffixe `-xgk5` aux noms du Blueprint).
 
 ### Étapes
 
@@ -104,7 +107,7 @@ configuration du fichier (la base et ses données sont conservées).
 ### Tester l'API GET pollution
 
 L'adresse de l'API est affichée en haut de la page du service `pollution-api`
-(par exemple `https://pollution-api-cplq.onrender.com`). Ouvrir dans le navigateur :
+(par exemple `https://pollution-api-xgk5.onrender.com`). Ouvrir dans le navigateur :
 
 - `https://<adresse-de-l-api>/health` → `{"status":"OK"}`
 - `https://<adresse-de-l-api>/api/pollutions` → la liste des pollutions en JSON
@@ -113,7 +116,7 @@ L'adresse de l'API est affichée en haut de la page du service `pollution-api`
 ### Relier le Front à l'API
 
 Le Front appelle l'adresse écrite dans `Front/src/environments/environment.ts` (`apiUrl`),
-ici `https://pollution-api-cplq.onrender.com/api`. Render ajoute un suffixe (`-cplq`) quand le
+ici `https://pollution-api-xgk5.onrender.com/api`. Render ajoute un suffixe (`-xgk5`) quand le
 nom est déjà pris : si l'adresse de l'API change, la recopier dans `apiUrl` (en gardant `/api`
 à la fin), committer et pousser. Render redéploie le Front tout seul.
 
@@ -124,8 +127,8 @@ nom est déjà pris : si l'adresse de l'API change, la recopier dans `apiUrl` (e
   réutiliser l'existante (voir la méthode manuelle).
 - **Dossier introuvable (`rootDir`)** : la branche choisie ne contient pas encore `api/` ou
   la version corrigée de `render.yaml` : pousser, puis relancer (**Manual Sync**).
-- **Un service créé à la main porte un autre nom** que dans `render.yaml` : Render en crée un
-  second. Renommer l'un ou l'autre pour qu'ils correspondent, puis relancer (**Manual Sync**).
+- **Render propose des noms avec un suffixe** (`-xgk5`) : des services du même nom existent
+  déjà. Ne pas valider, supprimer les services créés à la main, puis relancer (**Manual Sync**).
 
 ### Méthode manuelle (sans Blueprint)
 
