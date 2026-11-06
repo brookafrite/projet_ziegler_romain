@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { guestGuard } from './user/guards/guest.guard';
 import { LoginComponent } from './user/login/login.component';
 import { SignUpComponent } from './user/sign-up/sign-up.component';
 import { UserListComponent } from './user/user-list/user-list.component';
@@ -14,8 +15,9 @@ export const routes: Routes = [
   { path: 'pollutions/nouvelle', component: PollutionDeclarationComponent, title: 'Signaler une pollution' },
   { path: 'pollutions/:id', component: PollutionDetailComponent, title: 'Fiche pollution' },
   { path: 'pollutions/:id/modifier', component: PollutionEditComponent, title: 'Modifier une pollution' },
-  { path: 'inscription', component: SignUpComponent, title: 'Créer un compte' },
-  { path: 'connexion', component: LoginComponent, title: 'Connexion' },
+  // Réservées aux visiteurs non connectés (voir user/guards/guest.guard.ts)
+  { path: 'inscription', component: SignUpComponent, title: 'Créer un compte', canActivate: [guestGuard] },
+  { path: 'connexion', component: LoginComponent, title: 'Connexion', canActivate: [guestGuard] },
   { path: 'utilisateurs', component: UserListComponent, title: 'Utilisateurs' },
   // Ancienne adresse du TP02
   { path: 'signalement', redirectTo: 'pollutions/nouvelle' },
