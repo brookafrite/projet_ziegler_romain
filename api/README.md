@@ -75,20 +75,22 @@ Les tables sont créées automatiquement au démarrage (`sequelize.sync()`), pui
 ## Déploiement sur Render
 
 Le fichier `render.yaml`, à la racine du dépôt, est un **Blueprint** : il décrit en une fois
-les trois services du projet, et Render les crée tous d'un coup.
+les trois services du projet, et Render les crée tous d'un coup. Si un service du même nom
+existe déjà sur le compte, Render ne le recrée pas : il le **reprend** et lui applique la
+configuration du fichier (la base et ses données sont conservées).
 
 | Service          | Type             | Rôle                                              |
 |------------------|------------------|---------------------------------------------------|
 | `pollution-db`   | PostgreSQL       | la base de données (table `pollution`)            |
 | `pollution-api`  | Web Service Node | cette API, dossier `api/`                         |
-| `pollution-front`| Static Site      | le site Angular, dossier `Front/`                 |
+| `projet_ziegler_romain` | Static Site | le site Angular, dossier `Front/`          |
 
 ### Étapes
 
 1. **Pousser le code sur GitHub.** Render lit le dépôt GitHub, pas l'ordinateur : le dossier
    `api/` et `render.yaml` doivent être poussés sur la branche à déployer.
 2. Sur <https://dashboard.render.com> : **New → Blueprint**.
-3. Choisir le dépôt `projet_ziegler_romain`, puis la **branche** (`ex03`, ou `main` une fois la PR fusionnée).
+3. Choisir le dépôt `projet_ziegler_romain`, puis la **branche** (`tp04`, ou `main` une fois la PR fusionnée).
 4. Render affiche les trois services trouvés dans `render.yaml` : cliquer sur **Apply** (ou **Deploy Blueprint**).
 5. Attendre la fin des déploiements (quelques minutes). Render crée d'abord la base, puis :
    - l'API : `npm install --include=dev && npm run build`, puis `npm run start` ;
@@ -122,8 +124,8 @@ nom est déjà pris : si l'adresse de l'API change, la recopier dans `apiUrl` (e
   réutiliser l'existante (voir la méthode manuelle).
 - **Dossier introuvable (`rootDir`)** : la branche choisie ne contient pas encore `api/` ou
   la version corrigée de `render.yaml` : pousser, puis relancer (**Manual Sync**).
-- **Un site statique créé à la main existe déjà** : il peut rester, ou être supprimé au profit
-  de `pollution-front`.
+- **Un service créé à la main porte un autre nom** que dans `render.yaml` : Render en crée un
+  second. Renommer l'un ou l'autre pour qu'ils correspondent, puis relancer (**Manual Sync**).
 
 ### Méthode manuelle (sans Blueprint)
 
