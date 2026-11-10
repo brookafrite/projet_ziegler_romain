@@ -21,7 +21,7 @@ export default (app: Application): void => {
   router.post("/", userController.create);
 
   // Route DELETE /api/users/:id
-  router.delete("/:id", userController.remove);
+  router.delete("/:id", requireAuth, userController.remove);
 
   app.use("/api/users", router);
 };
