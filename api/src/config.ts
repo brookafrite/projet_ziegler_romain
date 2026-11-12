@@ -1,0 +1,28 @@
+export interface DatabaseConfig {
+  host: string;
+  port: string;
+  user: string;
+  password: string;
+  bdname: string;
+}
+
+export interface AppConfig {
+  BDD: DatabaseConfig;
+}
+
+// Les identifiants ne sont jamais écrits dans le code (il est public sur GitHub) :
+// ils viennent des variables d'environnement. Les valeurs par défaut correspondent
+// à la base PostgreSQL locale décrite dans api/README.md.
+// Sur Render, DATABASE_URL est fournie automatiquement et prend le dessus (voir models/index.ts).
+export const config: AppConfig = {
+  BDD: {
+    host: process.env.DB_HOST || "localhost",
+    port: process.env.DB_PORT || "5432",
+    user: process.env.DB_USER || "postgres",
+    password: process.env.DB_PASSWORD || "postgres",
+    bdname: process.env.DB_NAME || "pollution_db"
+  }
+};
+
+export const { BDD } = config;
+export default config;

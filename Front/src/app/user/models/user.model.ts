@@ -7,7 +7,13 @@ export interface SignUpRequest {
   email: string;
 }
 
-/** Utilisateur renvoyé par l'API après l'inscription (sans le mot de passe). */
+/** Identifiants envoyés à l'API pour se connecter. */
+export interface LoginRequest {
+  login: string;
+  password: string;
+}
+
+/** Utilisateur renvoyé par l'API (jamais avec son mot de passe). */
 export interface User {
   id: number;
   login: string;

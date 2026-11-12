@@ -5,7 +5,7 @@
       <h1>{{ pollution.titre }}</h1>
       <p class="meta">
         <span class="badge">{{ pollution.type }}</span>
-        <span>Observée le {{ formattedDate }}</span>
+        <span>Observée le {{ pollution.dateObservation | date: 'fullDate' }}</span>
       </p>
     </div>
     @if (showStamp) {

@@ -40,25 +40,22 @@
 .nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
 .nav a:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
 
+/* Compte : séparé du reste du menu par un trait */
+.account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem 1.25rem;
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--line);
+}
+.hello { color: var(--ink); font-weight: 600; }
+
 .site-main { flex: 1; padding: 2rem 1rem 3rem; }
 
 .site-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
 .site-footer p { margin: 0; }
 
 @media (max-width: 560px) {
-  /* Navigation */
-.nav { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; }
-.nav a {
-  padding: .3rem 0;
-  border-bottom: 2px solid transparent;
-  color: var(--muted);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color .15s, border-color .15s;
-}
-.nav a:hover { color: var(--accent); }
-.nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
-.nav a:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
-
-.site-main { padding: 1rem .5rem 2rem; }
+  .site-main { padding: 1rem .5rem 2rem; }
 }

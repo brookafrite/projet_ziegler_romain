@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution.model';
@@ -11,7 +12,7 @@ function normalize(text: string): string {
 
 @Component({
   selector: 'app-pollution-list',
-  imports: [FormsModule, RouterLink],
+  imports: [DatePipe, FormsModule, RouterLink],
   templateUrl: './pollution-list.component.html',
   styleUrl: './pollution-list.component.css',
 })
@@ -88,15 +89,6 @@ export class PollutionListComponent implements OnInit {
         this.errorMessage.set(`« ${pollution.titre} » n’a pas pu être supprimée.`);
         this.deletingId.set(null);
       },
-    });
-  }
-
-  formatDate(iso: string): string {
-    const [y, m, d] = iso.split('-').map(Number);
-    return new Date(y, m - 1, d).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
     });
   }
 }

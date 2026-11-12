@@ -1,0 +1,45 @@
+<section class="sheet">
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+    <header class="form-header">
+      <h1>Connexion</h1>
+      <p>
+        Connectez-vous avec votre login et votre mot de passe.
+        Pas encore de compte ? <a routerLink="/inscription">Créer un compte</a>
+      </p>
+    </header>
+
+    <fieldset>
+      <legend>Identifiants</legend>
+
+      <div class="field">
+        <label for="login">Login <span class="req" aria-hidden="true">*</span></label>
+        <input id="login" name="login" type="text" autocomplete="username" required
+               [(ngModel)]="model.login" #login="ngModel"
+               [attr.aria-invalid]="login.invalid && (login.touched || f.submitted)" />
+        @if (login.invalid && (login.touched || f.submitted)) {
+          <small class="error" role="alert">Saisissez votre login.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Mot de passe <span class="req" aria-hidden="true">*</span></label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required
+               [(ngModel)]="model.password" #password="ngModel"
+               [attr.aria-invalid]="password.invalid && (password.touched || f.submitted)" />
+        @if (password.invalid && (password.touched || f.submitted)) {
+          <small class="error" role="alert">Saisissez votre mot de passe.</small>
+        }
+      </div>
+    </fieldset>
+
+    @if (errorMessage(); as message) {
+      <p class="error api-error" role="alert">{{ message }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" class="primary" [disabled]="f.invalid || loading()">
+        {{ loading() ? 'Connexion…' : 'Se connecter' }}
+      </button>
+    </div>
+  </form>
+</section>

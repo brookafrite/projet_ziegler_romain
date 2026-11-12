@@ -1,4 +1,4 @@
-<section class="sheet">
+<section class="sheet stack">
   <header class="list-header">
     <div class="form-header">
       <h1>Pollutions signalées</h1>
@@ -65,7 +65,7 @@
               <a class="entry-title" [routerLink]="['/pollutions', pollution.id]">{{ pollution.titre }}</a>
               <p class="entry-meta">
                 <span class="badge">{{ pollution.type }}</span>
-                <span>{{ formatDate(pollution.dateObservation) }}</span>
+                <span>{{ pollution.dateObservation | date: 'longDate' }}</span>
                 <span>{{ pollution.lieu }}</span>
               </p>
             </div>
