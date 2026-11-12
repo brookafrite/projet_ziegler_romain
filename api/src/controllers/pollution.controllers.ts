@@ -7,10 +7,11 @@ const Pollutions = db.pollutions;
 
 /** Champs que le client a le droit d'envoyer (l'id est attribué par la base). */
 function readBody(body: Record<string, unknown>): PollutionCreationAttributes {
-  const { titre, type, description, dateObservation, lieu, latitude, longitude, photoUrl } = body;
+  const { titre, type, description, dateObservation, lieu, latitude, longitude, photoUrl, indice } = body;
   return {
     titre, type, description, dateObservation, lieu, latitude, longitude,
-    photoUrl: photoUrl || null
+    photoUrl: photoUrl || null,
+    indice: indice ?? null
   } as PollutionCreationAttributes;
 }
 

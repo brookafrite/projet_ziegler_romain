@@ -1,10 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnChanges } from '@angular/core';
+import { HighlightPollutionDirective } from '../directives/highlight-pollution.directive';
 import { Pollution } from '../models/pollution.model';
+import { PollutionLevelPipe } from '../pipes/pollution-level.pipe';
 
 @Component({
   selector: 'app-pollution-recap',
-  imports: [DatePipe],
+  imports: [DatePipe, PollutionLevelPipe, HighlightPollutionDirective],
   templateUrl: './pollution-recap.component.html',
   styleUrl: './pollution-recap.component.css',
 })
