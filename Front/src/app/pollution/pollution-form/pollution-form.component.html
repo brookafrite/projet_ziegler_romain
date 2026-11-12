@@ -57,6 +57,17 @@
         <small class="error" role="alert">Décrivez la pollution observée.</small>
       }
     </div>
+
+    <div class="field">
+      <label for="indice">Indice de dangerosité <span class="optional">(facultatif)</span></label>
+      <input id="indice" type="number" min="0" step="1" inputmode="numeric" formControlName="indice"
+             placeholder="Ex. : 35" [attr.aria-invalid]="showError('indice')" />
+      @if (showError('indice')) {
+        <small class="error" role="alert">L'indice est un nombre entier positif ou nul.</small>
+      } @else {
+        <small class="hint">0-20 faible, 21-50 modérée, 51-100 élevée, plus de 100 dangereuse. Laissez vide si non évalué.</small>
+      }
+    </div>
   </fieldset>
 
   <fieldset>

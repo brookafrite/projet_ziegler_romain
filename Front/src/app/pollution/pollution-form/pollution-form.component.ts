@@ -63,6 +63,8 @@ export class PollutionFormComponent implements OnInit {
       Validators.max(180),
     ]),
     photoUrl: ['', urlValidator],
+    // Facultatif : vide = « Non évalué »
+    indice: this.fb.control<number | null>(null, [Validators.min(0), Validators.pattern(/^\d+$/)]),
   });
 
   // Géolocalisation
@@ -155,6 +157,7 @@ export class PollutionFormComponent implements OnInit {
       titre: value.titre.trim(),
       lieu: value.lieu.trim(),
       photoUrl: value.photoUrl.trim() || null,
+      indice: value.indice ?? null,
     });
   }
 }
