@@ -29,10 +29,10 @@
       </div>
       <div class="item">
         <dt>Dangerosité</dt>
-        <dd>
+        <dd class="level">
           <span class="badge" [appHighlightPollution]="pollution.indice">{{ pollution.indice | pollutionLevel }}</span>
           @if (pollution.indice != null) {
-            <span class="hint">indice {{ pollution.indice }}</span>
+            <span class="indice">Indice <strong>{{ pollution.indice }}</strong></span>
           }
         </dd>
       </div>
