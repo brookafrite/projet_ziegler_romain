@@ -58,6 +58,16 @@ vérifie le login et le mot de passe et renvoie l'utilisateur, sans créer de je
 | `latitude`        | float     | oui (-90 à 90) |
 | `longitude`       | float     | oui (-180 à 180) |
 | `photoUrl`        | text      | non |
+| `indice`          | integer   | non (entier >= 0, vide = non évalué) |
+
+La colonne `indice` (exercice 04) a été ajoutée **à la main** dans pgAdmin, car
+`sequelize.sync()` crée les tables manquantes mais ne modifie jamais une table existante :
+
+```sql
+ALTER TABLE pollution ADD COLUMN indice integer;
+```
+
+Sur une base neuve, `sync()` crée directement la table avec cette colonne.
 
 ## Table `users`
 
@@ -181,6 +191,18 @@ Le Front appelle cette API à l'adresse `apiUrl` de `Front/src/environments/` :
 |-------------------|-------------------------------------------------|----------------------|
 | `PollutionService` | `Front/src/app/pollution/services/pollution.service.ts` | `/api/pollutions` |
 | `UserService`      | `Front/src/app/user/services/user.service.ts`           | `/api/users`      |
+
+Pour l'indice de dangerosité (exercice 04), le Front traduit le nombre en niveau :
+
+| Indice | Niveau (`PollutionLevelPipe`) | Fond (`HighlightPollutionDirective`) |
+|--------|-------------------------------|--------------------------------------|
+| vide   | Non évalué | gris |
+| 0-20   | Faible     | vert clair |
+| 21-50  | Modérée    | jaune |
+| 51-100 | Élevée     | orange |
+| 101+   | Dangereuse | rouge |
+
+Les seuils sont écrits une seule fois, dans `Front/src/app/pollution/models/pollution-level.ts`.
 
 L'API simulée dans le navigateur des TP02-TP03 a été retirée : toutes les données
 viennent maintenant de PostgreSQL.
