@@ -65,6 +65,11 @@
       @if (showError('indice')) {
         <small class="error" role="alert">L'indice est un nombre entier positif ou nul.</small>
       } @else {
+        <!-- Aperçu en direct : la même pipe et la même directive que dans la liste -->
+        <p class="level-preview" aria-live="polite">
+          Niveau :
+          <span class="badge" [appHighlightPollution]="form.controls.indice.value">{{ form.controls.indice.value | pollutionLevel }}</span>
+        </p>
         <small class="hint">0-20 faible, 21-50 modérée, 51-100 élevée, plus de 100 dangereuse. Laissez vide si non évalué.</small>
       }
     </div>

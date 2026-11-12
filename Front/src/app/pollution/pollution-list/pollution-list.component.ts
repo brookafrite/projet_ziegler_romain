@@ -2,8 +2,10 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { HighlightPollutionDirective } from '../directives/highlight-pollution.directive';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution.model';
 import { PollutionService } from '../services/pollution.service';
+import { PollutionLevelPipe } from '../pipes/pollution-level.pipe';
 
 /** Minuscules et sans accents, pour une recherche plus tolérante (« depot » trouve « Dépôt »). */
 function normalize(text: string): string {
@@ -12,7 +14,7 @@ function normalize(text: string): string {
 
 @Component({
   selector: 'app-pollution-list',
-  imports: [DatePipe, FormsModule, RouterLink],
+  imports: [DatePipe, FormsModule, RouterLink, PollutionLevelPipe, HighlightPollutionDirective],
   templateUrl: './pollution-list.component.html',
   styleUrl: './pollution-list.component.css',
 })
