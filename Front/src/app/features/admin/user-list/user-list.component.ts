@@ -1,12 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { User } from '../../../core/models/user.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserService } from '../../../core/services/user.service';
 
 @Component({
   selector: 'app-user-list',
-  imports: [RouterLink],
   templateUrl: './user-list.component.html',
 })
 export class UserListComponent implements OnInit {

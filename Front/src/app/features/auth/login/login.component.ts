@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -13,6 +13,9 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  /** Adresse à rouvrir après la connexion (?retour=… ajouté par les guards). */
+  readonly retour = input<string>();
+
   model = { login: '', password: '' };
 
   readonly loading = signal(false);
@@ -25,12 +28,18 @@ export class LoginComponent {
     this.errorMessage.set(null);
 
     this.authService.login(this.model).subscribe({
-      next: () => this.router.navigate(['/pollutions']),
+      next: () => this.router.navigateByUrl(this.returnUrl()),
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(this.toMessage(err));
         this.loading.set(false);
       },
     });
+  }
+
+  /** Seulement une adresse interne au site (commence par un seul « / »), sinon la liste. */
+  private returnUrl(): string {
+    const url = this.retour();
+    return url?.startsWith('/') && !url.startsWith('//') ? url : '/pollutions';
   }
 
   private toMessage(err: HttpErrorResponse): string {

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/guards/admin.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
 /**
@@ -30,6 +31,7 @@ export const routes: Routes = [
   {
     path: 'utilisateurs',
     title: 'Utilisateurs',
+    canMatch: [adminGuard], // réservée aux admins : le code n'est même pas téléchargé sinon
     loadComponent: () =>
       import('./features/admin/user-list/user-list.component').then((m) => m.UserListComponent),
   },

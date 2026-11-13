@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Pollution } from '../models/pollution.model';
+import { AuthService } from '../../../core/services/auth.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.component';
 
@@ -13,6 +14,7 @@ import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.comp
 })
 export class PollutionDetailComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);
+  protected readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   /** Paramètre :id de l'URL, transmis par le routeur (withComponentInputBinding). */

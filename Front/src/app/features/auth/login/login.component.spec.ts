@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgForm } from '@angular/forms';
 import { provideRouter, Router } from '@angular/router';
 
@@ -8,6 +8,7 @@ import { environment } from '../../../../environments/environment';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
+  let fixture: ComponentFixture<LoginComponent>;
   let component: LoginComponent;
   let httpMock: HttpTestingController;
   const validForm = { invalid: false } as NgForm;
@@ -18,22 +19,39 @@ describe('LoginComponent', () => {
       imports: [LoginComponent],
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
-    component = TestBed.createComponent(LoginComponent).componentInstance;
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     component.model = { login: 'brook', password: 'Secret123!' };
   });
 
   afterEach(() => httpMock.verify());
 
-  it('should go to the pollution list after logging in', () => {
-    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+  const user = { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const };
 
+  function logIn() {
     component.onSubmit(validForm);
-    httpMock
-      .expectOne(`${environment.apiUrl}/users/login`)
-      .flush({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const });
+    httpMock.expectOne(`${environment.apiUrl}/users/login`).flush(user);
+  }
 
-    expect(navigate).toHaveBeenCalledWith(['/pollutions']);
+  it('should go to the pollution list after logging in', () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    logIn();
+    expect(navigate).toHaveBeenCalledWith('/pollutions');
+  });
+
+  it('should go back to the page asked before logging in (?retour=…)', () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    fixture.componentRef.setInput('retour', '/pollutions/nouvelle');
+    logIn();
+    expect(navigate).toHaveBeenCalledWith('/pollutions/nouvelle');
+  });
+
+  it('should ignore a return address outside the site', () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    fixture.componentRef.setInput('retour', '//pirate.example');
+    logIn();
+    expect(navigate).toHaveBeenCalledWith('/pollutions');
   });
 
   it('should show a message when the credentials are wrong', () => {

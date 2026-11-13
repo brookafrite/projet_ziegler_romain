@@ -16,7 +16,9 @@
       <a routerLink="/pollutions" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
          ariaCurrentWhenActive="page">Pollutions</a>
       <a routerLink="/pollutions/nouvelle" routerLinkActive="active" ariaCurrentWhenActive="page">Signaler</a>
-      <a routerLink="/utilisateurs" routerLinkActive="active" ariaCurrentWhenActive="page">Utilisateurs</a>
+      @if (authService.isAdmin()) {
+        <a routerLink="/utilisateurs" routerLinkActive="active" ariaCurrentWhenActive="page">Utilisateurs</a>
+      }
 
       <!-- Partie « compte » : change selon que l'on est connecté ou non -->
       <span class="account">

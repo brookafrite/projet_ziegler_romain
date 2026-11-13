@@ -72,10 +72,12 @@
             </div>
             <div class="entry-actions">
               <a class="secondary" [routerLink]="['/pollutions', pollution.id]">Voir</a>
-              <button type="button" class="danger" (click)="remove(pollution)"
-                      [disabled]="deletingId() === pollution.id">
-                {{ deletingId() === pollution.id ? 'Suppression…' : 'Supprimer' }}
-              </button>
+              @if (authService.isLoggedIn()) {
+                <button type="button" class="danger" (click)="remove(pollution)"
+                        [disabled]="deletingId() === pollution.id">
+                  {{ deletingId() === pollution.id ? 'Suppression…' : 'Supprimer' }}
+                </button>
+              }
             </div>
           </li>
         }

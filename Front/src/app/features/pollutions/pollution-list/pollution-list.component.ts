@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution.model';
+import { AuthService } from '../../../core/services/auth.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
 
@@ -20,6 +21,7 @@ function normalize(text: string): string {
 })
 export class PollutionListComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);
+  protected readonly authService = inject(AuthService);
 
   readonly types = POLLUTION_TYPES;
 

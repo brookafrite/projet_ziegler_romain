@@ -28,17 +28,24 @@ describe('App', () => {
     expect(compiled.querySelector('.brand-name')?.textContent).toContain('Carnet de terrain');
   });
 
-  it('should link to every page', async () => {
+  function navLinks(fixture: { nativeElement: HTMLElement }): (string | null)[] {
+    return [...fixture.nativeElement.querySelectorAll('.nav a')].map((a) => a.getAttribute('href'));
+  }
+
+  it('should link to the public pages, without the admin page', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const links = [...(fixture.nativeElement as HTMLElement).querySelectorAll('.nav a')];
-    expect(links.map((a) => a.getAttribute('href'))).toEqual([
-      '/pollutions',
-      '/pollutions/nouvelle',
-      '/utilisateurs',
-      '/connexion',
-      '/inscription',
-    ]);
+    expect(navLinks(fixture)).toEqual(['/pollutions', '/pollutions/nouvelle', '/connexion', '/inscription']);
+  });
+
+  it('should show the users page link to an admin only', async () => {
+    localStorage.setItem(
+      'carnet-de-terrain-user',
+      JSON.stringify({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'admin' }),
+    );
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    expect(navLinks(fixture)).toEqual(['/pollutions', '/pollutions/nouvelle', '/utilisateurs']);
   });
 
   it('should greet the logged-in user instead of the login links', async () => {
