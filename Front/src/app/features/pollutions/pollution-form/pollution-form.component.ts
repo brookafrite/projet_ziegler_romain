@@ -93,6 +93,11 @@ export class PollutionFormComponent implements OnInit {
     }
   }
 
+  /** Vrai si l'utilisateur a modifié au moins un champ (utilisé par unsavedChangesGuard). */
+  isDirty(): boolean {
+    return this.form.dirty;
+  }
+
   /** Vrai si le champ est invalide et que l'utilisateur l'a déjà touché. */
   showError(name: FieldName): boolean {
     const control = this.form.controls[name];

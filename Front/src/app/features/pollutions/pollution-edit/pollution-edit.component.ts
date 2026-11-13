@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, inject, signal, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { Pollution } from '../models/pollution.model';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionFormComponent } from '../pollution-form/pollution-form.component';
@@ -10,7 +11,7 @@ import { PollutionFormComponent } from '../pollution-form/pollution-form.compone
   imports: [PollutionFormComponent, RouterLink],
   templateUrl: './pollution-edit.component.html',
 })
-export class PollutionEditComponent implements OnInit {
+export class PollutionEditComponent implements OnInit, HasUnsavedChanges {
   private readonly pollutionService = inject(PollutionService);
   private readonly router = inject(Router);
 
@@ -20,6 +21,14 @@ export class PollutionEditComponent implements OnInit {
   readonly loading = signal(true);
   readonly saving = signal(false);
   readonly errorMessage = signal<string | null>(null);
+
+  private readonly form = viewChild(PollutionFormComponent);
+  /** Vrai une fois enregistré : on peut alors quitter la page sans confirmation. */
+  private saved = false;
+
+  hasUnsavedChanges(): boolean {
+    return !this.saved && (this.form()?.isDirty() ?? false);
+  }
 
   ngOnInit(): void {
     this.pollutionService.getById(Number(this.id)).subscribe({
@@ -39,7 +48,10 @@ export class PollutionEditComponent implements OnInit {
     this.errorMessage.set(null);
 
     this.pollutionService.update(Number(this.id), changes).subscribe({
-      next: (saved) => this.router.navigate(['/pollutions', saved.id]),
+      next: (saved) => {
+        this.saved = true;
+        this.router.navigate(['/pollutions', saved.id]);
+      },
       error: () => {
         this.errorMessage.set("Les modifications n'ont pas pu être enregistrées. Réessayez.");
         this.saving.set(false);

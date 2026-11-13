@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { Pollution } from '../models/pollution.model';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionFormComponent } from '../pollution-form/pollution-form.component';
@@ -14,12 +15,19 @@ import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.comp
   imports: [PollutionFormComponent, PollutionRecapComponent, RouterLink],
   templateUrl: './pollution-declaration.component.html',
 })
-export class PollutionDeclarationComponent {
+export class PollutionDeclarationComponent implements HasUnsavedChanges {
   private readonly pollutionService = inject(PollutionService);
 
   readonly declaration = signal<Pollution | null>(null);
   readonly saving = signal(false);
   readonly errorMessage = signal<string | null>(null);
+
+  /** Le formulaire affiché (absent une fois la pollution enregistrée). */
+  private readonly form = viewChild(PollutionFormComponent);
+
+  hasUnsavedChanges(): boolean {
+    return this.form()?.isDirty() ?? false;
+  }
 
   onDeclared(pollution: Pollution): void {
     this.saving.set(true);

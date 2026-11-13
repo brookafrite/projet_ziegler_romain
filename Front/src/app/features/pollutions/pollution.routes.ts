@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authGuard } from '../../core/guards/auth.guard';
+import { unsavedChangesGuard } from '../../core/guards/unsaved-changes.guard';
 
 /**
  * Routes de la fonctionnalité « pollutions », chargées à la demande (loadChildren dans
@@ -18,6 +19,7 @@ export const POLLUTION_ROUTES: Routes = [
     path: 'nouvelle',
     title: 'Signaler une pollution',
     canActivate: [authGuard], // connexion obligatoire
+    canDeactivate: [unsavedChangesGuard], // « quitter sans enregistrer ? »
     loadComponent: () =>
       import('./pollution-declaration/pollution-declaration.component').then(
         (m) => m.PollutionDeclarationComponent,
@@ -33,6 +35,7 @@ export const POLLUTION_ROUTES: Routes = [
     path: ':id/modifier',
     title: 'Modifier une pollution',
     canActivate: [authGuard], // connexion obligatoire
+    canDeactivate: [unsavedChangesGuard], // « quitter sans enregistrer ? »
     loadComponent: () =>
       import('./pollution-edit/pollution-edit.component').then((m) => m.PollutionEditComponent),
   },
