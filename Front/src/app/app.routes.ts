@@ -1,24 +1,38 @@
 import { Routes } from '@angular/router';
 import { guestGuard } from './core/guards/guest.guard';
-import { LoginComponent } from './features/auth/login/login.component';
-import { SignUpComponent } from './features/auth/sign-up/sign-up.component';
-import { UserListComponent } from './features/admin/user-list/user-list.component';
-import { PollutionDeclarationComponent } from './features/pollutions/pollution-declaration/pollution-declaration.component';
-import { PollutionDetailComponent } from './features/pollutions/pollution-detail/pollution-detail.component';
-import { PollutionEditComponent } from './features/pollutions/pollution-edit/pollution-edit.component';
-import { PollutionListComponent } from './features/pollutions/pollution-list/pollution-list.component';
 
+/**
+ * Chaque page est chargée à la demande (lazy loading) : son code n'est téléchargé
+ * que lorsque l'utilisateur ouvre l'adresse correspondante.
+ */
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pollutions' },
-  { path: 'pollutions', component: PollutionListComponent, title: 'Pollutions signalées' },
-  // « nouvelle » doit être déclarée avant « :id », sinon elle serait lue comme un identifiant
-  { path: 'pollutions/nouvelle', component: PollutionDeclarationComponent, title: 'Signaler une pollution' },
-  { path: 'pollutions/:id', component: PollutionDetailComponent, title: 'Fiche pollution' },
-  { path: 'pollutions/:id/modifier', component: PollutionEditComponent, title: 'Modifier une pollution' },
+  {
+    path: 'pollutions',
+    loadChildren: () =>
+      import('./features/pollutions/pollution.routes').then((m) => m.POLLUTION_ROUTES),
+  },
   // Réservées aux visiteurs non connectés (voir core/guards/guest.guard.ts)
-  { path: 'inscription', component: SignUpComponent, title: 'Créer un compte', canActivate: [guestGuard] },
-  { path: 'connexion', component: LoginComponent, title: 'Connexion', canActivate: [guestGuard] },
-  { path: 'utilisateurs', component: UserListComponent, title: 'Utilisateurs' },
+  {
+    path: 'inscription',
+    title: 'Créer un compte',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/sign-up/sign-up.component').then((m) => m.SignUpComponent),
+  },
+  {
+    path: 'connexion',
+    title: 'Connexion',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'utilisateurs',
+    title: 'Utilisateurs',
+    loadComponent: () =>
+      import('./features/admin/user-list/user-list.component').then((m) => m.UserListComponent),
+  },
   // Ancienne adresse du TP02
   { path: 'signalement', redirectTo: 'pollutions/nouvelle' },
   { path: '**', redirectTo: 'pollutions' },
