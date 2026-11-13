@@ -37,5 +37,11 @@ export const routes: Routes = [
   },
   // Ancienne adresse du TP02
   { path: 'signalement', redirectTo: 'pollutions/nouvelle' },
-  { path: '**', redirectTo: 'pollutions' },
+  // Adresse inconnue : une vraie page 404 plutôt qu'une redirection silencieuse
+  {
+    path: '**',
+    title: 'Page introuvable',
+    loadComponent: () =>
+      import('./features/not-found/not-found.component').then((m) => m.NotFoundComponent),
+  },
 ];
