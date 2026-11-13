@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { PollutionLevel, pollutionLevel } from '../models/pollution-level';
+import { PollutionLevel, pollutionLevel } from '../utils/pollution-level';
 
 /**
  * Affiche le niveau de dangerosité à partir de l'indice.

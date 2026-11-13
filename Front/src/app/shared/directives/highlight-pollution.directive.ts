@@ -1,6 +1,6 @@
 import { Directive, computed, input } from '@angular/core';
 
-import { PollutionLevel, pollutionLevel } from '../models/pollution-level';
+import { PollutionLevel, pollutionLevel } from '../utils/pollution-level';
 
 /** Couleur de fond, et de texte pour rester lisible, de chaque niveau. */
 const COLORS: Record<PollutionLevel, { background: string; text: string }> = {

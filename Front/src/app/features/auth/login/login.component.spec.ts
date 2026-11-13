@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { NgForm } from '@angular/forms';
 import { provideRouter, Router } from '@angular/router';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {

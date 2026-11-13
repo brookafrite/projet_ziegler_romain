@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { UserListComponent } from './user-list.component';
 
 describe('UserListComponent', () => {

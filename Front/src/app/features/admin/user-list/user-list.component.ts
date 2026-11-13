@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { User } from '../models/user.model';
-import { AuthService } from '../services/auth.service';
-import { UserService } from '../services/user.service';
+import { User } from '../../../core/models/user.model';
+import { AuthService } from '../../../core/services/auth.service';
+import { UserService } from '../../../core/services/user.service';
 
 @Component({
   selector: 'app-user-list',

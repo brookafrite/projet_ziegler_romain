@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HighlightPollutionDirective } from '../directives/highlight-pollution.directive';
+import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution.model';
-import { PollutionLevelPipe } from '../pipes/pollution-level.pipe';
+import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
 import { observationDateValidator, urlValidator } from '../validators/pollution.validators';
 
 /** Nom d'un champ du formulaire ('titre', 'type', 'latitude'…). */

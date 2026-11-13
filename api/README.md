@@ -189,8 +189,8 @@ Le Front appelle cette API à l'adresse `apiUrl` de `Front/src/environments/` :
 
 | Service Angular   | Fichier                                         | Routes appelées      |
 |-------------------|-------------------------------------------------|----------------------|
-| `PollutionService` | `Front/src/app/pollution/services/pollution.service.ts` | `/api/pollutions` |
-| `UserService`      | `Front/src/app/user/services/user.service.ts`           | `/api/users`      |
+| `PollutionService` | `Front/src/app/features/pollutions/services/pollution.service.ts` | `/api/pollutions` |
+| `UserService`      | `Front/src/app/core/services/user.service.ts`           | `/api/users`      |
 
 Pour l'indice de dangerosité (exercice 04), le Front traduit le nombre en niveau :
 
@@ -202,7 +202,7 @@ Pour l'indice de dangerosité (exercice 04), le Front traduit le nombre en nivea
 | 51-100 | Élevée     | orange |
 | 101+   | Dangereuse | rouge |
 
-Les seuils sont écrits une seule fois, dans `Front/src/app/pollution/models/pollution-level.ts`.
+Les seuils sont écrits une seule fois, dans `Front/src/app/shared/utils/pollution-level.ts`.
 
 L'API simulée dans le navigateur des TP02-TP03 a été retirée : toutes les données
 viennent maintenant de PostgreSQL.
