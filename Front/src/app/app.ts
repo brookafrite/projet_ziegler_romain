@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
 
@@ -7,6 +7,8 @@ import { AuthService } from './core/services/auth.service';
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
+  // Rafraîchi seulement si une entrée, un signal ou un événement du composant change
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   protected readonly title = signal('projet_ZIEGLER_Romain');

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnChanges, signal } from '@angular/core';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
 import { Pollution } from '../models/pollution.model';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
@@ -9,16 +9,19 @@ import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
   imports: [DatePipe, PollutionLevelPipe, HighlightPollutionDirective],
   templateUrl: './pollution-recap.component.html',
   styleUrl: './pollution-recap.component.css',
+  // Rafraîchi seulement si une entrée, un signal ou un événement du composant change
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionRecapComponent implements OnChanges {
   @Input({ required: true }) pollution!: Pollution;
   /** Affiche le tampon « Signalement enregistré » (juste après une déclaration). */
   @Input() showStamp = false;
 
-  imageError = false;
+  /** Vrai si l'image n'a pas pu être chargée. Un signal : la vue est prévenue de chaque changement. */
+  readonly imageError = signal(false);
 
   ngOnChanges(): void {
-    this.imageError = false; // nouvelle fiche : on retente l'affichage de l'image
+    this.imageError.set(false); // nouvelle fiche : on retente l'affichage de l'image
   }
 
   /** Numéro de fiche sur 3 chiffres : 1 → "001". */

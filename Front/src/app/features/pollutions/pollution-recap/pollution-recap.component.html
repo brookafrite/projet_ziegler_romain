@@ -14,11 +14,11 @@
     }
   </header>
 
-  <div class="layout" [class.with-photo]="pollution.photoUrl && !imageError">
-    @if (pollution.photoUrl && !imageError) {
+  <div class="layout" [class.with-photo]="pollution.photoUrl && !imageError()">
+    @if (pollution.photoUrl && !imageError()) {
       <figure class="photo">
         <img [src]="pollution.photoUrl" [alt]="'Photo : ' + pollution.titre"
-             (error)="imageError = true" />
+             (error)="imageError.set(true)" />
       </figure>
     }
 
@@ -52,7 +52,7 @@
         <dd>
           @if (!pollution.photoUrl) {
             Aucune photo fournie
-          } @else if (imageError) {
+          } @else if (imageError()) {
             Image introuvable à cette adresse
           } @else {
             <a [href]="pollution.photoUrl" target="_blank" rel="noopener">Ouvrir l'image en grand</a>

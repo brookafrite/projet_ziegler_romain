@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -18,6 +18,8 @@ function normalize(text: string): string {
   imports: [DatePipe, FormsModule, RouterLink, PollutionLevelPipe, HighlightPollutionDirective],
   templateUrl: './pollution-list.component.html',
   styleUrl: './pollution-list.component.css',
+  // Rafraîchi seulement si une entrée, un signal ou un événement du composant change
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionListComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { User } from '../../../core/models/user.model';
@@ -29,6 +29,8 @@ const EMPTY_MODEL: SignUpModel = {
   imports: [FormsModule, RouterLink, MatchPasswordDirective],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css',
+  // Rafraîchi seulement si une entrée, un signal ou un événement du composant change
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignUpComponent {
   private readonly userService = inject(UserService);

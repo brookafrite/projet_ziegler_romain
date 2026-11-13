@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
@@ -32,6 +32,8 @@ function round6(n: number): number {
   imports: [ReactiveFormsModule, PollutionLevelPipe, HighlightPollutionDirective],
   templateUrl: './pollution-form.component.html',
   styleUrl: './pollution-form.component.css',
+  // Rafraîchi seulement si une entrée, un signal ou un événement du composant change
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionFormComponent implements OnInit {
   /** Pollution à modifier : si elle est fournie, le formulaire est pré-rempli. */

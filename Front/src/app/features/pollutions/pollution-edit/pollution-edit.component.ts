@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject, signal, viewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, inject, signal, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { Pollution } from '../models/pollution.model';
@@ -10,6 +10,8 @@ import { PollutionFormComponent } from '../pollution-form/pollution-form.compone
   selector: 'app-pollution-edit',
   imports: [PollutionFormComponent, RouterLink],
   templateUrl: './pollution-edit.component.html',
+  // Rafraîchi seulement si une entrée, un signal ou un événement du composant change
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionEditComponent implements OnInit, HasUnsavedChanges {
   private readonly pollutionService = inject(PollutionService);

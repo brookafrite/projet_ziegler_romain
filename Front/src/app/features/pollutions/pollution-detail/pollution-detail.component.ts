@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Pollution } from '../models/pollution.model';
 import { AuthService } from '../../../core/services/auth.service';
@@ -11,6 +11,8 @@ import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.comp
   selector: 'app-pollution-detail',
   imports: [PollutionRecapComponent, RouterLink],
   templateUrl: './pollution-detail.component.html',
+  // Rafraîchi seulement si une entrée, un signal ou un événement du composant change
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionDetailComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);
