@@ -79,6 +79,15 @@ Sur une base neuve, `sync()` crée directement la table avec cette colonne.
 | `nom`      | varchar     | oui |
 | `prenom`   | varchar     | oui |
 | `email`    | varchar     | oui, unique, format email |
+| `role`     | varchar(20) | oui, `utilisateur` (par défaut) ou `admin` |
+
+La colonne `role` (TP05) a été ajoutée **à la main** dans pgAdmin. On devient admin en
+changeant la valeur directement dans la base : l'API ignore un rôle envoyé à l'inscription.
+
+```sql
+ALTER TABLE users ADD COLUMN role varchar(20) NOT NULL DEFAULT 'utilisateur';
+UPDATE users SET role = 'admin' WHERE login = 'romainziegler';
+```
 
 Les tables sont créées automatiquement au démarrage (`sequelize.sync()`), puis remplie avec `seed.ts` si elle est vide.
 
