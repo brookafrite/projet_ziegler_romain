@@ -11,8 +11,8 @@ describe('UserListComponent', () => {
   let httpMock: HttpTestingController;
   const url = `${environment.apiUrl}/users`;
   const users = [
-    { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr' },
-    { id: 2, login: 'alice', nom: 'Dupont', prenom: 'Alice', email: 'alice@test.fr' },
+    { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const },
+    { id: 2, login: 'alice', nom: 'Dupont', prenom: 'Alice', email: 'alice@test.fr', role: 'utilisateur' as const },
   ];
 
   beforeEach(() => {

@@ -13,6 +13,9 @@ export interface LoginRequest {
   password: string;
 }
 
+/** Rôle d'un utilisateur : seul un admin voit la liste des utilisateurs. */
+export type UserRole = 'utilisateur' | 'admin';
+
 /** Utilisateur renvoyé par l'API (jamais avec son mot de passe). */
 export interface User {
   id: number;
@@ -20,4 +23,5 @@ export interface User {
   nom: string;
   prenom: string;
   email: string;
+  role: UserRole;
 }

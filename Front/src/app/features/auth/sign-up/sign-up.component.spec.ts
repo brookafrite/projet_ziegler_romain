@@ -44,7 +44,7 @@ describe('SignUpComponent', () => {
       prenom: 'Romain',
       email: 'romain@test.fr',
     });
-    req.flush({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr' });
+    req.flush({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const });
 
     expect(component.loading()).toBe(false);
     expect(component.createdUser()?.id).toBe(1);

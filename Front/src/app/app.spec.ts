@@ -44,7 +44,7 @@ describe('App', () => {
   it('should greet the logged-in user instead of the login links', async () => {
     localStorage.setItem(
       'carnet-de-terrain-user',
-      JSON.stringify({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr' }),
+      JSON.stringify({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const }),
     );
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();

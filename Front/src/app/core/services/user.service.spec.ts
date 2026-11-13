@@ -9,7 +9,7 @@ describe('UserService', () => {
   let service: UserService;
   let httpMock: HttpTestingController;
   const url = `${environment.apiUrl}/users`;
-  const user = { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr' };
+  const user = { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const };
 
   beforeEach(() => {
     TestBed.configureTestingModule({

@@ -5,7 +5,7 @@ import { ActivatedRouteSnapshot, provideRouter, RouterStateSnapshot, UrlTree } f
 import { guestGuard } from './guest.guard';
 
 describe('guestGuard', () => {
-  const user = { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr' };
+  const user = { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const };
 
   function runGuard() {
     TestBed.configureTestingModule({ providers: [provideRouter([]), provideHttpClient()] });

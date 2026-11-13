@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 describe('AuthService (connexion fictive)', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
-  const user = { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr' };
+  const user = { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const };
 
   beforeEach(() => {
     localStorage.clear();

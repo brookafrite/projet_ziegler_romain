@@ -19,6 +19,7 @@ export class AuthService {
   /** Utilisateur connecté, ou null. Lecture seule pour les composants. */
   readonly currentUser = this.user.asReadonly();
   readonly isLoggedIn = computed(() => this.user() !== null);
+  readonly isAdmin = computed(() => this.user()?.role === 'admin');
 
   login(credentials: LoginRequest): Observable<User> {
     return this.userService.login(credentials).pipe(tap((user) => this.setUser(user)));

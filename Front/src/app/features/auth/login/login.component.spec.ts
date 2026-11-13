@@ -31,7 +31,7 @@ describe('LoginComponent', () => {
     component.onSubmit(validForm);
     httpMock
       .expectOne(`${environment.apiUrl}/users/login`)
-      .flush({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr' });
+      .flush({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const });
 
     expect(navigate).toHaveBeenCalledWith(['/pollutions']);
   });
