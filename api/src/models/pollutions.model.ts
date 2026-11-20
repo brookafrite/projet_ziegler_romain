@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes, Model, Optional, ModelStatic } from "sequelize";
 
-// Mêmes types que dans le Front (Front/src/app/pollution/models/pollution.model.ts)
+// Mêmes types que dans le Front (Front/src/app/features/pollutions/models/pollution.model.ts)
 export const POLLUTION_TYPES = ["Plastique", "Chimique", "Dépôt sauvage", "Eau", "Air", "Autre"];
 
 export interface PollutionAttributes {

@@ -8,8 +8,8 @@ const Users = db.users;
 
 /** Ce que l'API renvoie d'un utilisateur : tout sauf le mot de passe. */
 function toPublic(user: UserInstance) {
-  const { id, login, nom, prenom, email } = user;
-  return { id, login, nom, prenom, email };
+  const { id, login, nom, prenom, email, role } = user;
+  return { id, login, nom, prenom, email, role };
 }
 
 /**
@@ -46,6 +46,7 @@ export const getById = async (req: Request, res: Response): Promise<void> => {
 /**
  * POST /api/users
  * Crée un utilisateur. Le mot de passe est haché avant d'être enregistré.
+ * Un éventuel « role » envoyé est ignoré : un nouveau compte est toujours « utilisateur ».
  */
 export const create = async (req: Request, res: Response): Promise<void> => {
   const { login, password, nom, prenom, email } = req.body;
