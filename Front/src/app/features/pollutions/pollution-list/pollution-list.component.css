@@ -8,6 +8,22 @@
 .summary { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
 .summary p { margin: 0; }
 
+/* Miniature à gauche de chaque pollution */
+.entry-body { display: flex; align-items: center; gap: .9rem; min-width: 0; }
+.thumb {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--accent-soft);
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb svg path { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
 /* Tri : à droite du nombre de résultats */
 .sort { display: flex; align-items: center; gap: .5rem; margin-left: auto; }
 .sort label { margin: 0; white-space: nowrap; }

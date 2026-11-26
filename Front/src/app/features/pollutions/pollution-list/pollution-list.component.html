@@ -88,17 +88,30 @@
       <ul class="list">
         @for (pollution of filtered(); track pollution.id) {
           <li class="entry">
-            <div class="entry-main">
-              <a class="entry-title" [routerLink]="['/pollutions', pollution.id]">{{ pollution.titre }}</a>
-              <p class="entry-meta">
-                <span class="badge">{{ pollution.type }}</span>
-                <span class="badge" [appHighlightPollution]="pollution.indice">{{ pollution.indice | pollutionLevel }}</span>
-                <span>{{ pollution.dateObservation | date: 'longDate' }}</span>
-                <span>{{ pollution.lieu }}</span>
-                @if (pollution.auteur; as auteur) {
-                  <span>par {{ auteur.prenom }} {{ auteur.nom }}</span>
+            <div class="entry-body">
+              <!-- Miniature : la photo, ou une feuille si elle manque ou ne se charge pas -->
+              <a class="thumb" [routerLink]="['/pollutions', pollution.id]" tabindex="-1" aria-hidden="true">
+                @if (pollution.photoUrl && !brokenPhotos().has(pollution.id!)) {
+                  <img [src]="pollution.photoUrl" alt="" loading="lazy" (error)="markPhotoBroken(pollution.id!)" />
+                } @else {
+                  <svg viewBox="0 0 32 32" width="28" height="28">
+                    <path d="M9.5 22.5C9.5 15 14.5 10 23 9.5c0 8.5-5 13.5-12.5 13.5" />
+                    <path d="M9.5 22.5l7.5-7.5" />
+                  </svg>
                 }
-              </p>
+              </a>
+              <div class="entry-main">
+                <a class="entry-title" [routerLink]="['/pollutions', pollution.id]">{{ pollution.titre }}</a>
+                <p class="entry-meta">
+                  <span class="badge">{{ pollution.type }}</span>
+                  <span class="badge" [appHighlightPollution]="pollution.indice">{{ pollution.indice | pollutionLevel }}</span>
+                  <span>{{ pollution.dateObservation | date: 'longDate' }}</span>
+                  <span>{{ pollution.lieu }}</span>
+                  @if (pollution.auteur; as auteur) {
+                    <span>par {{ auteur.prenom }} {{ auteur.nom }}</span>
+                  }
+                </p>
+              </div>
             </div>
             <div class="entry-actions">
               <a class="secondary" [routerLink]="['/pollutions', pollution.id]">Voir</a>

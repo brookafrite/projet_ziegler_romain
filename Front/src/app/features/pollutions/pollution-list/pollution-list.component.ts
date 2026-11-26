@@ -71,6 +71,8 @@ export class PollutionListComponent implements OnInit {
   readonly loading = signal(true);
   readonly errorMessage = signal<string | null>(null);
   readonly deletingId = signal<number | null>(null);
+  /** Pollutions dont la photo n'a pas pu être chargée : on montre la feuille à la place. */
+  readonly brokenPhotos = signal<ReadonlySet<number>>(new Set());
 
   // Critères de filtre, lus dans l'adresse (query params) grâce à withComponentInputBinding :
   // /pollutions?type=Chimique&du=2026-10-01 remplit type() et du(). Une recherche se partage par lien.
@@ -127,6 +129,11 @@ export class PollutionListComponent implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  markPhotoBroken(id: number): void {
+    // Nouvel ensemble (pas de add() sur l'ancien) : le signal change, la vue est mise à jour
+    this.brokenPhotos.update((ids) => new Set(ids).add(id));
   }
 
   /**
