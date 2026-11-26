@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal, viewChild } from '@
 import { RouterLink } from '@angular/router';
 import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { Pollution } from '../models/pollution.model';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionFormComponent } from '../pollution-form/pollution-form.component';
@@ -21,6 +22,7 @@ import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.comp
 export class PollutionDeclarationComponent implements HasUnsavedChanges {
   private readonly pollutionService = inject(PollutionService);
   private readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
 
   readonly declaration = signal<Pollution | null>(null);
   readonly saving = signal(false);
@@ -42,6 +44,7 @@ export class PollutionDeclarationComponent implements HasUnsavedChanges {
     this.pollutionService.create({ ...pollution, auteurId }).subscribe({
       next: (saved) => {
         this.declaration.set(saved);
+        this.toastService.success('Signalement enregistré.');
         this.saving.set(false);
         window.scrollTo({ top: 0 });
       },

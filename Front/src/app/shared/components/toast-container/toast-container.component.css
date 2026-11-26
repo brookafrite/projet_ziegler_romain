@@ -1,0 +1,55 @@
+/* Pile de notifications, en bas à droite, au-dessus de tout le reste */
+.toasts {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1000;
+  display: grid;
+  gap: .5rem;
+  width: min(24rem, calc(100vw - 2rem));
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .7rem .75rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.45);
+  animation: toast-in .2s ease-out both;
+}
+.toast.error { border-left-color: var(--error); }
+.toast p { flex: 1; margin: 0; }
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  font-size: .85rem;
+}
+.toast.error .icon { background: var(--error); }
+
+.close {
+  flex: none;
+  padding: 0 .25rem;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+.close:hover { color: var(--ink); }
+
+@keyframes toast-in {
+  from { transform: translateY(.75rem); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}

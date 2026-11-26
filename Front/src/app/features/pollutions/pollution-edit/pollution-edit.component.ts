@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, OnInit, inject, signal, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
+import { ToastService } from '../../../core/services/toast.service';
 import { Pollution } from '../models/pollution.model';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionFormComponent } from '../pollution-form/pollution-form.component';
@@ -16,6 +17,7 @@ import { PollutionFormComponent } from '../pollution-form/pollution-form.compone
 export class PollutionEditComponent implements OnInit, HasUnsavedChanges {
   private readonly pollutionService = inject(PollutionService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   @Input({ required: true }) id!: string;
 
@@ -52,6 +54,7 @@ export class PollutionEditComponent implements OnInit, HasUnsavedChanges {
     this.pollutionService.update(Number(this.id), changes).subscribe({
       next: (saved) => {
         this.saved = true;
+        this.toastService.success('Modifications enregistrées.');
         this.router.navigate(['/pollutions', saved.id]);
       },
       error: () => {

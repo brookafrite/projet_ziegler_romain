@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, OnInit, inject, signal } from '@angular/core';
 import { User } from '../../../core/models/user.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { UserService } from '../../../core/services/user.service';
 
 @Component({
@@ -12,6 +13,7 @@ import { UserService } from '../../../core/services/user.service';
 export class UserListComponent implements OnInit {
   private readonly userService = inject(UserService);
   protected readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
 
   readonly users = signal<User[]>([]);
   readonly loading = signal(true);
@@ -39,16 +41,16 @@ export class UserListComponent implements OnInit {
     if (!confirm(`Supprimer le compte de ${user.prenom} ${user.nom} ? Cette action est définitive.`)) return;
 
     this.deletingId.set(user.id);
-    this.errorMessage.set(null);
 
     this.userService.delete(user.id).subscribe({
       next: () => {
         if (this.isCurrentUser(user)) this.authService.logout(); // son propre compte : on se déconnecte
         this.users.update((list) => list.filter((u) => u.id !== user.id));
         this.deletingId.set(null);
+        this.toastService.success(`Le compte de ${user.prenom} ${user.nom} a été supprimé.`);
       },
       error: () => {
-        this.errorMessage.set(`Le compte de ${user.prenom} ${user.nom} n’a pas pu être supprimé.`);
+        this.toastService.error(`Le compte de ${user.prenom} ${user.nom} n’a pas pu être supprimé.`);
         this.deletingId.set(null);
       },
     });

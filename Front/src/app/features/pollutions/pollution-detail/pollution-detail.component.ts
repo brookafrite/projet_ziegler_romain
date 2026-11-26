@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, Input, OnInit, inject, signal } fro
 import { Router, RouterLink } from '@angular/router';
 import { Pollution } from '../models/pollution.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.component';
 
@@ -17,6 +18,7 @@ import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.comp
 export class PollutionDetailComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);
   protected readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
   /** Paramètre :id de l'URL, transmis par le routeur (withComponentInputBinding). */
@@ -49,9 +51,12 @@ export class PollutionDetailComponent implements OnInit {
 
     this.deleting.set(true);
     this.pollutionService.delete(Number(this.id)).subscribe({
-      next: () => this.router.navigate(['/pollutions']),
+      next: () => {
+        this.toastService.success(`« ${pollution.titre} » a été supprimée.`);
+        this.router.navigate(['/pollutions']);
+      },
       error: () => {
-        this.errorMessage.set('La pollution n’a pas pu être supprimée.');
+        this.toastService.error('La pollution n’a pas pu être supprimée.');
         this.deleting.set(false);
       },
     });

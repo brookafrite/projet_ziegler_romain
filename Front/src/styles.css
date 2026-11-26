@@ -10,6 +10,7 @@
   --accent: #2f5d50;      /* vert sapin */
   --accent-dark: #234a3f;
   --accent-soft: rgba(47, 93, 80, 0.1);
+  --on-accent: #fff;      /* texte sur fond vert */
   --error: #a12d2d;
 
   --font-title: 'Source Serif 4', Georgia, serif;

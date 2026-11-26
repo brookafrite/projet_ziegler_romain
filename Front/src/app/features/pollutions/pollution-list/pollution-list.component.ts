@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
 import { POLLUTION_TYPES, Pollution } from '../models/pollution.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
 import { POLLUTION_LEVELS, pollutionLevel } from '../../../shared/utils/pollution-level';
@@ -55,6 +56,7 @@ function normalize(text: string): string {
 export class PollutionListComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);
   protected readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -149,16 +151,16 @@ export class PollutionListComponent implements OnInit {
 
     const id = pollution.id;
     this.deletingId.set(id);
-    this.errorMessage.set(null);
 
     this.pollutionService.delete(id).subscribe({
       next: () => {
         // On retire la pollution de la liste locale : pas besoin de tout recharger
         this.pollutions.update((list) => list.filter((p) => p.id !== id));
         this.deletingId.set(null);
+        this.toastService.success(`« ${pollution.titre} » a été supprimée.`);
       },
       error: () => {
-        this.errorMessage.set(`« ${pollution.titre} » n’a pas pu être supprimée.`);
+        this.toastService.error(`« ${pollution.titre} » n’a pas pu être supprimée.`);
         this.deletingId.set(null);
       },
     });

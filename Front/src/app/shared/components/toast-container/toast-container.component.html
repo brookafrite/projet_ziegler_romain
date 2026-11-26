@@ -1,0 +1,11 @@
+<!-- aria-live : un lecteur d'écran annonce chaque nouvelle notification -->
+<div class="toasts" aria-live="polite">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast" [class.error]="toast.kind === 'error'" [attr.role]="toast.kind === 'error' ? 'alert' : 'status'">
+      <span class="icon" aria-hidden="true">{{ toast.kind === 'error' ? '!' : '✓' }}</span>
+      <p>{{ toast.message }}</p>
+      <button type="button" class="close" aria-label="Fermer la notification"
+              (click)="toastService.dismiss(toast.id)">×</button>
+    </div>
+  }
+</div>

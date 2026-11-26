@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, inject, input, signal } from '@angu
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   /** Adresse à rouvrir après la connexion (?retour=… ajouté par les guards). */
   readonly retour = input<string>();
@@ -30,7 +32,10 @@ export class LoginComponent {
     this.errorMessage.set(null);
 
     this.authService.login(this.model).subscribe({
-      next: () => this.router.navigateByUrl(this.returnUrl()),
+      next: (user) => {
+        this.toastService.success(`Bonjour ${user.prenom} !`);
+        this.router.navigateByUrl(this.returnUrl());
+      },
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(this.toMessage(err));
         this.loading.set(false);
