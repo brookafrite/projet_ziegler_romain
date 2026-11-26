@@ -19,6 +19,7 @@ Organisation recommandée par le cours (séance 5) :
 | `/pollutions`, `/pollutions/:id` | aucun | ouvert à tous | |
 | `/pollutions/nouvelle`, `/pollutions/:id/modifier` | `authGuard` (canActivate) | être connecté | `/connexion?retour=…`, puis retour sur la page demandée |
 | | `unsavedChangesGuard` (canDeactivate) | pas de saisie en cours | demande « Quitter quand même ? » |
+| `/pollutions/:id/modifier` | `pollutionAuthorGuard` (canActivate) | être l'auteur du signalement ou admin | la fiche de la pollution |
 | `/utilisateurs` | `adminGuard` (canMatch) | être admin | connexion si visiteur, liste des pollutions si simple utilisateur |
 | `/connexion`, `/inscription` | `guestGuard` (canActivate) | ne pas être connecté | liste des pollutions |
 | adresse inconnue | | | page 404 |
@@ -39,11 +40,23 @@ une recherche se partage par lien ou se met en favori.
 | `type` | `?type=Chimique` | type de pollution |
 | `du`, `au` | `?du=2026-10-01&au=2026-10-31` | période d'observation |
 | `niveau` | `?niveau=elevee` | niveau de dangerosité : `non-evalue`, `faible`, `moderee`, `elevee`, `dangereuse` |
+| `auteur` | `?auteur=moi` | seulement les pollutions de l'utilisateur connecté (case « Seulement mes pollutions », ignorée si personne n'est connecté) |
 | `tri` | `?tri=dangereuses` | ordre : plus récentes (par défaut), `anciennes`, `dangereuses`, `moins-dangereuses` |
 
 Le composant lit ces paramètres comme des entrées (`input()`), grâce à `withComponentInputBinding`.
 Changer un filtre met l'adresse à jour (`router.navigate` avec `queryParamsHandling: 'merge'`),
 et la liste se recalcule. Les pollutions non évaluées restent à la fin des tris par dangerosité.
+
+## Auteur des pollutions et droits
+
+Chaque pollution garde son auteur (l'utilisateur connecté au moment du signalement). La fiche
+affiche « Publiée par … », la liste « par … ». `AuthService.canManage(auteurId)` décide qui peut
+modifier ou supprimer : **l'auteur, ou un admin**. Une pollution sans auteur (signalée avant
+cette évolution) n'est gérée que par un admin. Les boutons sont masqués pour les autres, et
+`pollutionAuthorGuard` les empêche d'ouvrir la page Modifier par son adresse.
+
+Ces règles sont appliquées par le Front : tant que l'authentification est fictive, l'API ne
+les vérifie pas encore. Le jeton JWT d'un prochain TP les fera vérifier par l'API.
 
 ## Lazy loading
 

@@ -59,6 +59,7 @@ vérifie le login et le mot de passe et renvoie l'utilisateur, sans créer de je
 | `longitude`       | float     | oui (-180 à 180) |
 | `photoUrl`        | text      | non |
 | `indice`          | integer   | non (entier >= 0, vide = non évalué) |
+| `auteurId`        | integer   | non : clé étrangère vers `users.id`, vide = auteur inconnu |
 
 La colonne `indice` (exercice 04) a été ajoutée **à la main** dans pgAdmin, car
 `sequelize.sync()` crée les tables manquantes mais ne modifie jamais une table existante :
@@ -68,6 +69,23 @@ ALTER TABLE pollution ADD COLUMN indice integer;
 ```
 
 Sur une base neuve, `sync()` crée directement la table avec cette colonne.
+
+La colonne `auteurId` (lot B) a été ajoutée de la même façon. C'est une **clé étrangère** : la
+base refuse un auteur qui n'existe pas, et si un compte est supprimé, ses pollutions restent
+mais deviennent « Auteur inconnu » (`ON DELETE SET NULL`). Les guillemets gardent la majuscule :
+
+```sql
+ALTER TABLE pollution ADD COLUMN "auteurId" integer REFERENCES users(id) ON DELETE SET NULL;
+```
+
+Côté Sequelize, deux **associations** relient les tables (`models/index.ts`) : une pollution
+`belongsTo` son auteur, un utilisateur `hasMany` pollutions. L'API renvoie ainsi chaque
+pollution avec `auteur: { id, prenom, nom }` (jamais l'email ni le mot de passe). L'auteur est
+fixé à la création et ne change pas quand on modifie la pollution.
+
+⚠️ Authentification encore fictive : l'auteur est celui que le Front envoie, et l'API ne
+vérifie pas qui modifie ou supprime. Le jeton JWT, prévu dans un prochain TP, permettra à l'API
+de lire l'utilisateur dans le jeton et de refuser (403) ce qui ne lui appartient pas.
 
 ## Table `users`
 
