@@ -149,6 +149,14 @@
         }
       </div>
     </div>
+
+    <!-- Carte : suit les coordonnées ci-dessus, et un clic (ou le point déplacé) les remplit -->
+    <div class="field">
+      <span class="label">Sur la carte</span>
+      <app-location-map [latitude]="coordinates().latitude" [longitude]="coordinates().longitude"
+                        (picked)="onMapPicked($event)" />
+      <small class="hint">Cliquez sur la carte pour placer la pollution, ou faites glisser le point.</small>
+    </div>
   </fieldset>
 
   <fieldset>

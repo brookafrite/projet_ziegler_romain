@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, debounceTime, map, of, switchMap } from 'rxjs';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
@@ -8,6 +8,7 @@ import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
 import { observationDateValidator, photoValidator } from '../validators/pollution.validators';
 import { MAX_SOURCE_SIZE, base64Size, compressImage, isUploadedPhoto } from '../../../shared/utils/image';
 import { AddressService, AddressSuggestion } from '../services/address.service';
+import { LocationMapComponent, MapPoint } from '../../../shared/components/location-map/location-map.component';
 
 /** Nom d'un champ du formulaire ('titre', 'type', 'latitude'…). */
 type FieldName = keyof PollutionFormComponent['form']['controls'];
@@ -32,7 +33,7 @@ function round6(n: number): number {
 
 @Component({
   selector: 'app-pollution-form',
-  imports: [ReactiveFormsModule, PollutionLevelPipe, HighlightPollutionDirective],
+  imports: [ReactiveFormsModule, PollutionLevelPipe, HighlightPollutionDirective, LocationMapComponent],
   templateUrl: './pollution-form.component.html',
   styleUrl: './pollution-form.component.css',
   // Rafraîchi seulement si une entrée, un signal ou un événement du composant change
@@ -82,6 +83,14 @@ export class PollutionFormComponent implements OnInit {
   // Aperçu de la photo
   readonly photoPreview = signal<string | null>(null);
   readonly previewError = signal(false);
+
+  /** Latitude et longitude saisies, en signal : la carte les suit à chaque changement. */
+  readonly coordinates = toSignal(
+    this.form.valueChanges.pipe(
+      map((value) => ({ latitude: value.latitude ?? null, longitude: value.longitude ?? null })),
+    ),
+    { initialValue: { latitude: null, longitude: null } },
+  );
 
   // Suggestions d'adresse pour le champ Lieu
   readonly suggestions = signal<AddressSuggestion[]>([]);
@@ -226,6 +235,19 @@ export class PollutionFormComponent implements OnInit {
     }
     this.suggestions.set([]);
     this.geoMessage.set({ kind: 'ok', text: 'Coordonnées remplies d’après l’adresse choisie.' });
+  }
+
+  /** Point placé sur la carte (clic ou marqueur déplacé) : il remplit les coordonnées, et le lieu s'il est vide. */
+  onMapPicked({ latitude, longitude }: MapPoint): void {
+    const controls = this.form.controls;
+    controls.latitude.setValue(round6(latitude));
+    controls.longitude.setValue(round6(longitude));
+    for (const control of [controls.latitude, controls.longitude]) {
+      control.markAsDirty();
+      control.markAsTouched();
+    }
+    this.fillLieuFromPosition(latitude, longitude);
+    this.geoMessage.set({ kind: 'ok', text: 'Position placée sur la carte.' });
   }
 
   /** Remplit latitude et longitude avec la position de l'appareil. */
