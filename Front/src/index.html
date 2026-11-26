@@ -9,6 +9,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+  <!-- Thème choisi lors d'une visite précédente (voir ThemeService), appliqué avant l'affichage
+       pour éviter un éclair du mauvais thème le temps qu'Angular démarre -->
+  <script>
+    try {
+      var theme = localStorage.getItem('carnet-de-terrain-theme');
+      if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <app-root></app-root>

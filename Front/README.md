@@ -65,7 +65,7 @@ les vérifie pas encore. Le jeton JWT d'un prochain TP les fera vérifier par l'
 | Notifications | `core/services/toast.service.ts`, `shared/components/toast-container/` | `toastService.success('…')` ou `.error('…')` depuis n'importe quelle page ; la notification s'efface seule (4 s, 7 s pour une erreur) |
 | Fenêtre de confirmation | `core/services/confirm.service.ts`, `shared/components/confirm-dialog/` | `await confirmService.ask({ title, message, confirmLabel, danger })` renvoie `true` ou `false`. Élément `<dialog>` natif : modal, Échap pour annuler, focus sur « Annuler » |
 | Miniatures | liste des pollutions | la photo recadrée en 64 × 64, ou la feuille du logo si elle manque ou ne se charge pas |
-| Mode sombre | `src/styles.css` | les couleurs sont des variables CSS, redéfinies sous `@media (prefers-color-scheme: dark)` : le site suit le réglage de l'ordinateur |
+| Thème clair / sombre | `src/styles.css`, `core/services/theme.service.ts` | chaque couleur est une variable écrite une fois avec `light-dark(clair, sombre)`. Le bouton du menu passe de **Automatique** (suit l'ordinateur) à **Clair** puis **Sombre** : `ThemeService` pose `data-theme` sur `<html>` et retient le choix dans le localStorage. Un petit script de `index.html` l'applique avant le démarrage d'Angular, pour éviter un éclair du mauvais thème |
 
 Le `ToastContainer` et le `ConfirmDialog` sont placés une seule fois, dans `app.html`.
 Les deux services sont dans `core/` (un seul exemplaire pour toute l'application), les composants

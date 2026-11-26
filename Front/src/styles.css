@@ -1,48 +1,36 @@
 /* Style global : carnet de terrain, sobre */
-:root {
-  /* Les contrôles du navigateur (calendrier, listes, barres de défilement) suivent le thème */
-  color-scheme: light dark;
 
-  --paper: #ecebe4;       /* fond de page */
-  --card: #fbfaf6;        /* page du carnet */
-  --ink: #1f2a26;         /* texte */
-  --muted: #5d6a64;       /* texte secondaire */
-  --line: #d8d5ca;        /* traits fins */
-  --line-strong: #c4c0b3; /* bordure des champs */
-  --margin: #a9c4b9;      /* trait de marge du carnet */
-  --accent: #2f5d50;      /* vert sapin */
-  --accent-dark: #234a3f;
-  --accent-soft: rgba(47, 93, 80, 0.1);
-  --on-accent: #fff;      /* texte sur fond vert */
-  --error: #a12d2d;
-  --error-soft: rgba(161, 45, 45, 0.07);
-  --field: #fff;          /* fond des champs de saisie et des cadres photo */
-  --placeholder: #98a19c; /* texte d'exemple dans les champs */
+/*
+ * Thème clair et sombre. Chaque couleur est écrite une seule fois avec light-dark(clair, sombre) :
+ * le navigateur prend la première ou la seconde selon color-scheme.
+ * - par défaut, color-scheme suit le réglage de l'ordinateur (light dark) ;
+ * - le bouton du menu (ThemeService) peut forcer data-theme="light" ou "dark" sur <html>.
+ * color-scheme adapte aussi les contrôles du navigateur (calendrier, listes, barres de défilement).
+ */
+:root { color-scheme: light dark; }
+:root[data-theme='light'] { color-scheme: light; }
+:root[data-theme='dark'] { color-scheme: dark; }
+
+:root {
+  /*                     clair                     sombre (nuit en forêt) */
+  --paper:       light-dark(#ecebe4,               #131917);                  /* fond de page */
+  --card:        light-dark(#fbfaf6,               #1c2421);                  /* page du carnet */
+  --ink:         light-dark(#1f2a26,               #e4ebe7);                  /* texte */
+  --muted:       light-dark(#5d6a64,               #a2afa8);                  /* texte secondaire */
+  --line:        light-dark(#d8d5ca,               #333f3a);                  /* traits fins */
+  --line-strong: light-dark(#c4c0b3,               #4b5953);                  /* bordure des champs */
+  --margin:      light-dark(#a9c4b9,               #3e5b50);                  /* trait de marge du carnet */
+  --accent:      light-dark(#2f5d50,               #8fc8b3);                  /* vert sapin (éclairci en sombre) */
+  --accent-dark: light-dark(#234a3f,               #a9d8c6);                  /* survol */
+  --accent-soft: light-dark(rgba(47, 93, 80, 0.1), rgba(143, 200, 179, 0.15));
+  --on-accent:   light-dark(#fff,                  #10201a);                  /* texte sur fond vert */
+  --error:       light-dark(#a12d2d,               #f08b8b);
+  --error-soft:  light-dark(rgba(161, 45, 45, 0.07), rgba(240, 139, 139, 0.1));
+  --field:       light-dark(#fff,                  #141b18);                  /* champs de saisie, cadres photo */
+  --placeholder: light-dark(#98a19c,               #6e7c75);                  /* texte d'exemple dans les champs */
 
   --font-title: 'Source Serif 4', Georgia, serif;
   --font-text: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
-}
-
-/* Mode sombre : si l'ordinateur est réglé en sombre, on change seulement les couleurs.
-   Tout le site utilise ces variables : rien d'autre à modifier. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #131917;       /* fond de page, nuit en forêt */
-    --card: #1c2421;
-    --ink: #e4ebe7;
-    --muted: #a2afa8;
-    --line: #333f3a;
-    --line-strong: #4b5953;
-    --margin: #3e5b50;
-    --accent: #8fc8b3;      /* vert sapin éclairci, lisible sur fond sombre */
-    --accent-dark: #a9d8c6; /* survol : un peu plus clair */
-    --accent-soft: rgba(143, 200, 179, 0.15);
-    --on-accent: #10201a;   /* texte foncé sur le vert clair */
-    --error: #f08b8b;
-    --error-soft: rgba(240, 139, 139, 0.1);
-    --field: #141b18;
-    --placeholder: #6e7c75;
-  }
 }
 
 *, *::before, *::after { box-sizing: border-box; }

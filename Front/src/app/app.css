@@ -40,6 +40,23 @@
 .nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
 .nav a:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
 
+/* Bouton de thème (clair / sombre / automatique) */
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--accent);
+  font-size: 1rem;
+  line-height: 1;
+}
+.theme-toggle:hover { border-color: var(--accent); background: var(--accent-soft); }
+.theme-toggle:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
+
 /* Compte : séparé du reste du menu par un trait */
 .account {
   display: flex;

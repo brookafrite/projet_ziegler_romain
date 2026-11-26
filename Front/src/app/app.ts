@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
+import { ThemeService } from './core/services/theme.service';
 import { ToastService } from './core/services/toast.service';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 import { ToastContainerComponent } from './shared/components/toast-container/toast-container.component';
@@ -18,6 +19,14 @@ export class App {
   protected readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
+  protected readonly themeService = inject(ThemeService);
+
+  /** Texte du bouton de thème : le thème actuel, et ce que fera le prochain clic. */
+  protected readonly themeLabels = {
+    auto: { icon: '◐', name: 'Automatique', next: 'clair' },
+    light: { icon: '☀', name: 'Clair', next: 'sombre' },
+    dark: { icon: '☾', name: 'Sombre', next: 'automatique' },
+  } as const;
 
   logout(): void {
     this.authService.logout();

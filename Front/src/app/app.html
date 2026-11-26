@@ -30,6 +30,14 @@
           <a routerLink="/inscription" routerLinkActive="active" ariaCurrentWhenActive="page">Créer un compte</a>
         }
       </span>
+
+      <!-- Thème : automatique (suit l'ordinateur), clair ou sombre -->
+      @let theme = themeLabels[themeService.choice()];
+      <button type="button" class="theme-toggle" (click)="themeService.next()"
+              [attr.aria-label]="'Thème ' + theme.name.toLowerCase() + ' : passer au thème ' + theme.next"
+              [title]="'Thème : ' + theme.name + ' (cliquer pour ' + theme.next + ')'">
+        <span aria-hidden="true">{{ theme.icon }}</span>
+      </button>
     </nav>
   </div>
 </header>
