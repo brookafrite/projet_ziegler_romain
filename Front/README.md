@@ -28,6 +28,23 @@ page Utilisateurs n'est même pas téléchargé.
 
 L'authentification reste **fictive** (pas de jeton) : les guards protègent l'interface, pas l'API.
 
+## Filtres et tri de la liste, dans l'adresse
+
+Les critères de la liste des pollutions sont des **paramètres de requête** (query params) :
+une recherche se partage par lien ou se met en favori.
+
+| Paramètre | Exemple | Effet |
+|---|---|---|
+| `recherche` | `?recherche=canal` | texte cherché dans le titre, le type, le lieu et la description (sans tenir compte des accents) |
+| `type` | `?type=Chimique` | type de pollution |
+| `du`, `au` | `?du=2026-10-01&au=2026-10-31` | période d'observation |
+| `niveau` | `?niveau=elevee` | niveau de dangerosité : `non-evalue`, `faible`, `moderee`, `elevee`, `dangereuse` |
+| `tri` | `?tri=dangereuses` | ordre : plus récentes (par défaut), `anciennes`, `dangereuses`, `moins-dangereuses` |
+
+Le composant lit ces paramètres comme des entrées (`input()`), grâce à `withComponentInputBinding`.
+Changer un filtre met l'adresse à jour (`router.navigate` avec `queryParamsHandling: 'merge'`),
+et la liste se recalcule. Les pollutions non évaluées restent à la fin des tris par dangerosité.
+
 ## Lazy loading
 
 Chaque page est chargée à la demande (`loadComponent`), et la fonctionnalité pollutions a son
