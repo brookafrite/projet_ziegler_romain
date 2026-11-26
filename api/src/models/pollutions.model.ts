@@ -3,6 +3,9 @@ import { Sequelize, DataTypes, Model, Optional, ModelStatic } from "sequelize";
 // Mêmes types que dans le Front (Front/src/app/features/pollutions/models/pollution.model.ts)
 export const POLLUTION_TYPES = ["Plastique", "Chimique", "Dépôt sauvage", "Eau", "Air", "Autre"];
 
+/** Adresse d'une image en ligne (http/https), ou photo envoyée en base64 (stockée dans la base). */
+const PHOTO_PATTERN = /^(https?:\/\/\S+|data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+)$/;
+
 export interface PollutionAttributes {
   id: number;
   titre: string;
@@ -73,9 +76,12 @@ export default function definePollutions(
         allowNull: false,
         validate: { min: -180, max: 180 }
       },
+      // Adresse d'une image, ou la photo elle-même en base64 (« data:image/jpeg;base64,… ») :
+      // TEXT accepte un texte de grande taille, l'image est donc stockée dans la base.
       photoUrl: {
         type: DataTypes.TEXT,
-        allowNull: true
+        allowNull: true,
+        validate: { is: { args: PHOTO_PATTERN, msg: "photo invalide (adresse http(s) ou image base64)" } }
       },
       // Colonne ajoutée à la main dans pgAdmin (sync() ne modifie pas une table existante)
       indice: {

@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import db from "./models";
 import initRoutes from "./routes";
@@ -10,8 +10,10 @@ const app: Application = express();
 // Par défaut, cors() accepte toutes les origines et les méthodes GET, POST, PUT, DELETE...
 app.use(cors());
 
-// Lit le corps JSON des requêtes (req.body), envoyé par HttpClient côté Angular
-app.use(express.json());
+// Lit le corps JSON des requêtes (req.body), envoyé par HttpClient côté Angular.
+// Limite relevée à 2 Mo (100 Ko par défaut) : une photo peut être envoyée en base64.
+// Le Front la réduit et la compresse avant (quelques centaines de Ko).
+app.use(express.json({ limit: "2mb" }));
 
 // health checks
 app.get("/", (_req: Request, res: Response) => {
@@ -20,6 +22,15 @@ app.get("/", (_req: Request, res: Response) => {
 
 app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "OK" });
+});
+
+// Requête trop lourde (photo au-delà de 2 Mo) : un message clair en JSON plutôt qu'une page d'erreur
+app.use((err: { type?: string }, _req: Request, res: Response, next: NextFunction) => {
+  if (err.type === "entity.too.large") {
+    res.status(413).json({ message: "La photo est trop lourde (2 Mo au maximum)." });
+    return;
+  }
+  next(err);
 });
 
 db.sequelize
