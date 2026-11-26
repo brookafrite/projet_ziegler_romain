@@ -8,9 +8,33 @@ Organisation recommandée par le cours (séance 5) :
 
 | Dossier | Contenu |
 |---|---|
-| `src/app/core/` | Ce qui n'existe qu'en un exemplaire : `AuthService`, `UserService`, le modèle `User` et les **guards** |
+| `src/app/core/` | Ce qui n'existe qu'en un exemplaire : le **store d'authentification** (`states/auth/`), `UserService`, le modèle `User` et les **guards** |
 | `src/app/shared/` | Ce qui est réutilisable partout : la pipe `pollutionLevel`, les directives `appHighlightPollution` et `matchPassword`, les composants `ToastContainer` et `ConfirmDialog` |
 | `src/app/features/` | Une fonctionnalité par dossier : `pollutions`, `auth` (connexion, inscription), `admin` (utilisateurs), `not-found` (404) |
+
+## Store NGXS : l'état d'authentification (exercice 05)
+
+« Qui est connecté » est rangé dans un **store NGXS**, une source unique pour tout le site.
+Le circuit est toujours le même (flux unidirectionnel) :
+
+```
+Composant ── dispatch(new Login(user)) ──► @Action(Login) ── patchState ──► état 'auth'
+    ▲                                                                          │
+    └──────────── selectSignal(AuthState.username), selectSnapshot(…) ◄────────┘
+```
+
+| Étape de l'exercice | Où | Ce qui a été fait |
+|---|---|---|
+| 1. Configuration | `src/app/app.config.ts` | `provideStore([AuthState], withNgxsStoragePlugin({ keys: ['auth'] }))` : l'état `auth` est recopié dans le localStorage à chaque changement et relu au démarrage (la session survit à F5) |
+| 2. Actions | `core/states/auth/auth.actions.ts` | `Login` (`[Auth] Login`, payload : l'utilisateur **renvoyé par l'API** après vérification du mot de passe) et `Logout` (`[Auth] Logout`) |
+| 2. État | `core/states/auth/auth.state.ts` | `@State<AuthStateModel>({ name: 'auth', defaults: { user: null, isAuthenticated: false } })`. `@Action(Login)` : `ctx.patchState({ user, isAuthenticated: true })` ; `@Action(Logout)` : retour aux valeurs par défaut |
+| 2. Sélecteurs | `core/states/auth/auth.state.ts` | `@Selector()` mémorisés : `user`, `isAuthenticated`, `username` (« Romain Ziegler »), et pour le site `isAdmin` et `canManage` (auteur ou admin, sélecteur qui renvoie une fonction) |
+| 3. Composants | `features/auth/login/`, `app.ts` | La page Connexion appelle l'API puis `store.dispatch(new Login(user))`. Le menu lit `store.selectSignal(AuthState.username / isAuthenticated / isAdmin)` et « Se déconnecter » fait `dispatch(new Logout())` |
+| 4. Guard | `core/guards/auth.guard.ts` | `authGuard` injecte `Store` et `Router` : `selectSnapshot(AuthState.isAuthenticated)`, sinon redirection vers `/connexion?retour=…`. Les guards admin, invité et auteur lisent aussi le store |
+
+L'ancien `AuthService` (signal + localStorage écrit à la main) a été **supprimé** : toutes les pages
+lisent l'état par les sélecteurs. Les tests utilisent `provideStore([AuthState])` et simulent une
+session en dispatchant `Login`. Authentification toujours fictive : le JWT arrive au prochain TP.
 
 ## Routes et guards
 
@@ -50,7 +74,7 @@ et la liste se recalcule. Les pollutions non évaluées restent à la fin des tr
 ## Auteur des pollutions et droits
 
 Chaque pollution garde son auteur (l'utilisateur connecté au moment du signalement). La fiche
-affiche « Publiée par … », la liste « par … ». `AuthService.canManage(auteurId)` décide qui peut
+affiche « Publiée par … », la liste « par … ». le sélecteur `AuthState.canManage` décide qui peut
 modifier ou supprimer : **l'auteur, ou un admin**. Une pollution sans auteur (signalée avant
 cette évolution) n'est gérée que par un admin. Les boutons sont masqués pour les autres, et
 `pollutionAuthorGuard` les empêche d'ouvrir la page Modifier par son adresse.
