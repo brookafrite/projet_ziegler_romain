@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, OnInit, inject, signal } from '@angular/core';
 import { User } from '../../../core/models/user.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { ConfirmService } from '../../../core/services/confirm.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { UserService } from '../../../core/services/user.service';
 
@@ -14,6 +15,7 @@ export class UserListComponent implements OnInit {
   private readonly userService = inject(UserService);
   protected readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
+  private readonly confirmService = inject(ConfirmService);
 
   readonly users = signal<User[]>([]);
   readonly loading = signal(true);
@@ -37,8 +39,14 @@ export class UserListComponent implements OnInit {
     return this.authService.currentUser()?.id === user.id;
   }
 
-  remove(user: User): void {
-    if (!confirm(`Supprimer le compte de ${user.prenom} ${user.nom} ? Cette action est définitive.`)) return;
+  async remove(user: User): Promise<void> {
+    const confirmed = await this.confirmService.ask({
+      title: 'Supprimer ce compte ?',
+      message: `Le compte de ${user.prenom} ${user.nom} sera supprimé définitivement.`,
+      confirmLabel: 'Supprimer le compte',
+      danger: true,
+    });
+    if (!confirmed) return;
 
     this.deletingId.set(user.id);
 

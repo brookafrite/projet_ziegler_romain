@@ -1,4 +1,7 @@
+import { inject } from '@angular/core';
 import { CanDeactivateFn } from '@angular/router';
+
+import { ConfirmService } from '../services/confirm.service';
 
 /** Une page protégée par ce guard indique si elle contient une saisie non enregistrée. */
 export interface HasUnsavedChanges {
@@ -11,4 +14,9 @@ export interface HasUnsavedChanges {
  */
 export const unsavedChangesGuard: CanDeactivateFn<HasUnsavedChanges> = (component) =>
   !component.hasUnsavedChanges() ||
-  confirm('Votre saisie n’est pas enregistrée. Quitter quand même cette page ?');
+  // Une Promise : le routeur attend la réponse avant de quitter (ou non) la page
+  inject(ConfirmService).ask({
+    title: 'Quitter cette page ?',
+    message: 'Votre saisie n’est pas enregistrée : elle sera perdue si vous quittez la page.',
+    confirmLabel: 'Quitter la page',
+  });

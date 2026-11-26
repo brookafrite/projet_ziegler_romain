@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
 import { POLLUTION_TYPES, Pollution } from '../models/pollution.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { ConfirmService } from '../../../core/services/confirm.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
@@ -57,6 +58,7 @@ export class PollutionListComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);
   protected readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
+  private readonly confirmService = inject(ConfirmService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -145,9 +147,15 @@ export class PollutionListComponent implements OnInit {
     this.router.navigate([], { relativeTo: this.route, queryParams: { tri: this.tri() || null }, replaceUrl: true });
   }
 
-  remove(pollution: Pollution): void {
+  async remove(pollution: Pollution): Promise<void> {
     if (pollution.id == null) return;
-    if (!confirm(`Supprimer « ${pollution.titre} » ? Cette action est définitive.`)) return;
+    const confirmed = await this.confirmService.ask({
+      title: 'Supprimer ce signalement ?',
+      message: `« ${pollution.titre} » sera supprimée définitivement.`,
+      confirmLabel: 'Supprimer',
+      danger: true,
+    });
+    if (!confirmed) return;
 
     const id = pollution.id;
     this.deletingId.set(id);

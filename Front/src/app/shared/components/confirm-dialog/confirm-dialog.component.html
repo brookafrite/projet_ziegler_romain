@@ -1,0 +1,15 @@
+<!-- (cancel) : touche Échap. On répond « non » plutôt que de laisser le navigateur fermer seul -->
+<dialog #dialog aria-labelledby="confirm-title" aria-describedby="confirm-message"
+        (cancel)="$event.preventDefault(); confirmService.answer(false)"
+        (click)="onBackdropClick($event)">
+  @if (confirmService.question(); as question) {
+    <h2 id="confirm-title">{{ question.title }}</h2>
+    <p id="confirm-message">{{ question.message }}</p>
+    <div class="buttons">
+      <!-- autofocus sur Annuler : la touche Entrée ne supprime pas par erreur -->
+      <button type="button" class="secondary" autofocus (click)="confirmService.answer(false)">Annuler</button>
+      <button type="button" [class]="question.danger ? 'danger filled' : 'primary'"
+              (click)="confirmService.answer(true)">{{ question.confirmLabel }}</button>
+    </div>
+  }
+</dialog>

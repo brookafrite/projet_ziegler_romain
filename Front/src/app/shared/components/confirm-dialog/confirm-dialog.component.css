@@ -1,0 +1,24 @@
+dialog {
+  width: min(26rem, calc(100vw - 2rem));
+  padding: 1.5rem;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 24px 48px -20px rgba(0, 0, 0, 0.5);
+}
+dialog[open] { animation: dialog-in .15s ease-out both; }
+dialog::backdrop { background: rgba(20, 26, 24, 0.45); }
+
+h2 { margin: 0 0 .5rem; font-size: 1.3rem; font-weight: 600; }
+p { margin: 0 0 1.25rem; color: var(--muted); overflow-wrap: anywhere; }
+
+.buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .75rem; }
+.buttons .primary { min-width: 0; }
+.danger.filled { background: var(--error); color: var(--on-accent); }
+.danger.filled:hover { filter: brightness(.92); }
+
+@keyframes dialog-in {
+  from { transform: translateY(.5rem); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}

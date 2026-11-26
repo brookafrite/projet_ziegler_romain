@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/cor
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
 import { ToastService } from './core/services/toast.service';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 import { ToastContainerComponent } from './shared/components/toast-container/toast-container.component';
 
 @Component({
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastContainerComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConfirmDialogComponent, ToastContainerComponent],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
