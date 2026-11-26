@@ -41,4 +41,9 @@ export const db: Database = {
   users: defineUsers(sequelize, Sequelize)
 };
 
+// Associations : une pollution appartient à son auteur, un utilisateur a publié plusieurs pollutions.
+// Elles permettent de renvoyer l'auteur avec la pollution (include, voir pollution.controllers.ts).
+db.pollutions.belongsTo(db.users, { as: "auteur", foreignKey: "auteurId", onDelete: "SET NULL" });
+db.users.hasMany(db.pollutions, { as: "pollutions", foreignKey: "auteurId" });
+
 export default db;

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { UniqueConstraintError, ValidationError } from "sequelize";
+import { ForeignKeyConstraintError, UniqueConstraintError, ValidationError } from "sequelize";
 
 /** Vérifie le paramètre :id d'une route (ex. /api/pollutions/abc → 400). */
 export function checkId(_req: Request, res: Response, next: NextFunction, id: string): void {
@@ -10,8 +10,12 @@ export function checkId(_req: Request, res: Response, next: NextFunction, id: st
   next();
 }
 
-/** Valeur déjà prise (login, email...) → 409, données invalides → 400, le reste → 500. */
+/** Valeur déjà prise (login, email...) → 409, données invalides ou auteur inexistant → 400, le reste → 500. */
 export function sendError(res: Response, err: unknown, context: string): void {
+  if (err instanceof ForeignKeyConstraintError) {
+    res.status(400).json({ message: "L'auteur indiqué n'existe pas." });
+    return;
+  }
   if (err instanceof UniqueConstraintError) {
     res.status(409).json({ message: "Ce login ou cet email est déjà utilisé." });
     return;

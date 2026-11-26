@@ -14,10 +14,11 @@ export interface PollutionAttributes {
   longitude: number;
   photoUrl?: string | null;
   indice?: number | null; // indice de dangerosité, null = non évalué
+  auteurId?: number | null; // utilisateur qui a publié la pollution, null = auteur inconnu
 }
 
 export interface PollutionCreationAttributes
-  extends Optional<PollutionAttributes, "id" | "photoUrl" | "indice"> {}
+  extends Optional<PollutionAttributes, "id" | "photoUrl" | "indice" | "auteurId"> {}
 
 export interface PollutionInstance
   extends Model<PollutionAttributes, PollutionCreationAttributes>,
@@ -81,6 +82,14 @@ export default function definePollutions(
         type: DataTypes.INTEGER,
         allowNull: true,
         validate: { isInt: true, min: 0 }
+      },
+      // Colonne ajoutée à la main dans pgAdmin : clé étrangère vers users.id.
+      // Si le compte est supprimé, la pollution reste mais perd son auteur (SET NULL).
+      auteurId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: { model: "users", key: "id" },
+        onDelete: "SET NULL"
       }
     },
     { tableName: "pollution" }
