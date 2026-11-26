@@ -9,9 +9,9 @@ import { PollutionListComponent } from './pollution-list.component';
 
 const base = { description: '', latitude: 45, longitude: 4, photoUrl: null };
 const POLLUTIONS: Pollution[] = [
-  { ...base, id: 1, titre: 'Bidons au canal', type: 'Chimique', dateObservation: '2026-10-02', lieu: 'Canal', indice: 75 },
-  { ...base, id: 2, titre: 'Sacs plastiques', type: 'Plastique', dateObservation: '2026-10-09', lieu: 'Parc', indice: 30 },
-  { ...base, id: 3, titre: 'Gravats', type: 'Dépôt sauvage', dateObservation: '2026-09-21', lieu: 'Forêt', indice: null },
+  { ...base, id: 1, titre: 'Bidons au canal', type: 'Chimique', dateObservation: '2026-10-02', lieu: 'Canal', indice: 75, auteurId: 7 },
+  { ...base, id: 2, titre: 'Sacs plastiques', type: 'Plastique', dateObservation: '2026-10-09', lieu: 'Parc', indice: 30, auteurId: 8 },
+  { ...base, id: 3, titre: 'Gravats', type: 'Dépôt sauvage', dateObservation: '2026-09-21', lieu: 'Forêt', indice: null, auteurId: null },
 ];
 
 describe('PollutionListComponent', () => {
@@ -24,6 +24,7 @@ describe('PollutionListComponent', () => {
   }
 
   beforeEach(() => {
+    localStorage.clear();
     TestBed.configureTestingModule({
       imports: [PollutionListComponent],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
@@ -90,6 +91,31 @@ describe('PollutionListComponent', () => {
 
     component.resetFilters();
     expect(navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { tri: 'dangereuses' } }));
+  });
+
+  it('should show only my pollutions when « Mes pollutions » is ticked', () => {
+    // Utilisateur n° 7 connecté (session gardée dans le navigateur)
+    localStorage.setItem(
+      'carnet-de-terrain-user',
+      JSON.stringify({ id: 7, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'r@test.fr', role: 'utilisateur' }),
+    );
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [PollutionListComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    });
+    fixture = TestBed.createComponent(PollutionListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    TestBed.inject(HttpTestingController).expectOne(`${environment.apiUrl}/pollutions`).flush(POLLUTIONS);
+
+    setQueryParam('auteur', 'moi');
+    expect(component.filtered().map((p) => p.id)).toEqual([1]);
+  });
+
+  it('should ignore « Mes pollutions » when nobody is logged in', () => {
+    setQueryParam('auteur', 'moi');
+    expect(component.filtered().length).toBe(3);
   });
 
   it('should write a criterion in the address, keeping the others', () => {

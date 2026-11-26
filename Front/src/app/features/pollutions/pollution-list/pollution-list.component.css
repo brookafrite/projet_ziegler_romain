@@ -3,7 +3,7 @@
 /* Filtres */
 .filters { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 .filters legend { margin-bottom: 0; }
-.search { grid-column: 1 / -1; }
+.search, .mine { grid-column: 1 / -1; }
 
 .summary { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
 .summary p { margin: 0; }

@@ -48,6 +48,15 @@
       <input id="to" type="date" [min]="du() || null"
              [ngModel]="au() ?? ''" (ngModelChange)="setFilter('au', $event)" />
     </div>
+
+    <!-- « Mes pollutions » : seulement une fois connecté, enregistré dans l'adresse (?auteur=moi) -->
+    @if (authService.isLoggedIn()) {
+      <label class="check mine">
+        <input type="checkbox" [checked]="auteur() === 'moi'"
+               (change)="setFilter('auteur', $any($event.target).checked ? 'moi' : '')" />
+        Seulement mes pollutions
+      </label>
+    }
   </fieldset>
 
   @if (errorMessage(); as message) {

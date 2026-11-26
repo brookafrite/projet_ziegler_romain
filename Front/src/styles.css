@@ -112,6 +112,17 @@ input.ng-invalid.ng-touched,
 select.ng-invalid.ng-touched,
 textarea.ng-invalid.ng-touched { border-color: var(--error); }
 
+/* Case à cocher, avec son texte à côté : <label class="check"><input type="checkbox" /> Texte</label> */
+.check { display: flex; align-items: center; gap: .5rem; font-weight: 600; cursor: pointer; }
+.check input[type='checkbox'] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 small { font-size: .85rem; }
 .error { color: var(--error); }
 .hint { color: var(--muted); }

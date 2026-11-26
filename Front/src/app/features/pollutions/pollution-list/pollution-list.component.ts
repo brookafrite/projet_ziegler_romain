@@ -10,7 +10,7 @@ import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
 import { POLLUTION_LEVELS, pollutionLevel } from '../../../shared/utils/pollution-level';
 
 /** Nom des critères de filtre, tels qu'ils apparaissent dans l'adresse (?recherche=…&type=…). */
-type FilterName = 'recherche' | 'type' | 'du' | 'au' | 'niveau' | 'tri';
+type FilterName = 'recherche' | 'type' | 'du' | 'au' | 'niveau' | 'auteur' | 'tri';
 
 /** Ordres de tri proposés, avec leur valeur dans l'adresse (?tri=…). Vide : l'ordre par défaut. */
 const SORTS = [
@@ -76,6 +76,12 @@ export class PollutionListComponent implements OnInit {
   readonly au = input<string>(); // date de fin, AAAA-MM-JJ
   readonly niveau = input<string>(); // niveau de dangerosité : faible, moderee… (voir POLLUTION_LEVELS)
   readonly tri = input<string>(); // ordre d'affichage (voir SORTS)
+  readonly auteur = input<string>(); // « moi » : seulement les pollutions de l'utilisateur connecté
+
+  /** Id de l'utilisateur dont on affiche les pollutions (?auteur=moi), ignoré si personne n'est connecté. */
+  private readonly onlyAuthorId = computed(() =>
+    this.auteur() === 'moi' ? this.authService.currentUser()?.id : undefined,
+  );
 
   /** Liste affichée : recalculée automatiquement dès qu'un filtre ou la liste change. */
   readonly filtered = computed(() => {
@@ -86,10 +92,12 @@ export class PollutionListComponent implements OnInit {
     // Même calcul que le badge de chaque pollution : pollutionLevel(), les seuils sont au même endroit
     const level = POLLUTION_LEVELS.find((l) => l.value === this.niveau())?.label;
     const tri = this.tri();
+    const authorId = this.onlyAuthorId();
 
     return this.pollutions()
       .filter((p) => !type || p.type === type)
       .filter((p) => !level || pollutionLevel(p.indice) === level)
+      .filter((p) => authorId === undefined || p.auteurId === authorId)
       // Les dates AAAA-MM-JJ se comparent directement comme du texte
       .filter((p) => !from || p.dateObservation >= from)
       .filter((p) => !to || p.dateObservation <= to)
@@ -99,7 +107,9 @@ export class PollutionListComponent implements OnInit {
   });
 
   readonly hasFilters = computed(
-    () => !!(this.recherche() || this.type() || this.du() || this.au() || this.niveau()),
+    () =>
+      !!(this.recherche() || this.type() || this.du() || this.au() || this.niveau()) ||
+      this.onlyAuthorId() !== undefined,
   );
 
   ngOnInit(): void {
