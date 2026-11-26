@@ -5,6 +5,13 @@
 
 .icon { flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
+/* Photo depuis l'appareil : un bouton (le libellé) qui ouvre le sélecteur de fichier */
+.label { font-size: .92rem; font-weight: 600; }
+.file-button { justify-self: start; cursor: pointer; }
+.file-button.busy { opacity: .65; cursor: progress; }
+.file-button:focus-within { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
+.uploaded { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .75rem; margin: 0; }
+
 /* Aperçu photo */
 .preview { margin: 0; justify-self: start; }
 .preview img {

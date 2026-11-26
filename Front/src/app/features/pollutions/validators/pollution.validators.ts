@@ -20,5 +20,10 @@ export function observationDateValidator(control: AbstractControl): ValidationEr
   return null;
 }
 
-/** URL http(s) simple, pour le champ photo (optionnel). */
-export const urlValidator: ValidatorFn = Validators.pattern(/^https?:\/\/\S+\.\S+$/i);
+/**
+ * Champ photo (optionnel) : une adresse http(s), ou une photo envoyée depuis l'appareil,
+ * déjà transformée en base64 (data:image/…). Même règle que l'API.
+ */
+export const photoValidator: ValidatorFn = Validators.pattern(
+  /^(https?:\/\/\S+\.\S+|data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+)$/i,
+);

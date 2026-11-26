@@ -64,6 +64,9 @@
             Aucune photo fournie
           } @else if (imageError()) {
             Image introuvable à cette adresse
+          } @else if (isUploaded()) {
+            <!-- Une image base64 ne s'ouvre pas dans un nouvel onglet : les navigateurs le bloquent -->
+            Photo envoyée depuis l'appareil
           } @else {
             <a [href]="pollution.photoUrl" target="_blank" rel="noopener">Ouvrir l'image en grand</a>
           }

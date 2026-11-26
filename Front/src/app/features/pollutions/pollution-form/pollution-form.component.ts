@@ -4,7 +4,8 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution.model';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
-import { observationDateValidator, urlValidator } from '../validators/pollution.validators';
+import { observationDateValidator, photoValidator } from '../validators/pollution.validators';
+import { MAX_SOURCE_SIZE, base64Size, compressImage, isUploadedPhoto } from '../../../shared/utils/image';
 
 /** Nom d'un champ du formulaire ('titre', 'type', 'latitude'…). */
 type FieldName = keyof PollutionFormComponent['form']['controls'];
@@ -66,7 +67,7 @@ export class PollutionFormComponent implements OnInit {
       Validators.min(-180),
       Validators.max(180),
     ]),
-    photoUrl: ['', urlValidator],
+    photoUrl: ['', photoValidator],
     // Facultatif : vide = « Non évalué »
     indice: this.fb.control<number | null>(null, [Validators.min(0), Validators.pattern(/^\d+$/)]),
   });
@@ -78,6 +79,10 @@ export class PollutionFormComponent implements OnInit {
   // Aperçu de la photo
   readonly photoPreview = signal<string | null>(null);
   readonly previewError = signal(false);
+
+  // Photo envoyée depuis l'appareil
+  readonly compressing = signal(false);
+  readonly fileError = signal<string | null>(null);
 
   constructor() {
     // Met à jour l'aperçu dès que l'URL saisie est valide
@@ -98,6 +103,53 @@ export class PollutionFormComponent implements OnInit {
   /** Vrai si l'utilisateur a modifié au moins un champ (utilisé par unsavedChangesGuard). */
   isDirty(): boolean {
     return this.form.dirty;
+  }
+
+  /** Vrai si la photo vient de l'appareil (base64) plutôt que d'une adresse en ligne. */
+  hasUploadedPhoto(): boolean {
+    return isUploadedPhoto(this.form.controls.photoUrl.value);
+  }
+
+  /** Poids de la photo envoyée, en Ko, pour l'afficher sous l'aperçu. */
+  uploadedPhotoKb(): number {
+    return Math.round(base64Size(this.form.controls.photoUrl.value) / 1024);
+  }
+
+  /**
+   * Photo choisie sur l'appareil : réduite et compressée dans le navigateur, puis placée dans le
+   * champ photoUrl en base64. Elle partira avec le formulaire et sera stockée dans la base.
+   */
+  async onPhotoFile(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = ''; // permet de rechoisir le même fichier
+    if (!file) return;
+
+    this.fileError.set(null);
+    if (!file.type.startsWith('image/')) {
+      this.fileError.set('Ce fichier n’est pas une image. Choisissez une photo (JPEG, PNG, WebP…).');
+      return;
+    }
+    if (file.size > MAX_SOURCE_SIZE) {
+      this.fileError.set('Cette photo dépasse 20 Mo. Choisissez une image plus légère.');
+      return;
+    }
+
+    this.compressing.set(true);
+    try {
+      const photo = await compressImage(file);
+      this.form.controls.photoUrl.setValue(photo);
+      this.form.controls.photoUrl.markAsDirty();
+    } catch {
+      this.fileError.set('Cette image n’a pas pu être lue. Essayez une photo JPEG ou PNG.');
+    } finally {
+      this.compressing.set(false);
+    }
+  }
+
+  removePhoto(): void {
+    this.form.controls.photoUrl.setValue('');
+    this.form.controls.photoUrl.markAsDirty();
   }
 
   /** Vrai si le champ est invalide et que l'utilisateur l'a déjà touché. */

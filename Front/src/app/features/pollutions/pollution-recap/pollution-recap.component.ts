@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, Input, OnChanges, signal } from '@a
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
 import { Pollution } from '../models/pollution.model';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
+import { isUploadedPhoto } from '../../../shared/utils/image';
 
 @Component({
   selector: 'app-pollution-recap',
@@ -27,6 +28,11 @@ export class PollutionRecapComponent implements OnChanges {
   /** Numéro de fiche sur 3 chiffres : 1 → "001". */
   get numero(): string {
     return String(this.pollution.id ?? 0).padStart(3, '0');
+  }
+
+  /** Photo stockée dans la base (base64) plutôt qu'une adresse en ligne. */
+  isUploaded(): boolean {
+    return isUploadedPhoto(this.pollution.photoUrl);
   }
 
   get mapUrl(): string {

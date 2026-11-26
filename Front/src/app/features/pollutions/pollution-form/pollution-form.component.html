@@ -133,14 +133,37 @@
   <fieldset>
     <legend>Photo</legend>
 
-    <div class="field">
-      <label for="photoUrl">Adresse de la photo <span class="optional">(facultatif)</span></label>
-      <input id="photoUrl" type="url" formControlName="photoUrl" placeholder="https://…"
-             [attr.aria-invalid]="showError('photoUrl')" />
-      @if (showError('photoUrl')) {
-        <small class="error" role="alert">L'adresse doit commencer par http:// ou https://.</small>
-      }
-    </div>
+    @if (hasUploadedPhoto()) {
+      <!-- Photo envoyée depuis l'appareil : on n'affiche pas le long texte base64, seulement l'aperçu -->
+      <p class="hint uploaded">
+        Photo envoyée depuis votre appareil ({{ uploadedPhotoKb() }} Ko), enregistrée avec le signalement.
+        <button type="button" class="link" (click)="removePhoto()">Retirer la photo</button>
+      </p>
+    } @else {
+      <div class="field">
+        <span class="label">Depuis votre appareil <span class="optional">(facultatif)</span></span>
+        <!-- Le vrai champ fichier est caché : c'est le libellé, stylé en bouton, qui l'ouvre -->
+        <label class="secondary file-button" [class.busy]="compressing()">
+          <input type="file" accept="image/*" class="visually-hidden" (change)="onPhotoFile($event)"
+                 [disabled]="compressing()" />
+          {{ compressing() ? 'Préparation de la photo…' : 'Choisir une photo' }}
+        </label>
+        @if (fileError(); as message) {
+          <small class="error" role="alert">{{ message }}</small>
+        } @else {
+          <small class="hint">Elle est réduite et compressée avant l'envoi (quelques centaines de Ko).</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="photoUrl">… ou adresse d'une photo en ligne <span class="optional">(facultatif)</span></label>
+        <input id="photoUrl" type="url" formControlName="photoUrl" placeholder="https://…"
+               [attr.aria-invalid]="showError('photoUrl')" />
+        @if (showError('photoUrl')) {
+          <small class="error" role="alert">L'adresse doit commencer par http:// ou https://.</small>
+        }
+      </div>
+    }
 
     @if (photoPreview(); as url) {
       @if (!previewError()) {
