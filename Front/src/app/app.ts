@@ -18,6 +18,12 @@ import { ToastContainerComponent } from './shared/components/toast-container/toa
 })
 export class App {
   protected readonly title = signal('projet_ZIEGLER_Romain');
+  /**
+   * Store NGXS de l'état d'authentification. Le menu le lit (sélecteurs) et dispatche Logout.
+   * L'action Login, elle, est dispatchée par la page Connexion
+   * (features/auth/login/login.component.ts), une fois que l'API a vérifié le mot de passe :
+   * c'est là que se trouvent le formulaire et l'utilisateur renvoyé par l'API.
+   */
   private readonly store = inject(Store);
 
   // Lecture de l'état d'authentification par les sélecteurs, en signals : le menu se met à jour seul
