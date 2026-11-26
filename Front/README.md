@@ -9,7 +9,7 @@ Organisation recommandée par le cours (séance 5) :
 | Dossier | Contenu |
 |---|---|
 | `src/app/core/` | Ce qui n'existe qu'en un exemplaire : `AuthService`, `UserService`, le modèle `User` et les **guards** |
-| `src/app/shared/` | Ce qui est réutilisable partout : la pipe `pollutionLevel`, les directives `appHighlightPollution` et `matchPassword` |
+| `src/app/shared/` | Ce qui est réutilisable partout : la pipe `pollutionLevel`, les directives `appHighlightPollution` et `matchPassword`, les composants `ToastContainer` et `ConfirmDialog` |
 | `src/app/features/` | Une fonctionnalité par dossier : `pollutions`, `auth` (connexion, inscription), `admin` (utilisateurs), `not-found` (404) |
 
 ## Routes et guards
@@ -57,6 +57,19 @@ cette évolution) n'est gérée que par un admin. Les boutons sont masqués pour
 
 Ces règles sont appliquées par le Front : tant que l'authentification est fictive, l'API ne
 les vérifie pas encore. Le jeton JWT d'un prochain TP les fera vérifier par l'API.
+
+## Habillage
+
+| Élément | Où | Principe |
+|---|---|---|
+| Notifications | `core/services/toast.service.ts`, `shared/components/toast-container/` | `toastService.success('…')` ou `.error('…')` depuis n'importe quelle page ; la notification s'efface seule (4 s, 7 s pour une erreur) |
+| Fenêtre de confirmation | `core/services/confirm.service.ts`, `shared/components/confirm-dialog/` | `await confirmService.ask({ title, message, confirmLabel, danger })` renvoie `true` ou `false`. Élément `<dialog>` natif : modal, Échap pour annuler, focus sur « Annuler » |
+| Miniatures | liste des pollutions | la photo recadrée en 64 × 64, ou la feuille du logo si elle manque ou ne se charge pas |
+| Mode sombre | `src/styles.css` | les couleurs sont des variables CSS, redéfinies sous `@media (prefers-color-scheme: dark)` : le site suit le réglage de l'ordinateur |
+
+Le `ToastContainer` et le `ConfirmDialog` sont placés une seule fois, dans `app.html`.
+Les deux services sont dans `core/` (un seul exemplaire pour toute l'application), les composants
+qui les affichent dans `shared/`.
 
 ## Lazy loading
 
