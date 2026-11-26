@@ -65,6 +65,14 @@
       @if (hasFilters()) {
         <button type="button" class="link" (click)="resetFilters()">Effacer les filtres</button>
       }
+      <div class="sort">
+        <label for="tri">Trier</label>
+        <select id="tri" [ngModel]="tri() ?? ''" (ngModelChange)="setFilter('tri', $event)">
+          @for (sort of sorts; track sort.value) {
+            <option [value]="sort.value">{{ sort.label }}</option>
+          }
+        </select>
+      </div>
     </div>
 
     @if (filtered().length) {

@@ -71,6 +71,27 @@ describe('PollutionListComponent', () => {
     expect(component.filtered().length).toBe(3);
   });
 
+  it('should sort by danger level, unevaluated pollutions last', () => {
+    setQueryParam('tri', 'dangereuses');
+    expect(component.filtered().map((p) => p.id)).toEqual([1, 2, 3]);
+
+    setQueryParam('tri', 'moins-dangereuses');
+    expect(component.filtered().map((p) => p.id)).toEqual([2, 1, 3]);
+  });
+
+  it('should sort oldest first', () => {
+    setQueryParam('tri', 'anciennes');
+    expect(component.filtered().map((p) => p.id)).toEqual([3, 1, 2]);
+  });
+
+  it('should keep the sort order when the filters are cleared', () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    setQueryParam('tri', 'dangereuses');
+
+    component.resetFilters();
+    expect(navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { tri: 'dangereuses' } }));
+  });
+
   it('should write a criterion in the address, keeping the others', () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 

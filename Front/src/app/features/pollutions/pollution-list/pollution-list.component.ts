@@ -10,7 +10,34 @@ import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
 import { POLLUTION_LEVELS, pollutionLevel } from '../../../shared/utils/pollution-level';
 
 /** Nom des critères de filtre, tels qu'ils apparaissent dans l'adresse (?recherche=…&type=…). */
-type FilterName = 'recherche' | 'type' | 'du' | 'au' | 'niveau';
+type FilterName = 'recherche' | 'type' | 'du' | 'au' | 'niveau' | 'tri';
+
+/** Ordres de tri proposés, avec leur valeur dans l'adresse (?tri=…). Vide : l'ordre par défaut. */
+const SORTS = [
+  { value: '', label: 'Plus récentes d’abord' },
+  { value: 'anciennes', label: 'Plus anciennes d’abord' },
+  { value: 'dangereuses', label: 'Plus dangereuses d’abord' },
+  { value: 'moins-dangereuses', label: 'Moins dangereuses d’abord' },
+];
+
+/** Plus récente d'abord (les dates AAAA-MM-JJ se comparent comme du texte). */
+function byDate(a: Pollution, b: Pollution): number {
+  return b.dateObservation.localeCompare(a.dateObservation);
+}
+
+/** Compare deux pollutions selon l'ordre choisi ; à égalité, la plus récente d'abord. */
+function compare(a: Pollution, b: Pollution, tri: string | undefined): number {
+  if (tri === 'anciennes') return byDate(b, a);
+  if (tri === 'dangereuses' || tri === 'moins-dangereuses') {
+    // Les pollutions non évaluées vont toujours à la fin, quel que soit le sens
+    const aMissing = a.indice == null ? 1 : 0;
+    const bMissing = b.indice == null ? 1 : 0;
+    if (aMissing || bMissing) return aMissing - bMissing || byDate(a, b);
+    const gap = tri === 'dangereuses' ? b.indice! - a.indice! : a.indice! - b.indice!;
+    return gap || byDate(a, b);
+  }
+  return byDate(a, b);
+}
 
 /** Minuscules et sans accents, pour une recherche plus tolérante (« depot » trouve « Dépôt »). */
 function normalize(text: string): string {
@@ -33,6 +60,7 @@ export class PollutionListComponent implements OnInit {
 
   readonly types = POLLUTION_TYPES;
   readonly levels = POLLUTION_LEVELS;
+  readonly sorts = SORTS;
 
   // Données reçues de l'API et état de l'écran
   readonly pollutions = signal<Pollution[]>([]);
@@ -47,6 +75,7 @@ export class PollutionListComponent implements OnInit {
   readonly du = input<string>(); // date de début, AAAA-MM-JJ
   readonly au = input<string>(); // date de fin, AAAA-MM-JJ
   readonly niveau = input<string>(); // niveau de dangerosité : faible, moderee… (voir POLLUTION_LEVELS)
+  readonly tri = input<string>(); // ordre d'affichage (voir SORTS)
 
   /** Liste affichée : recalculée automatiquement dès qu'un filtre ou la liste change. */
   readonly filtered = computed(() => {
@@ -56,6 +85,7 @@ export class PollutionListComponent implements OnInit {
     const to = this.au();
     // Même calcul que le badge de chaque pollution : pollutionLevel(), les seuils sont au même endroit
     const level = POLLUTION_LEVELS.find((l) => l.value === this.niveau())?.label;
+    const tri = this.tri();
 
     return this.pollutions()
       .filter((p) => !type || p.type === type)
@@ -64,7 +94,8 @@ export class PollutionListComponent implements OnInit {
       .filter((p) => !from || p.dateObservation >= from)
       .filter((p) => !to || p.dateObservation <= to)
       .filter((p) => !search || normalize(`${p.titre} ${p.type} ${p.lieu} ${p.description}`).includes(search))
-      .sort((a, b) => b.dateObservation.localeCompare(a.dateObservation)); // plus récentes d'abord
+      // filter() a déjà créé un nouveau tableau : sort() ne modifie pas la liste reçue de l'API
+      .sort((a, b) => compare(a, b, tri));
   });
 
   readonly hasFilters = computed(
@@ -98,7 +129,8 @@ export class PollutionListComponent implements OnInit {
   }
 
   resetFilters(): void {
-    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+    // On efface les critères, mais on garde l'ordre de tri choisi
+    this.router.navigate([], { relativeTo: this.route, queryParams: { tri: this.tri() || null }, replaceUrl: true });
   }
 
   remove(pollution: Pollution): void {
