@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { AuthService } from './core/services/auth.service';
+import { Store } from '@ngxs/store';
+import { Logout } from './core/states/auth/auth.actions';
+import { AuthState } from './core/states/auth/auth.state';
 import { ThemeService } from './core/services/theme.service';
 import { ToastService } from './core/services/toast.service';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
@@ -16,7 +18,12 @@ import { ToastContainerComponent } from './shared/components/toast-container/toa
 })
 export class App {
   protected readonly title = signal('projet_ZIEGLER_Romain');
-  protected readonly authService = inject(AuthService);
+  private readonly store = inject(Store);
+
+  // Lecture de l'état d'authentification par les sélecteurs, en signals : le menu se met à jour seul
+  protected readonly isAuthenticated = this.store.selectSignal(AuthState.isAuthenticated);
+  protected readonly isAdmin = this.store.selectSignal(AuthState.isAdmin);
+  protected readonly username = this.store.selectSignal(AuthState.username);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
   protected readonly themeService = inject(ThemeService);
@@ -29,7 +36,7 @@ export class App {
   } as const;
 
   logout(): void {
-    this.authService.logout();
+    this.store.dispatch(new Logout());
     this.toastService.success('Vous êtes déconnecté.');
     this.router.navigate(['/connexion']);
   }

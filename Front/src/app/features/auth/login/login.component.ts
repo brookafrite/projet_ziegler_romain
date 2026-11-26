@@ -2,7 +2,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ChangeDetectionStrategy, inject, input, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
+import { Store } from '@ngxs/store';
+import { UserService } from '../../../core/services/user.service';
+import { Login } from '../../../core/states/auth/auth.actions';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
@@ -13,7 +15,8 @@ import { ToastService } from '../../../core/services/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
-  private readonly authService = inject(AuthService);
+  private readonly userService = inject(UserService);
+  private readonly store = inject(Store);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
@@ -31,8 +34,11 @@ export class LoginComponent {
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    this.authService.login(this.model).subscribe({
+    // L'API vérifie le login et le mot de passe, puis on DISPATCHE l'action Login :
+    // c'est le store (AuthState) qui retient l'utilisateur connecté.
+    this.userService.login(this.model).subscribe({
       next: (user) => {
+        this.store.dispatch(new Login(user));
         this.toastService.success(`Bonjour ${user.prenom} !`);
         this.router.navigateByUrl(this.returnUrl());
       },
