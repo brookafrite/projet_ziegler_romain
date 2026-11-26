@@ -21,6 +21,17 @@ export class AuthService {
   readonly isLoggedIn = computed(() => this.user() !== null);
   readonly isAdmin = computed(() => this.user()?.role === 'admin');
 
+  /**
+   * Vrai si l'utilisateur connecté peut modifier ou supprimer un signalement :
+   * il en est l'auteur, ou il est admin. Une pollution sans auteur n'est gérée que par un admin.
+   * Vérifié côté Front seulement tant que l'authentification est fictive (le JWT viendra au prochain TP).
+   */
+  canManage(auteurId: number | null | undefined): boolean {
+    const user = this.user();
+    if (!user) return false;
+    return user.role === 'admin' || (auteurId != null && auteurId === user.id);
+  }
+
   login(credentials: LoginRequest): Observable<User> {
     return this.userService.login(credentials).pipe(tap((user) => this.setUser(user)));
   }

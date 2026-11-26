@@ -10,6 +10,13 @@ export const POLLUTION_TYPES = [
 
 export type PollutionType = (typeof POLLUTION_TYPES)[number];
 
+/** Auteur d'une pollution, tel que l'API le renvoie : juste de quoi afficher son nom. */
+export interface PollutionAuthor {
+  id: number;
+  prenom: string;
+  nom: string;
+}
+
 /**
  * Données d'une déclaration de pollution.
  * Cette interface servira aussi de contrat avec la future API.
@@ -25,4 +32,6 @@ export interface Pollution {
   longitude: number;
   photoUrl?: string | null;
   indice?: number | null; // indice de dangerosité (entier >= 0), null = non évalué
+  auteurId?: number | null; // utilisateur qui l'a publiée, null = auteur inconnu
+  auteur?: PollutionAuthor | null; // renvoyé par l'API avec la pollution
 }

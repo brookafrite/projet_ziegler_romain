@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from '../../core/guards/auth.guard';
 import { unsavedChangesGuard } from '../../core/guards/unsaved-changes.guard';
+import { pollutionAuthorGuard } from './guards/pollution-author.guard';
 
 /**
  * Routes de la fonctionnalité « pollutions », chargées à la demande (loadChildren dans
@@ -34,7 +35,8 @@ export const POLLUTION_ROUTES: Routes = [
   {
     path: ':id/modifier',
     title: 'Modifier une pollution',
-    canActivate: [authGuard], // connexion obligatoire
+    // Connexion obligatoire, puis seulement l'auteur ou un admin
+    canActivate: [authGuard, pollutionAuthorGuard],
     canDeactivate: [unsavedChangesGuard], // « quitter sans enregistrer ? »
     loadComponent: () =>
       import('./pollution-edit/pollution-edit.component').then((m) => m.PollutionEditComponent),

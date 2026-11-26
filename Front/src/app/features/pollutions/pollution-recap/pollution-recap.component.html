@@ -37,6 +37,16 @@
         </dd>
       </div>
       <div class="item">
+        <dt>Publiée par</dt>
+        <dd>
+          @if (pollution.auteur; as auteur) {
+            {{ auteur.prenom }} {{ auteur.nom }}
+          } @else {
+            <span class="hint">Auteur inconnu</span>
+          }
+        </dd>
+      </div>
+      <div class="item">
         <dt>Lieu</dt>
         <dd>{{ pollution.lieu }}</dd>
       </div>

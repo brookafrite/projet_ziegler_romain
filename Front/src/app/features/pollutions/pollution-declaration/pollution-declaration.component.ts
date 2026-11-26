@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
+import { AuthService } from '../../../core/services/auth.service';
 import { Pollution } from '../models/pollution.model';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionFormComponent } from '../pollution-form/pollution-form.component';
@@ -19,6 +20,7 @@ import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.comp
 })
 export class PollutionDeclarationComponent implements HasUnsavedChanges {
   private readonly pollutionService = inject(PollutionService);
+  private readonly authService = inject(AuthService);
 
   readonly declaration = signal<Pollution | null>(null);
   readonly saving = signal(false);
@@ -35,7 +37,9 @@ export class PollutionDeclarationComponent implements HasUnsavedChanges {
     this.saving.set(true);
     this.errorMessage.set(null);
 
-    this.pollutionService.create(pollution).subscribe({
+    // L'auteur est l'utilisateur connecté (la page est protégée par authGuard)
+    const auteurId = this.authService.currentUser()?.id ?? null;
+    this.pollutionService.create({ ...pollution, auteurId }).subscribe({
       next: (saved) => {
         this.declaration.set(saved);
         this.saving.set(false);

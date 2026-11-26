@@ -86,11 +86,15 @@
                 <span class="badge" [appHighlightPollution]="pollution.indice">{{ pollution.indice | pollutionLevel }}</span>
                 <span>{{ pollution.dateObservation | date: 'longDate' }}</span>
                 <span>{{ pollution.lieu }}</span>
+                @if (pollution.auteur; as auteur) {
+                  <span>par {{ auteur.prenom }} {{ auteur.nom }}</span>
+                }
               </p>
             </div>
             <div class="entry-actions">
               <a class="secondary" [routerLink]="['/pollutions', pollution.id]">Voir</a>
-              @if (authService.isLoggedIn()) {
+              <!-- Supprimer : seulement pour l'auteur du signalement ou un admin -->
+              @if (authService.canManage(pollution.auteurId)) {
                 <button type="button" class="danger" (click)="remove(pollution)"
                         [disabled]="deletingId() === pollution.id">
                   {{ deletingId() === pollution.id ? 'Suppression…' : 'Supprimer' }}

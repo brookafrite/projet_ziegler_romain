@@ -43,4 +43,20 @@ describe('AuthService (connexion fictive)', () => {
 
     expect(service.isLoggedIn()).toBe(false);
   });
+
+  it('should let only the author or an admin manage a pollution', () => {
+    expect(service.canManage(1)).toBe(false); // personne n'est connecté
+
+    service.login({ login: 'brook', password: 'Secret123!' }).subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/users/login`).flush(user); // id 1, utilisateur
+    expect(service.canManage(1)).toBe(true); // son propre signalement
+    expect(service.canManage(2)).toBe(false); // celui d'un autre
+    expect(service.canManage(null)).toBe(false); // auteur inconnu
+
+    service.logout();
+    service.login({ login: 'admin', password: 'Secret123!' }).subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/users/login`).flush({ ...user, id: 9, role: 'admin' });
+    expect(service.canManage(2)).toBe(true);
+    expect(service.canManage(null)).toBe(true);
+  });
 });

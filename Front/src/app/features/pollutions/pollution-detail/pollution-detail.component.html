@@ -3,8 +3,8 @@
     <p class="hint" role="status">Chargement de la fiche…</p>
   } @else if (pollution(); as pollution) {
     <app-pollution-recap [pollution]="pollution">
-      <!-- Modifier et supprimer : seulement une fois connecté -->
-      @if (authService.isLoggedIn()) {
+      <!-- Modifier et supprimer : seulement pour l'auteur du signalement ou un admin -->
+      @if (authService.canManage(pollution.auteurId)) {
         <a class="primary" [routerLink]="['/pollutions', pollution.id, 'modifier']">Modifier</a>
         <button type="button" class="danger" (click)="remove(pollution)" [disabled]="deleting()">
           {{ deleting() ? 'Suppression…' : 'Supprimer' }}
