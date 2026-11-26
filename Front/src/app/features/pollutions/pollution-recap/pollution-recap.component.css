@@ -20,7 +20,7 @@
   max-height: 380px;
   object-fit: cover;
   padding: 5px;
-  background: #fff;
+  background: var(--field);
   border: 1px solid var(--line);
   border-radius: 4px;
 }

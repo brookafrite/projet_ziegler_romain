@@ -16,7 +16,7 @@
 }
 .brand { display: flex; align-items: center; gap: .75rem; }
 .logo circle { fill: var(--accent); }
-.logo path { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.logo path { fill: none; stroke: var(--on-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .brand-name {
   display: block;
   font-family: var(--font-title);

@@ -1,5 +1,8 @@
 /* Style global : carnet de terrain, sobre */
 :root {
+  /* Les contrôles du navigateur (calendrier, listes, barres de défilement) suivent le thème */
+  color-scheme: light dark;
+
   --paper: #ecebe4;       /* fond de page */
   --card: #fbfaf6;        /* page du carnet */
   --ink: #1f2a26;         /* texte */
@@ -12,9 +15,34 @@
   --accent-soft: rgba(47, 93, 80, 0.1);
   --on-accent: #fff;      /* texte sur fond vert */
   --error: #a12d2d;
+  --error-soft: rgba(161, 45, 45, 0.07);
+  --field: #fff;          /* fond des champs de saisie et des cadres photo */
+  --placeholder: #98a19c; /* texte d'exemple dans les champs */
 
   --font-title: 'Source Serif 4', Georgia, serif;
   --font-text: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* Mode sombre : si l'ordinateur est réglé en sombre, on change seulement les couleurs.
+   Tout le site utilise ces variables : rien d'autre à modifier. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #131917;       /* fond de page, nuit en forêt */
+    --card: #1c2421;
+    --ink: #e4ebe7;
+    --muted: #a2afa8;
+    --line: #333f3a;
+    --line-strong: #4b5953;
+    --margin: #3e5b50;
+    --accent: #8fc8b3;      /* vert sapin éclairci, lisible sur fond sombre */
+    --accent-dark: #a9d8c6; /* survol : un peu plus clair */
+    --accent-soft: rgba(143, 200, 179, 0.15);
+    --on-accent: #10201a;   /* texte foncé sur le vert clair */
+    --error: #f08b8b;
+    --error-soft: rgba(240, 139, 139, 0.1);
+    --field: #141b18;
+    --placeholder: #6e7c75;
+  }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -29,6 +57,9 @@ body {
 }
 
 h1, h2, h3, legend { font-family: var(--font-title); }
+
+/* Liens dans le texte : le vert du site plutôt que le bleu/violet du navigateur */
+a { color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -97,13 +128,13 @@ input, select, textarea {
   padding: .6rem .75rem;
   font: inherit;
   color: inherit;
-  background: #fff;
+  background: var(--field);
   border: 1px solid var(--line-strong);
   border-radius: 6px;
   transition: border-color .15s, box-shadow .15s;
 }
 textarea { resize: vertical; min-height: 6.5rem; line-height: 1.5; }
-input::placeholder, textarea::placeholder { color: #98a19c; }
+input::placeholder, textarea::placeholder { color: var(--placeholder); }
 input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: none;
   border-color: var(--accent);
@@ -136,14 +167,14 @@ button:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2p
   min-width: 12rem;
   padding: .75rem 1.5rem;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   border: 0;
   border-radius: 6px;
   font-weight: 600;
   transition: background .15s;
 }
 .primary:hover:not(:disabled) { background: var(--accent-dark); }
-.primary:disabled { background: var(--line-strong); cursor: not-allowed; }
+.primary:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
 
 .secondary {
   display: inline-flex;
@@ -169,7 +200,7 @@ button:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2p
   font-weight: 600;
   transition: background .15s, color .15s;
 }
-.danger:hover:not(:disabled) { background: var(--error); color: #fff; }
+.danger:hover:not(:disabled) { background: var(--error); color: var(--on-accent); }
 .danger:disabled { opacity: .65; cursor: progress; }
 
 /* Barre de boutons en bas d'un formulaire ou d'une fiche */
@@ -269,7 +300,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
   padding: .65rem .75rem;
   border-left: 3px solid var(--error);
   border-radius: 4px;
-  background: rgba(161, 45, 45, 0.07);
+  background: var(--error-soft);
 }
 
 /* Liste */

@@ -14,7 +14,7 @@
   border: 1px solid var(--line);
   border-radius: 4px;
   padding: 4px;
-  background: #fff;
+  background: var(--field);
 }
 .preview figcaption { margin-top: .3rem; font-size: .82rem; color: var(--muted); }
 
