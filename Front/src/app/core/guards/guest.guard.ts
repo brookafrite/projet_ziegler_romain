@@ -1,11 +1,12 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { Store } from '@ngxs/store';
 
-import { AuthService } from '../services/auth.service';
+import { AuthState } from '../states/auth/auth.state';
 
 /**
  * Garde de route : les pages Connexion et Créer un compte sont réservées aux visiteurs
- * non connectés. Un utilisateur déjà connecté est renvoyé vers la liste des pollutions.
+ * non connectés. Un utilisateur déjà connecté (d'après le store) est renvoyé vers la liste.
  */
 export const guestGuard: CanActivateFn = () =>
-  inject(AuthService).isLoggedIn() ? inject(Router).parseUrl('/pollutions') : true;
+  inject(Store).selectSnapshot(AuthState.isAuthenticated) ? inject(Router).parseUrl('/pollutions') : true;
