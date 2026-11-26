@@ -57,9 +57,15 @@ vérifie le login et le mot de passe et renvoie l'utilisateur, sans créer de je
 | `lieu`            | varchar   | oui |
 | `latitude`        | float     | oui (-90 à 90) |
 | `longitude`       | float     | oui (-180 à 180) |
-| `photoUrl`        | text      | non |
+| `photoUrl`        | text      | non : adresse http(s) d'une image, **ou la photo elle-même en base64** (`data:image/jpeg;base64,…`) |
 | `indice`          | integer   | non (entier >= 0, vide = non évalué) |
 | `auteurId`        | integer   | non : clé étrangère vers `users.id`, vide = auteur inconnu |
+
+Les photos envoyées depuis l'appareil sont donc **stockées dans la base** (colonne `text`), pas
+dans des fichiers sur le serveur. Le Front les réduit et les compresse avant l'envoi ; l'API
+accepte des requêtes jusqu'à **2 Mo** (`express.json({ limit: "2mb" })`, 413 au-delà) et refuse
+une photo qui n'est ni une adresse http(s) ni une image base64. La base gratuite de Render est
+limitée à 1 Go : avec des photos d'environ 250 Ko, cela laisse la place pour plusieurs milliers.
 
 La colonne `indice` (exercice 04) a été ajoutée **à la main** dans pgAdmin, car
 `sequelize.sync()` crée les tables manquantes mais ne modifie jamais une table existante :

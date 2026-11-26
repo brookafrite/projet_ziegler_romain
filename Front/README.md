@@ -71,6 +71,14 @@ Le `ToastContainer` et le `ConfirmDialog` sont placés une seule fois, dans `app
 Les deux services sont dans `core/` (un seul exemplaire pour toute l'application), les composants
 qui les affichent dans `shared/`.
 
+## Formulaire de signalement : photo, adresse et carte
+
+| Fonction | Où | Principe |
+|---|---|---|
+| Photo depuis l'appareil | `shared/utils/image.ts` | l'image choisie est réduite (1280 px) et recompressée en JPEG dans le navigateur (canvas), puis transformée en texte **base64** (`data:image/jpeg;base64,…`). Ce texte part dans `photoUrl` et est **stocké dans la base** : aucun fichier sur le serveur. Une photo de 3 Mo pèse environ 200 à 350 Ko |
+| Suggestions d'adresse | `features/pollutions/services/address.service.ts` | API Adresse de l'État (`environment.addressApiUrl`, gratuite, sans clé, adresses françaises). Le champ Lieu attend une pause de 300 ms (`debounceTime`) puis cherche ; `switchMap` annule la recherche précédente. Une adresse choisie remplit le lieu, la latitude et la longitude |
+| Carte | `shared/components/location-map/` | Leaflet + OpenStreetMap. Un clic ou le point déplacé remplit les coordonnées (et le lieu s'il est vide, avec l'adresse la plus proche) ; le point suit aussi les coordonnées saisies. Leaflet n'est téléchargé que sur les pages Signaler et Modifier |
+
 ## Lazy loading
 
 Chaque page est chargée à la demande (`loadComponent`), et la fonctionnalité pollutions a son
