@@ -1,12 +1,15 @@
-import { Component, ChangeDetectionStrategy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, computed, inject, input, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
-import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution.model';
+import { POLLUTION_TYPES, Pollution } from '../models/pollution.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
+
+/** Nom des critères de filtre, tels qu'ils apparaissent dans l'adresse (?recherche=…&type=…). */
+type FilterName = 'recherche' | 'type' | 'du' | 'au';
 
 /** Minuscules et sans accents, pour une recherche plus tolérante (« depot » trouve « Dépôt »). */
 function normalize(text: string): string {
@@ -24,6 +27,8 @@ function normalize(text: string): string {
 export class PollutionListComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);
   protected readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly types = POLLUTION_TYPES;
 
@@ -33,18 +38,19 @@ export class PollutionListComponent implements OnInit {
   readonly errorMessage = signal<string | null>(null);
   readonly deletingId = signal<number | null>(null);
 
-  // Critères de filtre
-  readonly search = signal('');
-  readonly type = signal<PollutionType | ''>('');
-  readonly from = signal(''); // date de début, AAAA-MM-JJ
-  readonly to = signal(''); // date de fin, AAAA-MM-JJ
+  // Critères de filtre, lus dans l'adresse (query params) grâce à withComponentInputBinding :
+  // /pollutions?type=Chimique&du=2026-10-01 remplit type() et du(). Une recherche se partage par lien.
+  readonly recherche = input<string>();
+  readonly type = input<string>();
+  readonly du = input<string>(); // date de début, AAAA-MM-JJ
+  readonly au = input<string>(); // date de fin, AAAA-MM-JJ
 
   /** Liste affichée : recalculée automatiquement dès qu'un filtre ou la liste change. */
   readonly filtered = computed(() => {
-    const search = normalize(this.search().trim());
+    const search = normalize((this.recherche() ?? '').trim());
     const type = this.type();
-    const from = this.from();
-    const to = this.to();
+    const from = this.du();
+    const to = this.au();
 
     return this.pollutions()
       .filter((p) => !type || p.type === type)
@@ -55,7 +61,7 @@ export class PollutionListComponent implements OnInit {
       .sort((a, b) => b.dateObservation.localeCompare(a.dateObservation)); // plus récentes d'abord
   });
 
-  readonly hasFilters = computed(() => !!(this.search() || this.type() || this.from() || this.to()));
+  readonly hasFilters = computed(() => !!(this.recherche() || this.type() || this.du() || this.au()));
 
   ngOnInit(): void {
     this.pollutionService.getAll().subscribe({
@@ -70,11 +76,21 @@ export class PollutionListComponent implements OnInit {
     });
   }
 
+  /**
+   * Change un critère en modifiant l'adresse : le routeur met à jour les entrées du composant,
+   * et la liste se recalcule. Une valeur vide retire le paramètre de l'adresse.
+   */
+  setFilter(name: FilterName, value: string): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { [name]: value || null },
+      queryParamsHandling: 'merge', // garde les autres critères
+      replaceUrl: true, // pas une page d'historique par lettre tapée
+    });
+  }
+
   resetFilters(): void {
-    this.search.set('');
-    this.type.set('');
-    this.from.set('');
-    this.to.set('');
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
   }
 
   remove(pollution: Pollution): void {

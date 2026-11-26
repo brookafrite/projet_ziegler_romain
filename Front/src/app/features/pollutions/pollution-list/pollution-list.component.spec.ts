@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 
 import { environment } from '../../../../environments/environment';
 import { Pollution } from '../models/pollution.model';
@@ -15,14 +15,20 @@ const POLLUTIONS: Pollution[] = [
 ];
 
 describe('PollutionListComponent', () => {
+  let fixture: ComponentFixture<PollutionListComponent>;
   let component: PollutionListComponent;
+
+  /** Simule un critère présent dans l'adresse (?nom=valeur), comme le ferait le routeur. */
+  function setQueryParam(name: string, value: string | undefined): void {
+    fixture.componentRef.setInput(name, value);
+  }
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [PollutionListComponent],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
-    const fixture = TestBed.createComponent(PollutionListComponent);
+    fixture = TestBed.createComponent(PollutionListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges(); // déclenche ngOnInit, donc le GET
     TestBed.inject(HttpTestingController)
@@ -35,23 +41,33 @@ describe('PollutionListComponent', () => {
   });
 
   it('should filter by type', () => {
-    component.type.set('Plastique');
+    setQueryParam('type', 'Plastique');
     expect(component.filtered().map((p) => p.id)).toEqual([2]);
   });
 
   it('should filter by text, ignoring case and accents', () => {
-    component.search.set('CANAL');
+    setQueryParam('recherche', 'CANAL');
     expect(component.filtered().map((p) => p.id)).toEqual([1]);
   });
 
   it('should filter by date range and combine criteria', () => {
-    component.from.set('2026-10-01');
+    setQueryParam('du', '2026-10-01');
     expect(component.filtered().map((p) => p.id)).toEqual([2, 1]);
 
-    component.to.set('2026-10-05');
+    setQueryParam('au', '2026-10-05');
     expect(component.filtered().map((p) => p.id)).toEqual([1]);
+  });
 
-    component.resetFilters();
-    expect(component.filtered().length).toBe(3);
+  it('should write a criterion in the address, keeping the others', () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    component.setFilter('type', 'Chimique');
+    expect(navigate).toHaveBeenCalledWith([], expect.objectContaining({
+      queryParams: { type: 'Chimique' },
+      queryParamsHandling: 'merge',
+    }));
+
+    component.setFilter('type', ''); // « Tous les types » : le paramètre disparaît de l'adresse
+    expect(navigate).toHaveBeenLastCalledWith([], expect.objectContaining({ queryParams: { type: null } }));
   });
 });

@@ -7,19 +7,19 @@
     <a class="primary" routerLink="/pollutions/nouvelle">Signaler une pollution</a>
   </header>
 
-  <!-- Filtres : chaque critère est un signal, la liste se met à jour en direct -->
+  <!-- Filtres : chaque critère est dans l'adresse (?recherche=…&type=…), la liste se met à jour en direct -->
   <fieldset class="filters" role="search">
     <legend>Filtrer</legend>
 
     <div class="field search">
       <label for="search">Recherche</label>
       <input id="search" type="search" placeholder="Titre, type, lieu, description…"
-             [ngModel]="search()" (ngModelChange)="search.set($event)" />
+             [ngModel]="recherche() ?? ''" (ngModelChange)="setFilter('recherche', $event)" />
     </div>
 
     <div class="field">
       <label for="type">Type</label>
-      <select id="type" [ngModel]="type()" (ngModelChange)="type.set($event)">
+      <select id="type" [ngModel]="type() ?? ''" (ngModelChange)="setFilter('type', $event)">
         <option value="">Tous les types</option>
         @for (t of types; track t) {
           <option [value]="t">{{ t }}</option>
@@ -29,14 +29,14 @@
 
     <div class="field">
       <label for="from">Observée depuis le</label>
-      <input id="from" type="date" [max]="to() || null"
-             [ngModel]="from()" (ngModelChange)="from.set($event)" />
+      <input id="from" type="date" [max]="au() || null"
+             [ngModel]="du() ?? ''" (ngModelChange)="setFilter('du', $event)" />
     </div>
 
     <div class="field">
       <label for="to">Jusqu'au</label>
-      <input id="to" type="date" [min]="from() || null"
-             [ngModel]="to()" (ngModelChange)="to.set($event)" />
+      <input id="to" type="date" [min]="du() || null"
+             [ngModel]="au() ?? ''" (ngModelChange)="setFilter('au', $event)" />
     </div>
   </fieldset>
 
