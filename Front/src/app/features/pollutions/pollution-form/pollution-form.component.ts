@@ -1,11 +1,13 @@
 import { Component, ChangeDetectionStrategy, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, debounceTime, map, of, switchMap } from 'rxjs';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
 import { POLLUTION_TYPES, Pollution, PollutionType } from '../models/pollution.model';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
 import { observationDateValidator, photoValidator } from '../validators/pollution.validators';
 import { MAX_SOURCE_SIZE, base64Size, compressImage, isUploadedPhoto } from '../../../shared/utils/image';
+import { AddressService, AddressSuggestion } from '../services/address.service';
 
 /** Nom d'un champ du formulaire ('titre', 'type', 'latitude'…). */
 type FieldName = keyof PollutionFormComponent['form']['controls'];
@@ -47,6 +49,7 @@ export class PollutionFormComponent implements OnInit {
   @Output() declared = new EventEmitter<Pollution>();
 
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly addressService = inject(AddressService);
 
   readonly types = POLLUTION_TYPES;
   readonly today = todayIso(); // borne max du champ date
@@ -80,11 +83,34 @@ export class PollutionFormComponent implements OnInit {
   readonly photoPreview = signal<string | null>(null);
   readonly previewError = signal(false);
 
+  // Suggestions d'adresse pour le champ Lieu
+  readonly suggestions = signal<AddressSuggestion[]>([]);
+  readonly activeSuggestion = signal(-1); // suggestion choisie au clavier (-1 : aucune)
+  private lieuHasFocus = false; // on ne cherche que pendant la saisie, pas au pré-remplissage
+
   // Photo envoyée depuis l'appareil
   readonly compressing = signal(false);
   readonly fileError = signal<string | null>(null);
 
   constructor() {
+    // Suggestions d'adresse : on attend une pause de 300 ms dans la frappe (debounceTime),
+    // puis on interroge l'API. switchMap annule la recherche précédente si l'on tape encore.
+    this.form.controls.lieu.valueChanges
+      .pipe(
+        map((text) => text.trim()),
+        debounceTime(300),
+        switchMap((text) =>
+          !this.lieuHasFocus || text.length < 3
+            ? of([])
+            : this.addressService.search(text).pipe(catchError(() => of([]))), // API injoignable : pas de suggestion
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe((suggestions) => {
+        this.suggestions.set(suggestions);
+        this.activeSuggestion.set(-1);
+      });
+
     // Met à jour l'aperçu dès que l'URL saisie est valide
     this.form.controls.photoUrl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
       const url = value.trim();
@@ -162,6 +188,46 @@ export class PollutionFormComponent implements OnInit {
     return this.form.controls[name].hasError(error);
   }
 
+  onLieuFocus(): void {
+    this.lieuHasFocus = true;
+  }
+
+  onLieuBlur(): void {
+    this.lieuHasFocus = false;
+    this.suggestions.set([]);
+  }
+
+  /** Clavier dans le champ Lieu : flèches pour parcourir les suggestions, Entrée pour choisir, Échap pour fermer. */
+  onLieuKeydown(event: KeyboardEvent): void {
+    const count = this.suggestions().length;
+    if (!count) return;
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      const step = event.key === 'ArrowDown' ? 1 : -1;
+      this.activeSuggestion.update((index) => (index + step + count) % count);
+    } else if (event.key === 'Enter' && this.activeSuggestion() >= 0) {
+      event.preventDefault(); // ne pas envoyer le formulaire
+      this.chooseSuggestion(this.suggestions()[this.activeSuggestion()]);
+    } else if (event.key === 'Escape') {
+      this.suggestions.set([]);
+    }
+  }
+
+  /** Une adresse choisie remplit le lieu, la latitude et la longitude. */
+  chooseSuggestion(suggestion: AddressSuggestion): void {
+    const { lieu, latitude, longitude } = this.form.controls;
+    lieu.setValue(suggestion.label, { emitEvent: false }); // pas de nouvelle recherche
+    latitude.setValue(round6(suggestion.latitude));
+    longitude.setValue(round6(suggestion.longitude));
+    for (const control of [lieu, latitude, longitude]) {
+      control.markAsDirty();
+      control.markAsTouched();
+    }
+    this.suggestions.set([]);
+    this.geoMessage.set({ kind: 'ok', text: 'Coordonnées remplies d’après l’adresse choisie.' });
+  }
+
   /** Remplit latitude et longitude avec la position de l'appareil. */
   useMyPosition(): void {
     if (!('geolocation' in navigator)) {
@@ -182,6 +248,7 @@ export class PollutionFormComponent implements OnInit {
         longitude.setValue(round6(coords.longitude));
         latitude.markAsTouched();
         longitude.markAsTouched();
+        this.fillLieuFromPosition(coords.latitude, coords.longitude);
 
         this.locating.set(false);
         this.geoMessage.set({
@@ -219,6 +286,21 @@ export class PollutionFormComponent implements OnInit {
       lieu: value.lieu.trim(),
       photoUrl: value.photoUrl.trim() || null,
       indice: value.indice ?? null,
+    });
+  }
+
+  /** Lieu encore vide : on y met l'adresse la plus proche de la position trouvée. */
+  private fillLieuFromPosition(lat: number, lon: number): void {
+    const { lieu } = this.form.controls;
+    if (lieu.value.trim()) return;
+    this.addressService.reverse(lat, lon).subscribe({
+      next: (address) => {
+        if (!address) return;
+        lieu.setValue(address.label, { emitEvent: false });
+        lieu.markAsDirty();
+        lieu.markAsTouched();
+      },
+      error: () => {}, // sans adresse, l'utilisateur écrit le lieu lui-même
     });
   }
 }

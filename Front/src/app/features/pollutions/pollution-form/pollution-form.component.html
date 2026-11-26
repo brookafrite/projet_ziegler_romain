@@ -80,11 +80,32 @@
 
     <div class="field">
       <label for="lieu">Lieu <span class="req" aria-hidden="true">*</span></label>
-      <input id="lieu" type="text" formControlName="lieu"
-             placeholder="Ex. : Berge nord, à 200 m du pont"
-             [attr.aria-invalid]="showError('lieu')" />
+      <!-- Champ avec suggestions d'adresse (rôle « combobox » pour les lecteurs d'écran) -->
+      <div class="autocomplete">
+        <input id="lieu" type="text" formControlName="lieu" autocomplete="off"
+               placeholder="Ex. : 12 rue de la République, Lyon"
+               role="combobox" aria-autocomplete="list" aria-controls="lieu-suggestions"
+               [attr.aria-expanded]="suggestions().length > 0"
+               [attr.aria-activedescendant]="activeSuggestion() >= 0 ? 'lieu-suggestion-' + activeSuggestion() : null"
+               [attr.aria-invalid]="showError('lieu')"
+               (focus)="onLieuFocus()" (blur)="onLieuBlur()" (keydown)="onLieuKeydown($event)" />
+        @if (suggestions().length) {
+          <ul id="lieu-suggestions" class="suggestions" role="listbox" aria-label="Adresses proposées">
+            @for (suggestion of suggestions(); track suggestion.label; let i = $index) {
+              <!-- mousedown sans effet : le champ garde le focus, le clic peut choisir l'adresse -->
+              <li role="option" [id]="'lieu-suggestion-' + i"
+                  [class.active]="i === activeSuggestion()" [attr.aria-selected]="i === activeSuggestion()"
+                  (mousedown)="$event.preventDefault()" (click)="chooseSuggestion(suggestion)">
+                {{ suggestion.label }}
+              </li>
+            }
+          </ul>
+        }
+      </div>
       @if (showError('lieu')) {
         <small class="error" role="alert">Indiquez le lieu.</small>
+      } @else {
+        <small class="hint">Tapez une adresse pour voir des suggestions, ou décrivez le lieu librement.</small>
       }
     </div>
 

@@ -5,6 +5,27 @@
 
 .icon { flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
+/* Suggestions d'adresse, sous le champ Lieu */
+.autocomplete { position: relative; }
+.suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 16rem;
+  margin: 0;
+  padding: .25rem 0;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  box-shadow: 0 12px 24px -14px rgba(0, 0, 0, 0.4);
+}
+.suggestions li { padding: .5rem .75rem; cursor: pointer; }
+.suggestions li:hover, .suggestions li.active { background: var(--accent-soft); color: var(--accent); }
+
 /* Photo depuis l'appareil : un bouton (le libellé) qui ouvre le sélecteur de fichier */
 .label { font-size: .92rem; font-weight: 600; }
 .file-button { justify-self: start; cursor: pointer; }
