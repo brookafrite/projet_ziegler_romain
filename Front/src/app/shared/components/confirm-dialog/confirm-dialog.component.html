@@ -6,8 +6,8 @@
     <h2 id="confirm-title">{{ question.title }}</h2>
     <p id="confirm-message">{{ question.message }}</p>
     <div class="buttons">
-      <!-- autofocus sur Annuler : la touche Entrée ne supprime pas par erreur -->
-      <button type="button" class="secondary" autofocus (click)="confirmService.answer(false)">Annuler</button>
+      <!-- Le focus va sur Annuler (voir le composant) : la touche Entrée ne supprime pas par erreur -->
+      <button type="button" class="secondary" (click)="confirmService.answer(false)">Annuler</button>
       <button type="button" [class]="question.danger ? 'danger filled' : 'primary'"
               (click)="confirmService.answer(true)">{{ question.confirmLabel }}</button>
     </div>

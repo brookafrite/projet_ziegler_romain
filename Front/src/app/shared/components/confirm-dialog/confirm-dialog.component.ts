@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, afterRenderEffect, inject, viewChild } from '@angular/core';
 
 import { ConfirmService } from '../../../core/services/confirm.service';
 
@@ -18,10 +18,14 @@ export class ConfirmDialogComponent {
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 
   constructor() {
-    // Ouvre ou ferme la fenêtre selon qu'une question est en cours
-    effect(() => {
+    // Ouvre ou ferme la fenêtre selon qu'une question est en cours.
+    // afterRenderEffect : après l'affichage, quand les boutons existent déjà (le focus peut aller sur « Annuler »)
+    afterRenderEffect(() => {
       const dialog = this.dialog().nativeElement;
-      if (this.confirmService.question() && !dialog.open) dialog.showModal();
+      if (this.confirmService.question() && !dialog.open) {
+        dialog.showModal();
+        dialog.querySelector<HTMLButtonElement>('button.secondary')?.focus();
+      }
       if (!this.confirmService.question() && dialog.open) dialog.close();
     });
   }
