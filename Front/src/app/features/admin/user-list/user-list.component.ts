@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy, OnInit, inject, signal } from '@angular/core';
 import { User } from '../../../core/models/user.model';
-import { AuthService } from '../../../core/services/auth.service';
+import { Store } from '@ngxs/store';
+import { Logout } from '../../../core/states/auth/auth.actions';
+import { AuthState } from '../../../core/states/auth/auth.state';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { UserService } from '../../../core/services/user.service';
@@ -13,7 +15,9 @@ import { UserService } from '../../../core/services/user.service';
 })
 export class UserListComponent implements OnInit {
   private readonly userService = inject(UserService);
-  protected readonly authService = inject(AuthService);
+  private readonly store = inject(Store);
+  /** Utilisateur connecté, lu dans le store NGXS. */
+  private readonly currentUser = this.store.selectSignal(AuthState.user);
   private readonly toastService = inject(ToastService);
   private readonly confirmService = inject(ConfirmService);
 
@@ -36,7 +40,7 @@ export class UserListComponent implements OnInit {
   }
 
   isCurrentUser(user: User): boolean {
-    return this.authService.currentUser()?.id === user.id;
+    return this.currentUser()?.id === user.id;
   }
 
   async remove(user: User): Promise<void> {
@@ -52,7 +56,7 @@ export class UserListComponent implements OnInit {
 
     this.userService.delete(user.id).subscribe({
       next: () => {
-        if (this.isCurrentUser(user)) this.authService.logout(); // son propre compte : on se déconnecte
+        if (this.isCurrentUser(user)) this.store.dispatch(new Logout()); // son propre compte : on se déconnecte
         this.users.update((list) => list.filter((u) => u.id !== user.id));
         this.deletingId.set(null);
         this.toastService.success(`Le compte de ${user.prenom} ${user.nom} a été supprimé.`);

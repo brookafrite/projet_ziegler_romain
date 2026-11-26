@@ -4,7 +4,7 @@
   } @else if (pollution(); as pollution) {
     <app-pollution-recap [pollution]="pollution">
       <!-- Modifier et supprimer : seulement pour l'auteur du signalement ou un admin -->
-      @if (authService.canManage(pollution.auteurId)) {
+      @if (canManage()(pollution.auteurId)) {
         <a class="primary" [routerLink]="['/pollutions', pollution.id, 'modifier']">Modifier</a>
         <button type="button" class="danger" (click)="remove(pollution)" [disabled]="deleting()">
           {{ deleting() ? 'Suppression…' : 'Supprimer' }}

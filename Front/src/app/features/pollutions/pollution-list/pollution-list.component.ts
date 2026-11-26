@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
 import { POLLUTION_TYPES, Pollution } from '../models/pollution.model';
-import { AuthService } from '../../../core/services/auth.service';
+import { Store } from '@ngxs/store';
+import { AuthState } from '../../../core/states/auth/auth.state';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { PollutionService } from '../services/pollution.service';
@@ -56,7 +57,12 @@ function normalize(text: string): string {
 })
 export class PollutionListComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);
-  protected readonly authService = inject(AuthService);
+  private readonly store = inject(Store);
+
+  // État d'authentification, lu dans le store NGXS par ses sélecteurs
+  protected readonly isAuthenticated = this.store.selectSignal(AuthState.isAuthenticated);
+  protected readonly canManage = this.store.selectSignal(AuthState.canManage);
+  private readonly currentUser = this.store.selectSignal(AuthState.user);
   private readonly toastService = inject(ToastService);
   private readonly confirmService = inject(ConfirmService);
   private readonly router = inject(Router);
@@ -86,7 +92,7 @@ export class PollutionListComponent implements OnInit {
 
   /** Id de l'utilisateur dont on affiche les pollutions (?auteur=moi), ignoré si personne n'est connecté. */
   private readonly onlyAuthorId = computed(() =>
-    this.auteur() === 'moi' ? this.authService.currentUser()?.id : undefined,
+    this.auteur() === 'moi' ? this.currentUser()?.id : undefined,
   );
 
   /** Liste affichée : recalculée automatiquement dès qu'un filtre ou la liste change. */
