@@ -1,12 +1,17 @@
 /* Les styles communs (feuille, champs, boutons, badge, liste...) sont dans src/styles.css */
 
 /* Filtres */
-.filters { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.filters { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 .filters legend { margin-bottom: 0; }
 .search { grid-column: 1 / -1; }
 
-.summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1rem; }
+.summary { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
 .summary p { margin: 0; }
+
+/* Tri : à droite du nombre de résultats */
+.sort { display: flex; align-items: center; gap: .5rem; margin-left: auto; }
+.sort label { margin: 0; white-space: nowrap; }
+.sort select { width: auto; }
 
 @media (max-width: 560px) {
   .filters { grid-template-columns: 1fr; }

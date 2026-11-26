@@ -12,3 +12,15 @@ export function pollutionLevel(indice: number | null | undefined): PollutionLeve
   if (indice <= 100) return 'Élevée';
   return 'Dangereuse';
 }
+
+/**
+ * Les niveaux dans l'ordre, chacun avec sa valeur dans l'adresse (?niveau=elevee) :
+ * sans accent ni espace, pour une adresse lisible.
+ */
+export const POLLUTION_LEVELS: readonly { value: string; label: PollutionLevel }[] = [
+  { value: 'non-evalue', label: 'Non évalué' },
+  { value: 'faible', label: 'Faible' },
+  { value: 'moderee', label: 'Modérée' },
+  { value: 'elevee', label: 'Élevée' },
+  { value: 'dangereuse', label: 'Dangereuse' },
+];
