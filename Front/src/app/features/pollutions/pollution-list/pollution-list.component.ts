@@ -7,9 +7,10 @@ import { POLLUTION_TYPES, Pollution } from '../models/pollution.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
+import { POLLUTION_LEVELS, pollutionLevel } from '../../../shared/utils/pollution-level';
 
 /** Nom des critères de filtre, tels qu'ils apparaissent dans l'adresse (?recherche=…&type=…). */
-type FilterName = 'recherche' | 'type' | 'du' | 'au';
+type FilterName = 'recherche' | 'type' | 'du' | 'au' | 'niveau';
 
 /** Minuscules et sans accents, pour une recherche plus tolérante (« depot » trouve « Dépôt »). */
 function normalize(text: string): string {
@@ -31,6 +32,7 @@ export class PollutionListComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   readonly types = POLLUTION_TYPES;
+  readonly levels = POLLUTION_LEVELS;
 
   // Données reçues de l'API et état de l'écran
   readonly pollutions = signal<Pollution[]>([]);
@@ -44,6 +46,7 @@ export class PollutionListComponent implements OnInit {
   readonly type = input<string>();
   readonly du = input<string>(); // date de début, AAAA-MM-JJ
   readonly au = input<string>(); // date de fin, AAAA-MM-JJ
+  readonly niveau = input<string>(); // niveau de dangerosité : faible, moderee… (voir POLLUTION_LEVELS)
 
   /** Liste affichée : recalculée automatiquement dès qu'un filtre ou la liste change. */
   readonly filtered = computed(() => {
@@ -51,9 +54,12 @@ export class PollutionListComponent implements OnInit {
     const type = this.type();
     const from = this.du();
     const to = this.au();
+    // Même calcul que le badge de chaque pollution : pollutionLevel(), les seuils sont au même endroit
+    const level = POLLUTION_LEVELS.find((l) => l.value === this.niveau())?.label;
 
     return this.pollutions()
       .filter((p) => !type || p.type === type)
+      .filter((p) => !level || pollutionLevel(p.indice) === level)
       // Les dates AAAA-MM-JJ se comparent directement comme du texte
       .filter((p) => !from || p.dateObservation >= from)
       .filter((p) => !to || p.dateObservation <= to)
@@ -61,7 +67,9 @@ export class PollutionListComponent implements OnInit {
       .sort((a, b) => b.dateObservation.localeCompare(a.dateObservation)); // plus récentes d'abord
   });
 
-  readonly hasFilters = computed(() => !!(this.recherche() || this.type() || this.du() || this.au()));
+  readonly hasFilters = computed(
+    () => !!(this.recherche() || this.type() || this.du() || this.au() || this.niveau()),
+  );
 
   ngOnInit(): void {
     this.pollutionService.getAll().subscribe({

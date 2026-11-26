@@ -9,9 +9,9 @@ import { PollutionListComponent } from './pollution-list.component';
 
 const base = { description: '', latitude: 45, longitude: 4, photoUrl: null };
 const POLLUTIONS: Pollution[] = [
-  { ...base, id: 1, titre: 'Bidons au canal', type: 'Chimique', dateObservation: '2026-10-02', lieu: 'Canal' },
-  { ...base, id: 2, titre: 'Sacs plastiques', type: 'Plastique', dateObservation: '2026-10-09', lieu: 'Parc' },
-  { ...base, id: 3, titre: 'Gravats', type: 'Dépôt sauvage', dateObservation: '2026-09-21', lieu: 'Forêt' },
+  { ...base, id: 1, titre: 'Bidons au canal', type: 'Chimique', dateObservation: '2026-10-02', lieu: 'Canal', indice: 75 },
+  { ...base, id: 2, titre: 'Sacs plastiques', type: 'Plastique', dateObservation: '2026-10-09', lieu: 'Parc', indice: 30 },
+  { ...base, id: 3, titre: 'Gravats', type: 'Dépôt sauvage', dateObservation: '2026-09-21', lieu: 'Forêt', indice: null },
 ];
 
 describe('PollutionListComponent', () => {
@@ -56,6 +56,19 @@ describe('PollutionListComponent', () => {
 
     setQueryParam('au', '2026-10-05');
     expect(component.filtered().map((p) => p.id)).toEqual([1]);
+  });
+
+  it('should filter by danger level, « Non évalué » included', () => {
+    setQueryParam('niveau', 'elevee');
+    expect(component.filtered().map((p) => p.id)).toEqual([1]);
+
+    setQueryParam('niveau', 'non-evalue');
+    expect(component.filtered().map((p) => p.id)).toEqual([3]);
+  });
+
+  it('should ignore an unknown level in the address', () => {
+    setQueryParam('niveau', 'bidon');
+    expect(component.filtered().length).toBe(3);
   });
 
   it('should write a criterion in the address, keeping the others', () => {

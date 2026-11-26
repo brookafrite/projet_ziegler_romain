@@ -1,7 +1,7 @@
 /* Les styles communs (feuille, champs, boutons, badge, liste...) sont dans src/styles.css */
 
 /* Filtres */
-.filters { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.filters { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 .filters legend { margin-bottom: 0; }
 .search { grid-column: 1 / -1; }
 

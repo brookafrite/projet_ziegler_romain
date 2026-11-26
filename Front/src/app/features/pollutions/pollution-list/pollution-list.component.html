@@ -28,6 +28,16 @@
     </div>
 
     <div class="field">
+      <label for="niveau">Dangerosité</label>
+      <select id="niveau" [ngModel]="niveau() ?? ''" (ngModelChange)="setFilter('niveau', $event)">
+        <option value="">Tous les niveaux</option>
+        @for (level of levels; track level.value) {
+          <option [value]="level.value">{{ level.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
       <label for="from">Observée depuis le</label>
       <input id="from" type="date" [max]="au() || null"
              [ngModel]="du() ?? ''" (ngModelChange)="setFilter('du', $event)" />
