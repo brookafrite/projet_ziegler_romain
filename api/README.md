@@ -79,6 +79,15 @@ Sur une base neuve, `sync()` crée directement la table avec cette colonne.
 | `nom`      | varchar     | oui |
 | `prenom`   | varchar     | oui |
 | `email`    | varchar     | oui, unique, format email |
+| `role`     | varchar(20) | oui, `utilisateur` (par défaut) ou `admin` |
+
+La colonne `role` (TP05) a été ajoutée **à la main** dans pgAdmin. On devient admin en
+changeant la valeur directement dans la base : l'API ignore un rôle envoyé à l'inscription.
+
+```sql
+ALTER TABLE users ADD COLUMN role varchar(20) NOT NULL DEFAULT 'utilisateur';
+UPDATE users SET role = 'admin' WHERE login = 'romainziegler';
+```
 
 Les tables sont créées automatiquement au démarrage (`sequelize.sync()`), puis remplie avec `seed.ts` si elle est vide.
 
@@ -189,8 +198,8 @@ Le Front appelle cette API à l'adresse `apiUrl` de `Front/src/environments/` :
 
 | Service Angular   | Fichier                                         | Routes appelées      |
 |-------------------|-------------------------------------------------|----------------------|
-| `PollutionService` | `Front/src/app/pollution/services/pollution.service.ts` | `/api/pollutions` |
-| `UserService`      | `Front/src/app/user/services/user.service.ts`           | `/api/users`      |
+| `PollutionService` | `Front/src/app/features/pollutions/services/pollution.service.ts` | `/api/pollutions` |
+| `UserService`      | `Front/src/app/core/services/user.service.ts`           | `/api/users`      |
 
 Pour l'indice de dangerosité (exercice 04), le Front traduit le nombre en niveau :
 
@@ -202,7 +211,7 @@ Pour l'indice de dangerosité (exercice 04), le Front traduit le nombre en nivea
 | 51-100 | Élevée     | orange |
 | 101+   | Dangereuse | rouge |
 
-Les seuils sont écrits une seule fois, dans `Front/src/app/pollution/models/pollution-level.ts`.
+Les seuils sont écrits une seule fois, dans `Front/src/app/shared/utils/pollution-level.ts`.
 
 L'API simulée dans le navigateur des TP02-TP03 a été retirée : toutes les données
 viennent maintenant de PostgreSQL.

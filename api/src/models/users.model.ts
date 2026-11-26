@@ -1,5 +1,9 @@
 import { Sequelize, DataTypes, Model, Optional, ModelStatic } from "sequelize";
 
+/** Rôles possibles : seul un admin voit la liste des utilisateurs. */
+export const USER_ROLES = ["utilisateur", "admin"] as const;
+export type UserRole = (typeof USER_ROLES)[number];
+
 export interface UserAttributes {
   id: number;
   login: string;
@@ -7,9 +11,10 @@ export interface UserAttributes {
   nom: string;
   prenom: string;
   email: string;
+  role: UserRole;
 }
 
-export interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+export interface UserCreationAttributes extends Optional<UserAttributes, "id" | "role"> {}
 
 export interface UserInstance
   extends Model<UserAttributes, UserCreationAttributes>,
@@ -52,6 +57,14 @@ export default function defineUsers(sequelize: Sequelize, _seq?: typeof Sequeliz
         allowNull: false,
         unique: true,
         validate: { isEmail: true }
+      },
+      // Colonne ajoutée à la main dans pgAdmin. Un nouveau compte est toujours « utilisateur » :
+      // on devient admin en changeant la valeur directement dans la base.
+      role: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: "utilisateur",
+        validate: { isIn: [USER_ROLES as unknown as string[]] }
       }
     },
     {
