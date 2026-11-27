@@ -20,46 +20,83 @@ const KINDS: TreeKind[] = ['sapin', 'feuillu', 'bouleau'];
 /**
  * Petit générateur de nombres « au hasard » mais reproductible : la même graine donne
  * toujours la même suite. Chaque arbre garde ainsi sa place d'une visite à l'autre.
+ *
+ * C'est l'algorithme « mulberry32 » : il mélange bien les bits, si bien que deux graines
+ * voisines (id 1, id 2…) donnent des suites sans rapport. Un générateur plus simple
+ * donnait des valeurs liées d'un id au suivant, et les arbres se rangeaient en lignes.
  */
 export function seededRandom(seed: number): () => number {
-  let state = (seed * 9301 + 49297) % 233280;
+  let state = Math.imul(seed, 0x9e3779b9) >>> 0; // écarte les graines voisines
   return () => {
-    state = (state * 9301 + 49297) % 233280;
-    return state / 233280;
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296; // un nombre entre 0 et 1
   };
 }
+
+/** Nombre d'emplacements essayés pour chaque arbre : on garde le plus éloigné des autres. */
+const CANDIDATES = 10;
+/**
+ * La profondeur (y) ne fait que 105 px pour 920 px de large : on l'étire pour mesurer
+ * les distances, sinon deux arbres l'un derrière l'autre compteraient comme « loin ».
+ */
+const DEPTH_STRETCH = 4;
 
 /**
  * Plante un arbre par pollution nettoyée, dans l'ordre des nettoyages (les plus anciens
  * poussent en premier). Fonction pure : mêmes pollutions ⇒ même forêt.
+ *
+ * Pour que la forêt paraisse naturelle (ni lignes, ni paquets), chaque arbre tire plusieurs
+ * emplacements au hasard et garde celui qui est le plus loin des arbres déjà plantés
+ * (méthode du « meilleur candidat »). Un nouveau nettoyage ne déplace pas les arbres existants.
  */
 export function plantTrees(pollutions: readonly Pollution[]): ForestTree[] {
   const cleaned = pollutions
     .filter((p) => p.statut === 'nettoyee')
     .sort((a, b) => (a.dateNettoyage ?? '').localeCompare(b.dateNettoyage ?? '') || (a.id ?? 0) - (b.id ?? 0));
 
-  return (
-    cleaned
-      .map((pollution, index) => {
-        const id = pollution.id ?? index;
-        const random = seededRandom(id + 1);
-        const x = 40 + random() * (WIDTH - 80);
-        const y = GROUND_TOP + random() * (GROUND_BOTTOM - GROUND_TOP);
-        const depth = (y - GROUND_TOP) / (GROUND_BOTTOM - GROUND_TOP); // 0 au fond, 1 devant
-        const scale = Math.round((0.8 + depth * 0.45) * 100) / 100;
-        return {
-          pollution,
-          // Pas d'arbre dans l'eau : s'il tombe dans la rivière, on le pousse sur la rive la plus proche
-          x: Math.round(awayFromRiver(x, y, TREE_FOOT * scale)),
-          y: Math.round(y),
-          scale,
-          kind: KINDS[id % KINDS.length],
-          delay: index * 120,
-        };
-      })
-      // On dessine du fond vers l'avant : les arbres proches passent devant les autres
-      .sort((a, b) => a.y - b.y)
-  );
+  const placed: { x: number; y: number }[] = [];
+  const trees = cleaned.map((pollution, index) => {
+    const id = pollution.id ?? index;
+    const random = seededRandom(id + 1);
+    let best: { x: number; y: number; scale: number } | null = null;
+    let bestDistance = -1;
+    for (let i = 0; i < CANDIDATES; i++) {
+      const x = 40 + random() * (WIDTH - 80);
+      const y = GROUND_TOP + random() * (GROUND_BOTTOM - GROUND_TOP);
+      const depth = (y - GROUND_TOP) / (GROUND_BOTTOM - GROUND_TOP); // 0 au fond, 1 devant
+      const scale = Math.round((0.8 + depth * 0.45) * 100) / 100;
+      if (inRiver(x, y, TREE_FOOT * scale)) continue; // pas d'arbre dans l'eau
+      const distance = nearestDistance(placed, x, y);
+      if (distance > bestDistance) {
+        best = { x, y, scale };
+        bestDistance = distance;
+      }
+    }
+    // Cas très rare : tous les essais tombaient dans l'eau ; on pousse le dernier sur la rive
+    if (!best) {
+      const y = GROUND_TOP + random() * (GROUND_BOTTOM - GROUND_TOP);
+      const scale = Math.round((0.8 + ((y - GROUND_TOP) / (GROUND_BOTTOM - GROUND_TOP)) * 0.45) * 100) / 100;
+      best = { x: awayFromRiver(40 + random() * (WIDTH - 80), y, TREE_FOOT * scale), y, scale };
+    }
+    const tree = { x: Math.round(best.x), y: Math.round(best.y) };
+    placed.push(tree);
+    return { pollution, ...tree, scale: best.scale, kind: KINDS[id % KINDS.length], delay: index * 120 };
+  });
+
+  // On dessine du fond vers l'avant : les arbres proches passent devant les autres
+  return trees.sort((a, b) => a.y - b.y);
+}
+
+/** Distance du point (x, y) à l'arbre déjà planté le plus proche (profondeur étirée). */
+function nearestDistance(placed: readonly { x: number; y: number }[], x: number, y: number): number {
+  let nearest = Infinity;
+  for (const tree of placed) {
+    nearest = Math.min(nearest, Math.hypot(tree.x - x, (tree.y - y) * DEPTH_STRETCH));
+  }
+  return nearest;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -233,22 +270,22 @@ export interface ForestAnimal {
   x: number;
   y: number; // pied de l'animal
   scale: number;
-  back: boolean; // vrai : dessiné derrière les arbres (au loin, ou sur l'eau)
+  back: boolean; // vrai : dessiné derrière les arbres (le cerf, au loin sur la colline)
 }
 
 /** Un nouvel animal tous les ANIMAL_STEP nettoyages. */
 export const ANIMAL_STEP = 5;
 
-const DUCKS_Y = 352;
+const DUCKS_Y = 396; // près de nous, là où l'eau est large : les arbres ne les cachent pas
 
 /** Les animaux, dans l'ordre où ils reviennent. Leurs places sont fixes, hors de l'eau (sauf les canards). */
 const PLACES: Omit<ForestAnimal, 'threshold'>[] = [
-  { kind: 'lapin', name: 'un lapin', returned: 'Un lapin est revenu', x: 720, y: 400, scale: 1, back: false },
-  { kind: 'canards', name: 'des canards', returned: 'Des canards sont revenus', x: Math.round(riverAt(DUCKS_Y)!.center), y: DUCKS_Y, scale: 0.9, back: true },
-  { kind: 'renard', name: 'un renard', returned: 'Un renard est revenu', x: 150, y: 404, scale: 1, back: false },
-  { kind: 'cerf', name: 'un cerf', returned: 'Un cerf est revenu', x: 880, y: Math.round(hillTop(FRONT_HILL, 880) + 14), scale: 0.8, back: true },
-  { kind: 'hibou', name: 'un hibou', returned: 'Un hibou est revenu', x: 975, y: 398, scale: 1, back: false },
-  { kind: 'papillons', name: 'des papillons', returned: 'Des papillons sont revenus', x: 600, y: 330, scale: 1, back: false },
+  { kind: 'lapin', name: 'un lapin', returned: 'Un lapin est revenu', x: 720, y: 402, scale: 1.5, back: false },
+  { kind: 'canards', name: 'des canards', returned: 'Des canards sont revenus', x: Math.round(riverAt(DUCKS_Y)!.center), y: DUCKS_Y, scale: 1.4, back: false },
+  { kind: 'renard', name: 'un renard', returned: 'Un renard est revenu', x: 150, y: 406, scale: 1.5, back: false },
+  { kind: 'cerf', name: 'un cerf', returned: 'Un cerf est revenu', x: 880, y: Math.round(hillTop(FRONT_HILL, 880) + 14), scale: 1.1, back: true },
+  { kind: 'hibou', name: 'un hibou', returned: 'Un hibou est revenu', x: 972, y: 400, scale: 1.4, back: false },
+  { kind: 'papillons', name: 'des papillons', returned: 'Des papillons sont revenus', x: 600, y: 330, scale: 1.4, back: false },
 ];
 export const ANIMALS: readonly ForestAnimal[] = PLACES.map((animal, index) => ({ ...animal, threshold: (index + 1) * ANIMAL_STEP }));
 

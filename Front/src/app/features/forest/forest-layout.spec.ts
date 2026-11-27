@@ -103,3 +103,29 @@ describe('forest animals', () => {
     }
   });
 });
+
+describe('tree spreading', () => {
+  const cleaned = (count: number): Pollution[] =>
+    Array.from({ length: count }, (_, i) => ({
+      ...base, id: i + 1, statut: 'nettoyee' as const, dateNettoyage: `2026-11-${String((i % 28) + 1).padStart(2, '0')}`,
+    }));
+
+  it('should keep trees apart, so the forest looks natural', () => {
+    const trees = plantTrees(cleaned(40));
+    for (const a of trees) {
+      for (const b of trees) {
+        if (a === b) continue;
+        expect(Math.hypot(a.x - b.x, (a.y - b.y) * 4)).toBeGreaterThan(30);
+      }
+    }
+  });
+
+  it('should not move the existing trees when a new one is planted', () => {
+    const before = plantTrees(cleaned(20));
+    const after = plantTrees([...cleaned(20), { ...base, id: 99, statut: 'nettoyee', dateNettoyage: '2026-12-31' }]);
+    for (const tree of before) {
+      const same = after.find((t) => t.pollution.id === tree.pollution.id);
+      expect([same?.x, same?.y]).toEqual([tree.x, tree.y]);
+    }
+  });
+});

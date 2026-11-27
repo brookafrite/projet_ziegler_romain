@@ -47,7 +47,7 @@
       <path class="tuft" [attr.transform]="'translate(' + tuft.x + ' ' + tuft.y + ')'" d="M-4,0 L-6,-7 M0,0 L0,-9 M4,0 L6,-7" />
     }
 
-    <!-- Les animaux du fond (cerf sur la colline, canards sur l'eau) : derrière les arbres -->
+    <!-- Les animaux du fond (le cerf sur la colline) : derrière les arbres -->
     @for (animal of fauna().animals; track animal.kind; let i = $index) {
       @if (animal.back) {
         <g class="animal" [attr.transform]="'translate(' + animal.x + ' ' + animal.y + ') scale(' + animal.scale + ')'">

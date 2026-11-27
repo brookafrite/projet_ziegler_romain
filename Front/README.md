@@ -114,7 +114,7 @@ La **forêt** (`features/forest/`, composant `ForestLandscape`, au cœur de la p
 
 | Élément | Principe |
 |---|---|
-| `plantTrees()` (`forest-layout.ts`) | fonction pure : un arbre par pollution nettoyée, placé à partir de son id (la forêt ne bouge pas d'une visite à l'autre), plus petit au fond pour la perspective, 3 espèces, dessiné du fond vers l'avant |
+| `plantTrees()` (`forest-layout.ts`) | fonction pure : un arbre par pollution nettoyée, placé à partir de son id (la forêt ne bouge pas d'une visite à l'autre). Pour une forêt naturelle, chaque arbre essaie 10 emplacements tirés au hasard (générateur `mulberry32`, reproductible) et garde le plus éloigné des arbres déjà plantés (méthode du « meilleur candidat ») ; plus petit au fond pour la perspective, 3 espèces, dessiné du fond vers l'avant |
 | Rivière | `riverAt(y)` (`forest-layout.ts`) donne le milieu et la largeur de la rivière à chaque hauteur : elle sort de derrière la colline, serpente (un sinus) et s'élargit vers l'avant (perspective). `buildRiver()` en tire le contour SVG et deux reflets en pointillés qui « coulent » (animation de `stroke-dashoffset`). Un arbre qui tomberait dans l'eau est poussé sur la rive la plus proche ; buissons et herbes du décor l'évitent aussi ; des roseaux bordent l'eau |
 | Animaux | tous les 5 nettoyages, un animal revient (`animalsFor()` dans `forest-layout.ts`, fonction pure) : lapin, canards sur la rivière, renard, cerf, hibou (ses yeux brillent la nuit), papillons. Chacun a sa place fixe et sa petite animation CSS ; sous le paysage, une phrase dit combien de nettoyages manquent pour le prochain |
 | Dessin | SVG : ciel, soleil, nuages qui dérivent, collines. En thème sombre : la nuit, avec lune et étoiles (couleurs `light-dark()`) |
