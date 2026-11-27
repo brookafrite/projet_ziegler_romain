@@ -125,14 +125,13 @@ La **forêt** (`features/forest/`, composant `ForestLandscape`, au cœur de la p
 
 La page d'accueil (`features/home/`, adresse `/`) : on y revient en cliquant sur le logo.
 
+La page tient en **3 blocs** pour ne pas trop défiler :
+
 | Bloc | Contenu |
 |---|---|
-| Présentation | « Repérez, signalez, nettoyez. », boutons Signaler une pollution / Voir les pollutions |
-| La forêt | chiffres clés (nettoyées, en cours, à nettoyer, observées ce mois-ci), barre de progression, puis le paysage `ForestLandscape` ; chaque chiffre mène à la liste filtrée |
-| Par dangerosité | une barre par niveau, aux couleurs des badges ; un clic ouvre `/pollutions?niveau=…` |
-| Derniers signalements | les 3 observations les plus récentes, avec leur miniature (`PollutionThumb`, partagée avec la liste) |
-| Mes contributions | une fois connecté : nombre de pollutions signalées et nettoyées, lien vers `?auteur=moi` |
-| Comment ça marche | Observer, Signaler, Nettoyer |
+| 1. Présentation | « Repérez, signalez, nettoyez. », boutons Signaler une pollution / Voir les pollutions ; dessous, « comment ça marche » en 3 étapes courtes (Observer, Signaler, Nettoyer) ; une fois connecté, une ligne « Mes contributions » (pollutions signalées et nettoyées, lien vers `?auteur=moi`) |
+| 2. La forêt | chiffres clés (nettoyées, en cours, à nettoyer, observées ce mois-ci), barre de progression, puis le paysage `ForestLandscape` ; chaque chiffre mène à la liste filtrée |
+| 3. Dangerosité et derniers signalements | côte à côte (l'un sous l'autre sur petit écran, sous 760 px). Une barre par niveau, aux couleurs des badges, un clic ouvre `/pollutions?niveau=…` ; les 3 observations les plus récentes en lignes compactes, avec leur miniature (`PollutionThumb`, partagée avec la liste) |
 
 Tous les chiffres viennent de `homeStats()` (`home-stats.ts`), une fonction pure testée : elle reçoit
 la liste des pollutions (et la date du jour) et ne modifie jamais la liste reçue.

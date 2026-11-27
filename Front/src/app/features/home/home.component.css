@@ -1,7 +1,7 @@
 /* La page d'accueil enchaîne plusieurs « pages » du carnet */
 .home { display: grid; gap: 1.5rem; }
 /* Dans une grille, margin: auto (venu de .sheet) rétrécirait la page à son contenu : pleine largeur */
-.home > .sheet { width: 100%; }
+.home > .sheet, .duo > .sheet { width: 100%; }
 .loading { text-align: center; }
 
 /* 1. Présentation */
@@ -9,9 +9,47 @@
 .lead { margin: 0 0 1.4rem; max-width: 52ch; color: var(--muted); font-size: 1.08rem; }
 .cta { display: flex; flex-wrap: wrap; gap: .75rem; }
 
-.section-header h2, .how-title, .contributions h2 { margin: 0 0 .3rem; font-size: 1.4rem; font-weight: 600; }
+.section-header h2 { margin: 0 0 .3rem; font-size: 1.4rem; font-weight: 600; }
 .section-header p { margin: 0; color: var(--muted); }
 .row-header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+
+/* Comment ça marche : 3 étapes courtes sous les boutons, séparées par un trait */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1.6rem 0 0;
+  padding: 1.2rem 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+.steps li { display: flex; gap: .6rem; align-items: start; }
+.steps strong { display: block; }
+.steps .hint { font-size: .88rem; }
+.step-number {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+}
+
+/* Mes contributions : une seule ligne, sous les étapes */
+.contributions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .4rem 1rem;
+  margin: 1.2rem 0 0;
+  padding: .7rem .9rem;
+  border-radius: 8px;
+  background: var(--accent-soft);
+}
 
 /* 2. Chiffres clés */
 .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; }
@@ -35,7 +73,20 @@
 .progress { height: 10px; overflow: hidden; border-radius: 999px; background: var(--line); }
 .progress span { display: block; height: 100%; background: var(--accent); border-radius: inherit; transition: width .6s ease-out; }
 
-/* 3. Dangerosité : badge, barre, nombre */
+/* 3. Deux pages côte à côte : un peu moins de marge intérieure pour garder de la place */
+.duo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 780px; /* même largeur que les autres pages (.sheet) */
+  margin: 0 auto;
+}
+.duo > .sheet { padding: 1.75rem 1.25rem 1.75rem 2.75rem; }
+.duo > .sheet::before { left: 1.6rem; }
+.duo .section-header h2 { font-size: 1.25rem; }
+
+/* Dangerosité : badge, barre, nombre */
 .levels { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
 .levels a {
   display: grid;
@@ -53,14 +104,14 @@
 .bar span { display: block; height: 100%; min-width: 2px; border-radius: inherit; }
 .count { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
 
-/* 4. Derniers signalements */
-.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: .9rem; margin: 0; padding: 0; list-style: none; }
+/* Derniers signalements : une ligne par pollution, avec une petite miniature */
+.latest { display: grid; gap: .6rem; margin: 0; padding: 0; list-style: none; }
 .card {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: .75rem;
-  height: 100%;
-  padding: .75rem;
+  gap: .7rem;
+  align-items: center;
+  padding: .5rem;
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
@@ -68,32 +119,18 @@
   transition: border-color .15s, background .15s;
 }
 .card:hover { border-color: var(--accent); background: var(--accent-soft); }
-.card-body { display: grid; gap: .3rem; align-content: start; min-width: 0; }
-.card-title { font-family: var(--font-title); font-weight: 600; overflow-wrap: anywhere; }
+.card app-pollution-thumb { width: 48px; height: 48px; }
+.card-body { display: grid; gap: .2rem; min-width: 0; }
+.card-title { overflow: hidden; font-family: var(--font-title); font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
 .card-meta { display: flex; flex-wrap: wrap; gap: .3rem; }
-.card .hint { font-size: .85rem; }
+.card .hint { overflow: hidden; font-size: .82rem; white-space: nowrap; text-overflow: ellipsis; }
 
-/* 5. Mes contributions */
-.contributions p { margin: 0 0 1rem; }
-
-/* 6. Comment ça marche */
-.how-title { margin-bottom: 1rem; }
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0; padding: 0; list-style: none; }
-.steps li { display: grid; gap: .3rem; align-content: start; }
-.step-number {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-accent);
-  font-weight: 700;
+@media (max-width: 760px) {
+  .duo { grid-template-columns: 1fr; }
 }
-
 @media (max-width: 700px) {
   .tiles { grid-template-columns: repeat(2, 1fr); }
-  .cards, .steps { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; gap: .6rem; }
 }
 @media (max-width: 560px) {
   .hero h1 { font-size: 1.7rem; }

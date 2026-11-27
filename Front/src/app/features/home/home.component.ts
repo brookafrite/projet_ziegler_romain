@@ -13,8 +13,10 @@ import { PollutionService } from '../pollutions/services/pollution.service';
 import { homeStats } from './home-stats';
 
 /**
- * Page d'accueil (« / ») : présentation, chiffres clés, la forêt, les derniers signalements,
- * les contributions de l'utilisateur connecté et « comment ça marche ».
+ * Page d'accueil (« / ») en 3 blocs, pour ne pas trop défiler :
+ * 1. présentation, « comment ça marche » et les contributions de l'utilisateur connecté ;
+ * 2. la forêt et ses chiffres clés ;
+ * 3. la dangerosité et les derniers signalements, côte à côte.
  */
 @Component({
   selector: 'app-home',
