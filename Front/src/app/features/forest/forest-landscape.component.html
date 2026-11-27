@@ -1,0 +1,64 @@
+<!-- Le paysage : ciel, soleil (ou lune), collines, puis les arbres du fond vers l'avant -->
+<figure class="landscape">
+  <svg viewBox="0 0 1000 420" role="group" aria-label="La forêt des pollutions nettoyées">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" class="sky-top" />
+        <stop offset="1" class="sky-bottom" />
+      </linearGradient>
+    </defs>
+    <rect width="1000" height="420" fill="url(#sky)" />
+    @for (star of stars; track $index) {
+      <circle class="star" [attr.cx]="star[0]" [attr.cy]="star[1]" r="1.6" />
+    }
+    <circle class="sun" cx="860" cy="85" r="34" />
+    <!-- Nuages qui dérivent lentement -->
+    <g class="cloud drift-1"><ellipse cx="180" cy="80" rx="46" ry="16" /><ellipse cx="210" cy="68" rx="30" ry="18" /></g>
+    <g class="cloud drift-2"><ellipse cx="520" cy="55" rx="38" ry="13" /><ellipse cx="545" cy="45" rx="24" ry="14" /></g>
+    <g class="cloud drift-1"><ellipse cx="700" cy="140" rx="34" ry="11" /></g>
+    <path class="hill-back" d="M0,250 C150,190 300,230 450,205 C600,180 800,240 1000,200 L1000,420 L0,420 Z" />
+    <path class="hill-front" d="M0,290 C200,250 400,300 600,265 C750,240 900,280 1000,260 L1000,420 L0,420 Z" />
+
+    @if (trees().length === 0) {
+      <!-- Pas encore d'arbre : une petite pousse au milieu -->
+      <g class="sprout" transform="translate(500 340)">
+        <path d="M0,0 L0,-26" />
+        <path d="M0,-14 C-12,-16 -18,-26 -18,-32 C-8,-30 0,-24 0,-14 Z" />
+        <path d="M0,-20 C10,-22 16,-32 16,-38 C6,-36 0,-30 0,-20 Z" />
+      </g>
+    }
+
+    @for (tree of trees(); track tree.pollution.id) {
+      <g class="tree" role="link" tabindex="0" [attr.aria-label]="label(tree)"
+         [attr.transform]="'translate(' + tree.x + ' ' + tree.y + ') scale(' + tree.scale + ')'"
+         (click)="open(tree)" (keydown.enter)="open(tree)">
+        <title>{{ label(tree) }}</title>
+        <!-- La pousse : l'arbre grandit depuis son pied, l'un après l'autre -->
+        <g class="grow" [style.animation-delay.ms]="tree.delay">
+          <ellipse class="shadow" cx="0" cy="0" rx="20" ry="4" />
+          @switch (tree.kind) {
+            @case ('sapin') {
+              <rect class="trunk" x="-3" y="-14" width="6" height="14" />
+              <polygon class="leaves dark" points="0,-74 -22,-30 22,-30" />
+              <polygon class="leaves dark" points="0,-54 -19,-12 19,-12" />
+            }
+            @case ('feuillu') {
+              <rect class="trunk" x="-4" y="-28" width="8" height="28" />
+              <circle class="leaves" cx="-13" cy="-38" r="14" />
+              <circle class="leaves" cx="13" cy="-38" r="14" />
+              <circle class="leaves" cx="0" cy="-50" r="19" />
+            }
+            @case ('bouleau') {
+              <rect class="trunk birch" x="-3" y="-42" width="6" height="42" />
+              <path class="birch-mark" d="M-3,-30 h3 M0,-18 h3 M-3,-8 h3" />
+              <ellipse class="leaves light" cx="0" cy="-58" rx="15" ry="22" />
+            }
+          }
+        </g>
+      </g>
+    }
+  </svg>
+  <figcaption class="hint">
+    Survolez un arbre pour voir la pollution qu'il représente, cliquez pour ouvrir sa fiche.
+  </figcaption>
+</figure>

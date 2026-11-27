@@ -10,6 +10,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
+import { PollutionThumbComponent } from '../../../shared/components/pollution-thumb/pollution-thumb.component';
 import { POLLUTION_LEVELS, pollutionLevel } from '../../../shared/utils/pollution-level';
 
 /** Nom des critères de filtre, tels qu'ils apparaissent dans l'adresse (?recherche=…&type=…). */
@@ -49,7 +50,7 @@ function normalize(text: string): string {
 
 @Component({
   selector: 'app-pollution-list',
-  imports: [DatePipe, FormsModule, RouterLink, PollutionLevelPipe, HighlightPollutionDirective],
+  imports: [DatePipe, FormsModule, RouterLink, PollutionLevelPipe, HighlightPollutionDirective, PollutionThumbComponent],
   templateUrl: './pollution-list.component.html',
   styleUrl: './pollution-list.component.css',
   // Rafraîchi seulement si une entrée, un signal ou un événement du composant change
@@ -79,8 +80,6 @@ export class PollutionListComponent implements OnInit {
   readonly loading = signal(true);
   readonly errorMessage = signal<string | null>(null);
   readonly deletingId = signal<number | null>(null);
-  /** Pollutions dont la photo n'a pas pu être chargée : on montre la feuille à la place. */
-  readonly brokenPhotos = signal<ReadonlySet<number>>(new Set());
 
   // Critères de filtre, lus dans l'adresse (query params) grâce à withComponentInputBinding :
   // /pollutions?type=Chimique&du=2026-10-01 remplit type() et du(). Une recherche se partage par lien.
@@ -140,11 +139,6 @@ export class PollutionListComponent implements OnInit {
         this.loading.set(false);
       },
     });
-  }
-
-  markPhotoBroken(id: number): void {
-    // Nouvel ensemble (pas de add() sur l'ancien) : le signal change, la vue est mise à jour
-    this.brokenPhotos.update((ids) => new Set(ids).add(id));
   }
 
   /**

@@ -1,0 +1,8 @@
+@if (photoUrl() && !broken()) {
+  <img [src]="photoUrl()" alt="" loading="lazy" (error)="broken.set(true)" />
+} @else {
+  <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+    <path d="M9.5 22.5C9.5 15 14.5 10 23 9.5c0 8.5-5 13.5-12.5 13.5" />
+    <path d="M9.5 22.5l7.5-7.5" />
+  </svg>
+}

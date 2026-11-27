@@ -1,5 +1,6 @@
 /* Couleurs du paysage : chacune en version jour (thème clair) et nuit (thème sombre) */
 :host {
+  display: block;
   --sky-top: light-dark(#bfdcea, #0d1626);
   --sky-bottom: light-dark(#efeadb, #1c2a2a);
   --sun: light-dark(#f2cf6b, #e9e4cf);
@@ -14,18 +15,7 @@
   --cloud: light-dark(rgba(255, 255, 255, 0.85), rgba(70, 86, 104, 0.45));
 }
 
-.stats { display: grid; gap: .6rem; }
-.stats .hint { margin: 0; }
 
-/* Chiffres */
-.counters { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; align-items: baseline; }
-.counter { margin: 0; color: var(--muted); }
-.counter strong { color: var(--ink); font-size: 1.2rem; }
-.counter.main strong { color: var(--accent); font-size: 2rem; font-family: var(--font-title); }
-.counter.main { color: var(--accent); font-weight: 600; }
-
-.progress { height: 10px; overflow: hidden; border-radius: 999px; background: var(--line); }
-.progress span { display: block; height: 100%; background: var(--accent); border-radius: inherit; transition: width .6s ease-out; }
 
 /* Paysage */
 .landscape { margin: 0; }
@@ -77,5 +67,3 @@
 
 /* Pas encore d'arbre : une jeune pousse */
 .sprout path { fill: var(--leaves-light); stroke: var(--leaves-dark); stroke-width: 2; stroke-linecap: round; }
-
-.links { display: flex; flex-wrap: wrap; gap: .75rem; margin: 0; }
