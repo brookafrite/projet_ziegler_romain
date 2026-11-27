@@ -50,7 +50,7 @@
     </div>
 
     <!-- « Mes pollutions » : seulement une fois connecté, enregistré dans l'adresse (?auteur=moi) -->
-    @if (authService.isLoggedIn()) {
+    @if (isAuthenticated()) {
       <label class="check mine">
         <input type="checkbox" [checked]="auteur() === 'moi'"
                (change)="setFilter('auteur', $any($event.target).checked ? 'moi' : '')" />
@@ -116,7 +116,7 @@
             <div class="entry-actions">
               <a class="secondary" [routerLink]="['/pollutions', pollution.id]">Voir</a>
               <!-- Supprimer : seulement pour l'auteur du signalement ou un admin -->
-              @if (authService.canManage(pollution.auteurId)) {
+              @if (canManage()(pollution.auteurId)) {
                 <button type="button" class="danger" (click)="remove(pollution)"
                         [disabled]="deletingId() === pollution.id">
                   {{ deletingId() === pollution.id ? 'Suppression…' : 'Supprimer' }}

@@ -2,9 +2,12 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { provideStore, Store } from '@ngxs/store';
 
 import { environment } from '../../../../environments/environment';
 import { Pollution } from '../models/pollution.model';
+import { Login } from '../../../core/states/auth/auth.actions';
+import { AuthState } from '../../../core/states/auth/auth.state';
 import { PollutionListComponent } from './pollution-list.component';
 
 const base = { description: '', latitude: 45, longitude: 4, photoUrl: null };
@@ -24,10 +27,9 @@ describe('PollutionListComponent', () => {
   }
 
   beforeEach(() => {
-    localStorage.clear();
     TestBed.configureTestingModule({
       imports: [PollutionListComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideStore([AuthState])],
     });
     fixture = TestBed.createComponent(PollutionListComponent);
     component = fixture.componentInstance;
@@ -94,20 +96,10 @@ describe('PollutionListComponent', () => {
   });
 
   it('should show only my pollutions when « Mes pollutions » is ticked', () => {
-    // Utilisateur n° 7 connecté (session gardée dans le navigateur)
-    localStorage.setItem(
-      'carnet-de-terrain-user',
-      JSON.stringify({ id: 7, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'r@test.fr', role: 'utilisateur' }),
+    // Utilisateur n° 7 connecté dans le store NGXS
+    TestBed.inject(Store).dispatch(
+      new Login({ id: 7, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'r@test.fr', role: 'utilisateur' }),
     );
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      imports: [PollutionListComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
-    });
-    fixture = TestBed.createComponent(PollutionListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-    TestBed.inject(HttpTestingController).expectOne(`${environment.apiUrl}/pollutions`).flush(POLLUTIONS);
 
     setQueryParam('auteur', 'moi');
     expect(component.filtered().map((p) => p.id)).toEqual([1]);

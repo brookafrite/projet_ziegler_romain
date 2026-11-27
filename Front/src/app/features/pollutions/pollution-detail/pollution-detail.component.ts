@@ -2,7 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ChangeDetectionStrategy, Input, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Pollution } from '../models/pollution.model';
-import { AuthService } from '../../../core/services/auth.service';
+import { Store } from '@ngxs/store';
+import { AuthState } from '../../../core/states/auth/auth.state';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { PollutionService } from '../services/pollution.service';
@@ -18,7 +19,8 @@ import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.comp
 })
 export class PollutionDetailComponent implements OnInit {
   private readonly pollutionService = inject(PollutionService);
-  protected readonly authService = inject(AuthService);
+  /** Règle « auteur ou admin », lue dans le store NGXS. */
+  protected readonly canManage = inject(Store).selectSignal(AuthState.canManage);
   private readonly toastService = inject(ToastService);
   private readonly confirmService = inject(ConfirmService);
   private readonly router = inject(Router);

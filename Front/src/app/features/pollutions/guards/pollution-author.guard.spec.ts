@@ -9,20 +9,24 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
+import { provideStore, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
+import { User } from '../../../core/models/user.model';
+import { Login } from '../../../core/states/auth/auth.actions';
+import { AuthState } from '../../../core/states/auth/auth.state';
 import { pollutionAuthorGuard } from './pollution-author.guard';
 
 describe('pollutionAuthorGuard', () => {
-  const user = { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' };
+  const user: User = { id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' };
 
   /** Lance le guard pour /pollutions/5/modifier, puis renvoie la réponse de l'API simulée. */
   function runGuard(auteurId: number | null): GuardResult | undefined {
-    localStorage.setItem('carnet-de-terrain-user', JSON.stringify(user));
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting(), provideStore([AuthState])],
     });
+    TestBed.inject(Store).dispatch(new Login(user)); // l'utilisateur n° 1 est connecté
     const route = { paramMap: convertToParamMap({ id: '5' }) } as ActivatedRouteSnapshot;
     const result$ = TestBed.runInInjectionContext(() =>
       pollutionAuthorGuard(route, {} as RouterStateSnapshot),
@@ -35,8 +39,6 @@ describe('pollutionAuthorGuard', () => {
       .flush({ id: 5, titre: 'Test', auteurId });
     return result;
   }
-
-  beforeEach(() => localStorage.clear());
 
   it('should let the author edit their own pollution', () => {
     expect(runGuard(1)).toBe(true);

@@ -2,15 +2,19 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
+import { provideStore, Store } from '@ngxs/store';
 import { App } from './app';
 import { routes } from './app.routes';
+import { Login } from './core/states/auth/auth.actions';
+import { AuthState } from './core/states/auth/auth.state';
 
 describe('App', () => {
   beforeEach(async () => {
-    localStorage.clear(); // personne n'est connecté au départ
+    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting()],
+      // Store NGXS sans persistance : personne n'est connecté au départ
+      providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting(), provideStore([AuthState])],
     })
       .compileComponents();
   });
@@ -39,9 +43,8 @@ describe('App', () => {
   });
 
   it('should show the users page link to an admin only', async () => {
-    localStorage.setItem(
-      'carnet-de-terrain-user',
-      JSON.stringify({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'admin' }),
+    TestBed.inject(Store).dispatch(
+      new Login({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'admin' }),
     );
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
@@ -49,9 +52,8 @@ describe('App', () => {
   });
 
   it('should greet the logged-in user instead of the login links', async () => {
-    localStorage.setItem(
-      'carnet-de-terrain-user',
-      JSON.stringify({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' as const }),
+    TestBed.inject(Store).dispatch(
+      new Login({ id: 1, login: 'brook', nom: 'Ziegler', prenom: 'Romain', email: 'romain@test.fr', role: 'utilisateur' }),
     );
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();

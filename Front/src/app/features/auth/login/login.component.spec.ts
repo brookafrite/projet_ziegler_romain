@@ -3,8 +3,10 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgForm } from '@angular/forms';
 import { provideRouter, Router } from '@angular/router';
+import { provideStore, Store } from '@ngxs/store';
 
 import { environment } from '../../../../environments/environment';
+import { AuthState } from '../../../core/states/auth/auth.state';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -17,7 +19,7 @@ describe('LoginComponent', () => {
     localStorage.clear();
     TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting(), provideStore([AuthState])],
     });
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
@@ -34,9 +36,10 @@ describe('LoginComponent', () => {
     httpMock.expectOne(`${environment.apiUrl}/users/login`).flush(user);
   }
 
-  it('should go to the pollution list after logging in', () => {
+  it('should dispatch Login: the store keeps the user, then the list opens', () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     logIn();
+    expect(TestBed.inject(Store).selectSnapshot(AuthState.user)).toEqual(user);
     expect(navigate).toHaveBeenCalledWith('/pollutions');
   });
 

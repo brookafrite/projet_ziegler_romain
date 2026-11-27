@@ -2,9 +2,11 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideStore } from '@ngxs/store';
 
 import { environment } from '../../../../environments/environment';
 import { ConfirmService } from '../../../core/services/confirm.service';
+import { AuthState } from '../../../core/states/auth/auth.state';
 import { UserListComponent } from './user-list.component';
 
 describe('UserListComponent', () => {
@@ -20,7 +22,7 @@ describe('UserListComponent', () => {
     localStorage.clear();
     TestBed.configureTestingModule({
       imports: [UserListComponent],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting(), provideStore([AuthState])],
     });
     const fixture = TestBed.createComponent(UserListComponent);
     component = fixture.componentInstance;

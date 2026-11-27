@@ -1,8 +1,9 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { catchError, map, of } from 'rxjs';
 
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthState } from '../../../core/states/auth/auth.state';
 import { PollutionService } from '../services/pollution.service';
 
 /**
@@ -12,13 +13,14 @@ import { PollutionService } from '../services/pollution.service';
  * et le routeur attend sa réponse avant d'afficher la page.
  */
 export const pollutionAuthorGuard: CanActivateFn = (route) => {
-  const authService = inject(AuthService);
+  // Règle « auteur ou admin », lue dans le store NGXS
+  const canManage = inject(Store).selectSnapshot(AuthState.canManage);
   const router = inject(Router);
   const id = Number(route.paramMap.get('id'));
 
   return inject(PollutionService).getById(id).pipe(
     map((pollution) =>
-      authService.canManage(pollution.auteurId) ? true : router.createUrlTree(['/pollutions', id]),
+      canManage(pollution.auteurId) ? true : router.createUrlTree(['/pollutions', id]),
     ),
     // Pollution introuvable : on laisse la page s'ouvrir, elle affiche elle-même l'erreur
     catchError(() => of(true)),
