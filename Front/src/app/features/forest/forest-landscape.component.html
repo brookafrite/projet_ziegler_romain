@@ -47,6 +47,18 @@
       <path class="tuft" [attr.transform]="'translate(' + tuft.x + ' ' + tuft.y + ')'" d="M-4,0 L-6,-7 M0,0 L0,-9 M4,0 L6,-7" />
     }
 
+    <!-- Les animaux du fond (cerf sur la colline, canards sur l'eau) : derrière les arbres -->
+    @for (animal of fauna().animals; track animal.kind; let i = $index) {
+      @if (animal.back) {
+        <g class="animal" [attr.transform]="'translate(' + animal.x + ' ' + animal.y + ') scale(' + animal.scale + ')'">
+          <title>{{ animalLabel(animal) }}</title>
+          <g class="appear" [style.animation-delay.ms]="animalDelay(i)">
+            <ng-container [ngTemplateOutlet]="animalShape" [ngTemplateOutletContext]="{ $implicit: animal.kind }" />
+          </g>
+        </g>
+      }
+    }
+
     @if (trees().length === 0) {
       <!-- Pas encore d'arbre planté : une petite pousse au milieu -->
       <g class="sprout" transform="translate(560 340)">
@@ -82,9 +94,97 @@
         <circle cx="-9" cy="-6" r="9" /><circle cx="8" cy="-7" r="10" /><circle cx="0" cy="-13" r="10" />
       </g>
     }
+    <!-- Les animaux du premier plan : devant les arbres -->
+    @for (animal of fauna().animals; track animal.kind; let i = $index) {
+      @if (!animal.back) {
+        <g class="animal" [attr.transform]="'translate(' + animal.x + ' ' + animal.y + ') scale(' + animal.scale + ')'">
+          <title>{{ animalLabel(animal) }}</title>
+          <g class="appear" [style.animation-delay.ms]="animalDelay(i)">
+            <ng-container [ngTemplateOutlet]="animalShape" [ngTemplateOutletContext]="{ $implicit: animal.kind }" />
+          </g>
+        </g>
+      }
+    }
     @for (fly of fireflies; track $index) {
       <circle class="firefly" [attr.cx]="fly[0]" [attr.cy]="fly[1]" r="2.2" [style.animation-delay.ms]="$index * -450" />
     }
+
+    <!-- Les animaux, dessinés une seule fois ; le pied (0, 0) au sol, tournés vers la droite -->
+    <ng-template #animalShape let-kind>
+      @switch (kind) {
+        @case ('lapin') {
+          <svg:g class="hop">
+            <svg:ellipse class="rabbit" cx="6" cy="-19" rx="1.8" ry="5.5" transform="rotate(-12 6 -19)" />
+            <svg:ellipse class="rabbit" cx="9" cy="-19" rx="1.8" ry="5.5" transform="rotate(10 9 -19)" />
+            <svg:ellipse class="rabbit" cx="0" cy="-7" rx="9" ry="6.5" />
+            <svg:circle class="rabbit" cx="8" cy="-12" r="4.5" />
+            <svg:circle class="white" cx="-9" cy="-9" r="2.6" />
+            <svg:circle class="eye" cx="9.8" cy="-13" r="0.9" />
+          </svg:g>
+        }
+        @case ('canards') {
+          @for (duck of [[-8, 0, 1], [9, 3, 0.85]]; track $index) {
+            <svg:g [attr.transform]="'translate(' + duck[0] + ' ' + duck[1] + ') scale(' + duck[2] + ')'">
+              <svg:g class="bob" [style.animation-delay.s]="$index * -1.1">
+                <svg:ellipse class="duck" cx="0" cy="-3" rx="7" ry="3.5" />
+                <svg:circle class="duck-head" cx="5" cy="-8" r="2.8" />
+                <svg:path class="beak" d="M7.5,-8.5 L11,-7.6 L7.5,-6.8 Z" />
+              </svg:g>
+            </svg:g>
+          }
+        }
+        @case ('renard') {
+          <svg:g class="tail-sway">
+            <svg:ellipse class="fox" cx="-16" cy="-10" rx="8" ry="3.5" transform="rotate(-20 -16 -10)" />
+            <svg:circle class="white" cx="-23" cy="-12.5" r="2.4" />
+          </svg:g>
+          <svg:path class="dark-leg" d="M-6,-6 v6 M-3,-6 v6 M5,-6 v6 M8,-6 v6" />
+          <svg:ellipse class="fox" cx="0" cy="-9" rx="10" ry="4.5" />
+          <svg:path class="fox" d="M9,-13 L10.5,-19 L13,-14 Z" />
+          <svg:circle class="fox" cx="11" cy="-11" r="4" />
+          <svg:path class="fox" d="M13,-12.5 L19,-10 L13,-8 Z" />
+          <svg:circle class="eye" cx="12.3" cy="-12" r="0.8" />
+        }
+        @case ('cerf') {
+          <svg:path class="deer-leg" d="M-9,-12 v12 M-5,-12 v12 M6,-12 v12 M10,-12 v12" />
+          <svg:ellipse class="deer" cx="0" cy="-15" rx="12" ry="5.5" />
+          <svg:circle class="white" cx="-12" cy="-17" r="1.8" />
+          <svg:g class="graze">
+            <svg:path class="deer" d="M7,-18 L11,-29 L15,-28 L12,-14 Z" />
+            <svg:ellipse class="deer" cx="15" cy="-30" rx="5" ry="3" />
+            <svg:path class="antler" d="M12,-32 L10,-40 M10,-37 L7,-40 M11,-38 L13,-42 M15,-32 L16,-40 M16,-37 L19,-39" />
+          </svg:g>
+        }
+        @case ('hibou') {
+          <!-- Sur sa souche ; la nuit, ses yeux brillent -->
+          <svg:rect class="stump" x="-8" y="-12" width="16" height="12" />
+          <svg:ellipse class="stump-top" cx="0" cy="-12" rx="8" ry="2.5" />
+          <svg:path class="owl" d="M-5,-27 L-6,-33 L-2,-29 Z M5,-27 L6,-33 L2,-29 Z" />
+          <svg:ellipse class="owl" cx="0" cy="-21" rx="6.5" ry="8.5" />
+          <svg:g class="blink">
+            <svg:circle class="owl-eye" cx="-2.6" cy="-24" r="2.4" />
+            <svg:circle class="owl-eye" cx="2.6" cy="-24" r="2.4" />
+            <svg:circle class="eye" cx="-2.6" cy="-24" r="1" />
+            <svg:circle class="eye" cx="2.6" cy="-24" r="1" />
+          </svg:g>
+          <svg:path class="beak" d="M-1,-21.5 L1,-21.5 L0,-19.5 Z" />
+        }
+        @case ('papillons') {
+          @for (fly of [[0, -20], [-30, -5]]; track $index) {
+            <svg:g [attr.transform]="'translate(' + fly[0] + ' ' + fly[1] + ')'">
+              <svg:g class="flutter-path" [style.animation-delay.s]="$index * -4">
+                <svg:g class="flap" [class.second]="$index === 1">
+                  <svg:ellipse class="wing" cx="-3" cy="-2" rx="3" ry="2.6" />
+                  <svg:ellipse class="wing" cx="3" cy="-2" rx="3" ry="2.6" />
+                  <svg:ellipse class="wing" cx="-2" cy="1.5" rx="2" ry="1.6" />
+                  <svg:ellipse class="wing" cx="2" cy="1.5" rx="2" ry="1.6" />
+                </svg:g>
+              </svg:g>
+            </svg:g>
+          }
+        }
+      }
+    </ng-template>
 
     <!-- Les 3 espèces, dessinées une seule fois : pour les vrais arbres et pour le décor -->
     <ng-template #treeShape let-kind>
@@ -110,5 +210,6 @@
   </svg>
   <figcaption class="hint">
     Survolez un arbre pour voir la pollution qu'il représente, cliquez pour ouvrir sa fiche.
+    <span class="next-animal">{{ nextAnimalHint() }}</span>
   </figcaption>
 </figure>

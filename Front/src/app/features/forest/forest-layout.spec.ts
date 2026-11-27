@@ -1,5 +1,5 @@
 import { Pollution } from '../pollutions/models/pollution.model';
-import { BACK_HILL, buildDecor, buildRiver, hillTop, inRiver, plantTrees, riverAt } from './forest-layout';
+import { ANIMALS, BACK_HILL, animalsFor, buildDecor, buildRiver, hillTop, inRiver, plantTrees, riverAt } from './forest-layout';
 
 const base = { titre: 't', type: 'Eau', description: '', lieu: '', latitude: 0, longitude: 0, dateObservation: '2026-10-01' } as const;
 const pollutions: Pollution[] = [
@@ -74,6 +74,32 @@ describe('forest river', () => {
     const decor = buildDecor();
     for (const item of [...decor.midTrees, ...decor.bushes, ...decor.tufts]) {
       expect(inRiver(item.x, item.y)).toBe(false);
+    }
+  });
+});
+
+describe('forest animals', () => {
+  it('should bring an animal back every 5 cleanings', () => {
+    expect(animalsFor(0).animals).toEqual([]);
+    expect(animalsFor(0).next).toEqual({ animal: ANIMALS[0], remaining: 5 });
+
+    const twelve = animalsFor(12);
+    expect(twelve.animals.map((a) => a.kind)).toEqual(['lapin', 'canards']);
+    expect(twelve.next?.animal.kind).toBe('renard');
+    expect(twelve.next?.remaining).toBe(3);
+  });
+
+  it('should have no next animal once they are all back', () => {
+    expect(animalsFor(100).animals.length).toBe(ANIMALS.length);
+    expect(animalsFor(100).next).toBeNull();
+  });
+
+  it('should keep land animals out of the water, and the ducks on it', () => {
+    for (const animal of ANIMALS) {
+      expect(inRiver(animal.x, animal.y, 15)).toBe(animal.kind === 'canards');
+      expect(animal.x).toBeGreaterThanOrEqual(0);
+      expect(animal.x).toBeLessThanOrEqual(1000);
+      expect(animal.y).toBeLessThanOrEqual(420);
     }
   });
 });

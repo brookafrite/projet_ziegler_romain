@@ -217,3 +217,50 @@ export function buildDecor(): Decor {
 
   return { treeLine, midTrees, bushes, tufts, reeds };
 }
+
+// ---------------------------------------------------------------------------------------------
+// Animaux : tous les 5 nettoyages, un animal revient dans la forêt. Ce sont des récompenses :
+// les arbres comptent les pollutions, les animaux marquent les paliers franchis.
+// ---------------------------------------------------------------------------------------------
+
+export type AnimalKind = 'lapin' | 'canards' | 'renard' | 'cerf' | 'hibou' | 'papillons';
+
+export interface ForestAnimal {
+  kind: AnimalKind;
+  name: string; // pour la phrase « Encore 3 nettoyages pour voir revenir un renard »
+  returned: string; // pour l'infobulle
+  threshold: number; // nombre de pollutions nettoyées qu'il faut atteindre
+  x: number;
+  y: number; // pied de l'animal
+  scale: number;
+  back: boolean; // vrai : dessiné derrière les arbres (au loin, ou sur l'eau)
+}
+
+/** Un nouvel animal tous les ANIMAL_STEP nettoyages. */
+export const ANIMAL_STEP = 5;
+
+const DUCKS_Y = 352;
+
+/** Les animaux, dans l'ordre où ils reviennent. Leurs places sont fixes, hors de l'eau (sauf les canards). */
+const PLACES: Omit<ForestAnimal, 'threshold'>[] = [
+  { kind: 'lapin', name: 'un lapin', returned: 'Un lapin est revenu', x: 720, y: 400, scale: 1, back: false },
+  { kind: 'canards', name: 'des canards', returned: 'Des canards sont revenus', x: Math.round(riverAt(DUCKS_Y)!.center), y: DUCKS_Y, scale: 0.9, back: true },
+  { kind: 'renard', name: 'un renard', returned: 'Un renard est revenu', x: 150, y: 404, scale: 1, back: false },
+  { kind: 'cerf', name: 'un cerf', returned: 'Un cerf est revenu', x: 880, y: Math.round(hillTop(FRONT_HILL, 880) + 14), scale: 0.8, back: true },
+  { kind: 'hibou', name: 'un hibou', returned: 'Un hibou est revenu', x: 975, y: 398, scale: 1, back: false },
+  { kind: 'papillons', name: 'des papillons', returned: 'Des papillons sont revenus', x: 600, y: 330, scale: 1, back: false },
+];
+export const ANIMALS: readonly ForestAnimal[] = PLACES.map((animal, index) => ({ ...animal, threshold: (index + 1) * ANIMAL_STEP }));
+
+/**
+ * Les animaux déjà revenus pour ce nombre de pollutions nettoyées, et le prochain à venir
+ * (avec le nombre de nettoyages qui manquent). Fonction pure : facile à tester.
+ */
+export function animalsFor(cleaned: number): {
+  animals: ForestAnimal[];
+  next: { animal: ForestAnimal; remaining: number } | null;
+} {
+  const animals = ANIMALS.filter((animal) => cleaned >= animal.threshold);
+  const coming = ANIMALS.find((animal) => cleaned < animal.threshold);
+  return { animals, next: coming ? { animal: coming, remaining: coming.threshold - cleaned } : null };
+}

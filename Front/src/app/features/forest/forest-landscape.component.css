@@ -26,6 +26,19 @@
   --water-bank: light-dark(#6f9e66, #10251f);
   --water-shine: light-dark(rgba(255, 255, 255, 0.8), rgba(190, 215, 240, 0.35));
   --reed: light-dark(#4d7f45, #2f5a3a);
+  /* Animaux */
+  --rabbit: light-dark(#b39a80, #857262);
+  --fox: light-dark(#d9773a, #a85a2f);
+  --deer: light-dark(#9c6b43, #6e4c33);
+  --antler: light-dark(#6b5038, #4e3a2a);
+  --owl: light-dark(#8b7258, #6b5a48);
+  --owl-eye: light-dark(#ffffff, #f5d36b);
+  --duck: light-dark(#a8895f, #7a6447);
+  --duck-head: light-dark(#2f7a4d, #245e3c);
+  --beak: light-dark(#e8a33a, #c98a2e);
+  --white: light-dark(#f6f2ea, #d6d0c4);
+  --eye: #1f1f1f;
+  --wing: light-dark(#f0a646, #c98a3a);
 }
 
 
@@ -40,6 +53,7 @@
   border-radius: 8px;
 }
 .landscape figcaption { margin-top: .4rem; font-size: .88rem; }
+.next-animal { display: block; margin-top: .15rem; font-weight: 600; }
 
 .sky-top { stop-color: var(--sky-top); }
 .sky-bottom { stop-color: var(--sky-bottom); }
@@ -142,6 +156,95 @@
 @keyframes grow {
   from { transform: scale(0); }
   to   { transform: scale(1); }
+}
+
+/* Animaux : ils apparaissent comme les arbres, puis vivent chacun à leur façon */
+.animal { pointer-events: bounding-box; }
+.appear {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: grow .7s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+.rabbit { fill: var(--rabbit); }
+.fox { fill: var(--fox); }
+.deer { fill: var(--deer); }
+.owl { fill: var(--owl); }
+.owl-eye { fill: var(--owl-eye); }
+.duck { fill: var(--duck); }
+.duck-head { fill: var(--duck-head); }
+.beak { fill: var(--beak); }
+.white { fill: var(--white); }
+.eye { fill: var(--eye); }
+.wing { fill: var(--wing); }
+.stump { fill: var(--trunk); }
+.stump-top { fill: var(--decor-trunk); }
+.dark-leg, .deer-leg { stroke: var(--antler); stroke-width: 2.2; stroke-linecap: round; }
+.antler { fill: none; stroke: var(--antler); stroke-width: 1.4; stroke-linecap: round; }
+
+/* Le lapin fait deux petits bonds, puis se repose */
+.hop { animation: hop 4s ease-in-out infinite; }
+@keyframes hop {
+  0%, 70%, 86%, 100% { transform: translateY(0); }
+  78% { transform: translateY(-8px); }
+  92% { transform: translateY(-4px); }
+}
+/* Les canards se balancent sur l'eau */
+.bob {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: bob 2.4s ease-in-out infinite alternate;
+}
+@keyframes bob {
+  from { transform: rotate(-4deg) translateY(0); }
+  to   { transform: rotate(4deg) translateY(1px); }
+}
+/* Le renard remue la queue */
+.tail-sway {
+  transform-box: fill-box;
+  transform-origin: 100% 50%;
+  animation: tail 1.6s ease-in-out infinite alternate;
+}
+@keyframes tail {
+  from { transform: rotate(-8deg); }
+  to   { transform: rotate(8deg); }
+}
+/* Le cerf baisse la tête pour brouter de temps en temps */
+.graze {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+  animation: graze 7s ease-in-out infinite;
+}
+@keyframes graze {
+  0%, 55%, 100% { transform: rotate(0); }
+  65%, 85% { transform: rotate(50deg); }
+}
+/* Le hibou cligne des yeux */
+.blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blink-eyes 5s infinite;
+}
+@keyframes blink-eyes {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(.1); }
+}
+/* Les papillons volettent en battant des ailes */
+.flutter-path { animation: flutter-path 9s ease-in-out infinite; }
+@keyframes flutter-path {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(35px, -14px); }
+  50% { transform: translate(70px, 4px); }
+  75% { transform: translate(30px, 10px); }
+}
+.flap {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: flap .35s ease-in-out infinite alternate;
+}
+.flap.second { --wing: light-dark(#7fb4e0, #5c8fb8); animation-duration: .3s; }
+@keyframes flap {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(.25); }
 }
 
 /* Pas encore d'arbre : une jeune pousse */

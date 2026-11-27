@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, LOCALE_ID, computed, inject, input 
 import { Router } from '@angular/router';
 
 import { Pollution } from '../pollutions/models/pollution.model';
-import { ForestTree, buildDecor, buildRiver, plantTrees } from './forest-layout';
+import { ForestAnimal, ForestTree, animalsFor, buildDecor, buildRiver, plantTrees } from './forest-layout';
 
 /**
  * Le paysage de la forêt (dessin SVG) : chaque pollution nettoyée y fait pousser un arbre.
@@ -26,6 +26,17 @@ export class ForestLandscapeComponent {
 
   /** Les arbres, recalculés si la liste change. */
   readonly trees = computed(() => plantTrees(this.pollutions()));
+
+  /** Les animaux revenus (un tous les 5 nettoyages) et le prochain attendu. */
+  readonly fauna = computed(() => animalsFor(this.trees().length));
+
+  /** Phrase sous le paysage : ce qui manque pour le prochain animal. */
+  readonly nextAnimalHint = computed(() => {
+    const next = this.fauna().next;
+    if (!next) return 'Tous les animaux sont revenus dans la forêt.';
+    const cleanings = next.remaining > 1 ? 'nettoyages' : 'nettoyage';
+    return `Encore ${next.remaining} ${cleanings} pour voir revenir ${next.animal.name}.`;
+  });
 
   /** Le décor (toujours le même) : ligne d'arbres lointains, arbres discrets, buissons, herbe. */
   readonly decor = buildDecor();
@@ -66,6 +77,16 @@ export class ForestLandscapeComponent {
     if (!date) return false;
     const days = (Date.now() - new Date(date).getTime()) / 86_400_000;
     return days <= 7;
+  }
+
+  /** Infobulle d'un animal : « Un renard est revenu (15 pollutions nettoyées) ». */
+  animalLabel(animal: ForestAnimal): string {
+    return `${animal.returned} (${animal.threshold} pollutions nettoyées)`;
+  }
+
+  /** Les animaux apparaissent une fois tous les arbres poussés, l'un après l'autre. */
+  animalDelay(index: number): number {
+    return this.trees().length * 120 + 300 + index * 250;
   }
 
   /** Décalage du balancement : les arbres ne bougent pas tous en même temps. */
