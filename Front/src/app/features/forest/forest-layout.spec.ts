@@ -1,5 +1,5 @@
 import { Pollution } from '../pollutions/models/pollution.model';
-import { BACK_HILL, buildDecor, hillTop, plantTrees } from './forest-layout';
+import { BACK_HILL, buildDecor, buildRiver, hillTop, inRiver, plantTrees, riverAt } from './forest-layout';
 
 const base = { titre: 't', type: 'Eau', description: '', lieu: '', latitude: 0, longitude: 0, dateObservation: '2026-10-01' } as const;
 const pollutions: Pollution[] = [
@@ -52,5 +52,28 @@ describe('forest decor', () => {
     expect(Math.round(hillTop(BACK_HILL, 0))).toBe(250);
     expect(Math.round(hillTop(BACK_HILL, 450))).toBe(205);
     expect(Math.round(hillTop(BACK_HILL, 1000))).toBe(200);
+  });
+});
+
+describe('forest river', () => {
+  it('should flow from the hill down to the bottom, wider in front', () => {
+    expect(riverAt(200)).toBeNull(); // au-dessus de sa source : pas de rivière
+    const far = riverAt(300)!;
+    const near = riverAt(410)!;
+    expect(near.half).toBeGreaterThan(far.half);
+    expect(buildRiver()).toEqual(buildRiver());
+  });
+
+  it('should never plant a tree, a bush or a tuft in the water', () => {
+    const many: Pollution[] = Array.from({ length: 300 }, (_, i) => ({ ...base, id: i + 1, statut: 'nettoyee' as const }));
+    for (const tree of plantTrees(many)) {
+      expect(inRiver(tree.x, tree.y)).toBe(false);
+      expect(tree.x).toBeGreaterThanOrEqual(40);
+      expect(tree.x).toBeLessThanOrEqual(960);
+    }
+    const decor = buildDecor();
+    for (const item of [...decor.midTrees, ...decor.bushes, ...decor.tufts]) {
+      expect(inRiver(item.x, item.y)).toBe(false);
+    }
   });
 });

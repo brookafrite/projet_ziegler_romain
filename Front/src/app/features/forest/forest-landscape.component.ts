@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, LOCALE_ID, computed, inject, input 
 import { Router } from '@angular/router';
 
 import { Pollution } from '../pollutions/models/pollution.model';
-import { ForestTree, buildDecor, plantTrees } from './forest-layout';
+import { ForestTree, buildDecor, buildRiver, plantTrees } from './forest-layout';
 
 /**
  * Le paysage de la forêt (dessin SVG) : chaque pollution nettoyée y fait pousser un arbre.
@@ -34,6 +34,9 @@ export class ForestLandscapeComponent {
   readonly treeLinePath = this.decor.treeLine
     .map(({ x, y, height }) => `M${x},${y - height} L${x - height * 0.32},${y} L${x + height * 0.32},${y} Z`)
     .join(' ');
+
+  /** La rivière : son lit et les reflets qui coulent dessus. */
+  readonly river = buildRiver();
 
   /** Oiseaux le jour, lucioles la nuit (chacun a son propre rythme). */
   readonly birds = [

@@ -30,6 +30,14 @@
 
     <!-- Colline de devant, avec quelques arbres discrets sur sa crête et des touffes d'herbe -->
     <path class="hill-front" d="M0,290 C200,250 400,300 600,265 C750,240 900,280 1000,260 L1000,420 L0,420 Z" />
+    <!-- La rivière : elle sort de derrière la colline et serpente vers nous ; ses reflets coulent -->
+    <path class="river" [attr.d]="river.bed" />
+    @for (shine of river.shine; track $index) {
+      <path class="river-shine" [attr.d]="shine" [style.animation-delay.s]="$index * -1.3" />
+    }
+    @for (reed of decor.reeds; track $index) {
+      <path class="reed" [attr.transform]="'translate(' + reed.x + ' ' + reed.y + ')'" d="M0,0 L-3,-13 M0,0 L1,-17 M0,0 L4,-12" />
+    }
     @for (tree of decor.midTrees; track $index) {
       <g class="decor-tree" [attr.transform]="'translate(' + tree.x + ' ' + tree.y + ') scale(' + tree.scale + ')'">
         <ng-container [ngTemplateOutlet]="treeShape" [ngTemplateOutletContext]="{ $implicit: tree.kind }" />
@@ -41,7 +49,7 @@
 
     @if (trees().length === 0) {
       <!-- Pas encore d'arbre planté : une petite pousse au milieu -->
-      <g class="sprout" transform="translate(500 340)">
+      <g class="sprout" transform="translate(560 340)">
         <path d="M0,0 L0,-26" />
         <path d="M0,-14 C-12,-16 -18,-26 -18,-32 C-8,-30 0,-24 0,-14 Z" />
         <path d="M0,-20 C10,-22 16,-32 16,-38 C6,-36 0,-30 0,-20 Z" />

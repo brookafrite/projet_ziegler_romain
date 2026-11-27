@@ -46,11 +46,13 @@ export function plantTrees(pollutions: readonly Pollution[]): ForestTree[] {
         const x = 40 + random() * (WIDTH - 80);
         const y = GROUND_TOP + random() * (GROUND_BOTTOM - GROUND_TOP);
         const depth = (y - GROUND_TOP) / (GROUND_BOTTOM - GROUND_TOP); // 0 au fond, 1 devant
+        const scale = Math.round((0.8 + depth * 0.45) * 100) / 100;
         return {
           pollution,
-          x: Math.round(x),
+          // Pas d'arbre dans l'eau : s'il tombe dans la rivière, on le pousse sur la rive la plus proche
+          x: Math.round(awayFromRiver(x, y, TREE_FOOT * scale)),
           y: Math.round(y),
-          scale: Math.round((0.8 + depth * 0.45) * 100) / 100,
+          scale,
           kind: KINDS[id % KINDS.length],
           delay: index * 120,
         };
@@ -97,6 +99,62 @@ function bezier([p0, p1, p2, p3]: [Point, Point, Point, Point], t: number): Poin
   return [at(0), at(1)];
 }
 
+// ---------------------------------------------------------------------------------------------
+// Rivière : elle sort de derrière la colline de devant et descend vers nous en serpentant.
+// Elle est étroite au loin et s'élargit devant (perspective), comme les arbres qui grandissent.
+// ---------------------------------------------------------------------------------------------
+
+const HEIGHT = 420; // bas du dessin
+const RIVER_SOURCE_X = 560; // là où elle apparaît, sur la crête
+const RIVER_MOUTH_X = 300; // là où elle sort du dessin, en bas
+const RIVER_SOURCE_Y = Math.round(hillTop(FRONT_HILL, RIVER_SOURCE_X)) + 1;
+/** Demi-largeur de l'ombre au pied d'un arbre (taille 1) : la marge à garder avec l'eau. */
+const TREE_FOOT = 22;
+
+/** La rivière à la hauteur y : son milieu et sa demi-largeur (null au-dessus de sa source). */
+export function riverAt(y: number): { center: number; half: number } | null {
+  if (y < RIVER_SOURCE_Y || y > HEIGHT) return null;
+  const t = (y - RIVER_SOURCE_Y) / (HEIGHT - RIVER_SOURCE_Y); // 0 à la source, 1 en bas
+  return {
+    // Une ligne de la source vers l'embouchure, plus une vague (sinus) pour la faire serpenter
+    center: RIVER_SOURCE_X + (RIVER_MOUTH_X - RIVER_SOURCE_X) * t + 45 * Math.sin(t * Math.PI * 1.6),
+    half: (6 + 64 * t ** 1.3) / 2,
+  };
+}
+
+/** Vrai si le point (x, y) tombe dans l'eau, ou à moins de `margin` de la rive. */
+export function inRiver(x: number, y: number, margin = 0): boolean {
+  const river = riverAt(y);
+  return river !== null && Math.abs(x - river.center) < river.half + margin;
+}
+
+/** Ramène x sur la rive la plus proche s'il tombe dans la rivière. */
+function awayFromRiver(x: number, y: number, margin: number): number {
+  const river = riverAt(y);
+  if (!river || !inRiver(x, y, margin)) return x;
+  const gap = river.half + margin;
+  return x < river.center ? river.center - gap : river.center + gap;
+}
+
+/** Le lit de la rivière (une forme fermée) et deux reflets qui coulent sur l'eau. */
+export function buildRiver(): { bed: string; shine: string[] } {
+  const steps = 40;
+  const ys = Array.from({ length: steps + 1 }, (_, i) => RIVER_SOURCE_Y + ((HEIGHT - RIVER_SOURCE_Y) * i) / steps);
+  const point = (y: number, side: number) => {
+    const { center, half } = riverAt(y)!;
+    return `${round1(center + side * half)},${round1(y)}`;
+  };
+  // La rive gauche en descendant, puis la rive droite en remontant : on obtient le contour
+  const bed = `M${ys.map((y) => point(y, -1)).join(' L')} L${[...ys].reverse().map((y) => point(y, 1)).join(' L')} Z`;
+  // Les reflets commencent un peu après la source, là où l'eau est assez large
+  const shine = [-0.45, 0.4].map((side) => `M${ys.slice(5).map((y) => point(y, side)).join(' L')}`);
+  return { bed, shine };
+}
+
+function round1(value: number): number {
+  return Math.round(value * 10) / 10;
+}
+
 export interface DecorTree {
   x: number;
   y: number;
@@ -112,6 +170,8 @@ export interface Decor {
   /** Buissons et touffes d'herbe au premier plan. */
   bushes: { x: number; y: number; scale: number }[];
   tufts: { x: number; y: number }[];
+  /** Roseaux au bord de la rivière. */
+  reeds: { x: number; y: number }[];
 }
 
 /** Le décor complet, toujours le même (graines fixes). */
@@ -125,24 +185,35 @@ export function buildDecor(): Decor {
 
   const midTrees: DecorTree[] = [];
   for (let x = 25; x < WIDTH; x += 55 + random() * 60) {
-    midTrees.push({
+    const tree = {
       x: Math.round(x),
       y: Math.round(hillTop(FRONT_HILL, x) + 4 + random() * 10),
       scale: Math.round((0.45 + random() * 0.2) * 100) / 100,
       kind: KINDS[Math.floor(random() * KINDS.length)],
-    });
+    };
+    // Rien du décor dans l'eau (on tire quand même les nombres : le reste du décor ne bouge pas)
+    if (!inRiver(tree.x, tree.y, TREE_FOOT * tree.scale)) midTrees.push(tree);
   }
 
   const bushes = [];
   for (let x = 15; x < WIDTH; x += 70 + random() * 90) {
-    bushes.push({ x: Math.round(x), y: Math.round(410 + random() * 8), scale: Math.round((0.7 + random() * 0.6) * 100) / 100 });
+    const bush = { x: Math.round(x), y: Math.round(410 + random() * 8), scale: Math.round((0.7 + random() * 0.6) * 100) / 100 };
+    if (!inRiver(bush.x, bush.y, 20 * bush.scale)) bushes.push(bush);
   }
 
   const tufts = [];
   for (let i = 0; i < 26; i++) {
     const x = 10 + random() * (WIDTH - 20);
-    tufts.push({ x: Math.round(x), y: Math.round(hillTop(FRONT_HILL, x) + 30 + random() * 110) });
+    const y = Math.round(hillTop(FRONT_HILL, x) + 30 + random() * 110);
+    if (!inRiver(x, y, 8)) tufts.push({ x: Math.round(x), y });
   }
 
-  return { treeLine, midTrees, bushes, tufts };
+  // Quelques roseaux posés juste au bord de l'eau, d'un côté puis de l'autre
+  const reeds = [];
+  for (const [y, side] of [[300, 1], [326, -1], [352, 1], [371, -1], [392, 1], [408, -1]] as const) {
+    const { center, half } = riverAt(y)!;
+    reeds.push({ x: Math.round(center + side * (half + 3)), y });
+  }
+
+  return { treeLine, midTrees, bushes, tufts, reeds };
 }

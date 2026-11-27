@@ -22,6 +22,10 @@
   --bird: light-dark(#4e5d66, transparent);
   --firefly: light-dark(transparent, #f5e38a);
   --new-star: light-dark(#e2a72e, #f5d36b);
+  --water: light-dark(#8cc3dc, #1d3d55);
+  --water-bank: light-dark(#6f9e66, #10251f);
+  --water-shine: light-dark(rgba(255, 255, 255, 0.8), rgba(190, 215, 240, 0.35));
+  --reed: light-dark(#4d7f45, #2f5a3a);
 }
 
 
@@ -58,6 +62,21 @@
 .decor-tree .birch-mark { stroke: none; }
 .tuft { fill: none; stroke: var(--tuft); stroke-width: 1.6; stroke-linecap: round; }
 .bush circle { fill: var(--bush); }
+
+/* Rivière : une rive plus foncée, et des reflets en pointillés qui glissent vers nous */
+.river { fill: var(--water); stroke: var(--water-bank); stroke-width: 2; stroke-linejoin: round; }
+.river-shine {
+  fill: none;
+  stroke: var(--water-shine);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 8 18;
+  animation: flow 2.6s linear infinite;
+}
+@keyframes flow {
+  to { stroke-dashoffset: -26; } /* 26 = un tiret + un espace : la boucle ne se voit pas */
+}
+.reed { fill: none; stroke: var(--reed); stroke-width: 1.6; stroke-linecap: round; }
 
 /* Oiseaux : ils traversent le ciel en battant doucement */
 .bird {
