@@ -1,0 +1,81 @@
+/* Couleurs du paysage : chacune en version jour (thème clair) et nuit (thème sombre) */
+:host {
+  --sky-top: light-dark(#bfdcea, #0d1626);
+  --sky-bottom: light-dark(#efeadb, #1c2a2a);
+  --sun: light-dark(#f2cf6b, #e9e4cf);
+  --star: light-dark(transparent, #f4f1e4);
+  --hill-back: light-dark(#bcd5b2, #1d3a2e);
+  --hill-front: light-dark(#92bd86, #17302a);
+  --trunk: light-dark(#7a5638, #5e4330);
+  --leaves: light-dark(#3f8a4f, #2f7342);
+  --leaves-dark: light-dark(#2d6a45, #245a3a);
+  --leaves-light: light-dark(#78b45a, #5c9446);
+  --birch: light-dark(#f1ede4, #cfc9bd);
+  --cloud: light-dark(rgba(255, 255, 255, 0.85), rgba(70, 86, 104, 0.45));
+}
+
+.stats { display: grid; gap: .6rem; }
+.stats .hint { margin: 0; }
+
+/* Chiffres */
+.counters { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; align-items: baseline; }
+.counter { margin: 0; color: var(--muted); }
+.counter strong { color: var(--ink); font-size: 1.2rem; }
+.counter.main strong { color: var(--accent); font-size: 2rem; font-family: var(--font-title); }
+.counter.main { color: var(--accent); font-weight: 600; }
+
+.progress { height: 10px; overflow: hidden; border-radius: 999px; background: var(--line); }
+.progress span { display: block; height: 100%; background: var(--accent); border-radius: inherit; transition: width .6s ease-out; }
+
+/* Paysage */
+.landscape { margin: 0; }
+.landscape svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.landscape figcaption { margin-top: .4rem; font-size: .88rem; }
+
+.sky-top { stop-color: var(--sky-top); }
+.sky-bottom { stop-color: var(--sky-bottom); }
+.sun { fill: var(--sun); }
+.star { fill: var(--star); }
+.hill-back { fill: var(--hill-back); }
+.cloud { fill: var(--cloud); }
+.drift-1 { animation: drift 40s ease-in-out infinite alternate; }
+.drift-2 { animation: drift 55s ease-in-out infinite alternate-reverse; }
+@keyframes drift {
+  from { transform: translateX(-30px); }
+  to   { transform: translateX(30px); }
+}
+.hill-front { fill: var(--hill-front); }
+
+/* Arbres */
+.tree { cursor: pointer; outline: none; }
+.tree:hover .leaves, .tree:focus-visible .leaves { filter: brightness(1.15); }
+.tree:focus-visible .shadow { fill: var(--accent); opacity: .6; }
+.shadow { fill: #000; opacity: .12; }
+.trunk { fill: var(--trunk); }
+.trunk.birch { fill: var(--birch); }
+.birch-mark { stroke: #3b3b3b; stroke-width: 1.5; }
+.leaves { fill: var(--leaves); }
+.leaves.dark { fill: var(--leaves-dark); }
+.leaves.light { fill: var(--leaves-light); }
+
+/* La pousse : depuis le pied de l'arbre, avec un petit rebond */
+.grow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: grow .7s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+@keyframes grow {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+/* Pas encore d'arbre : une jeune pousse */
+.sprout path { fill: var(--leaves-light); stroke: var(--leaves-dark); stroke-width: 2; stroke-linecap: round; }
+
+.links { display: flex; flex-wrap: wrap; gap: .75rem; margin: 0; }

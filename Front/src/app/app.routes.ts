@@ -13,6 +13,12 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/pollutions/pollution.routes').then((m) => m.POLLUTION_ROUTES),
   },
+  // Chaque pollution nettoyée fait pousser un arbre
+  {
+    path: 'foret',
+    title: 'La forêt',
+    loadComponent: () => import('./features/forest/forest.component').then((m) => m.ForestComponent),
+  },
   // Réservées aux visiteurs non connectés (voir core/guards/guest.guard.ts)
   {
     path: 'inscription',
