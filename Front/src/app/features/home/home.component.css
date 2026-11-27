@@ -1,0 +1,101 @@
+/* La page d'accueil enchaîne plusieurs « pages » du carnet */
+.home { display: grid; gap: 1.5rem; }
+/* Dans une grille, margin: auto (venu de .sheet) rétrécirait la page à son contenu : pleine largeur */
+.home > .sheet { width: 100%; }
+.loading { text-align: center; }
+
+/* 1. Présentation */
+.hero h1 { margin: 0 0 .6rem; font-size: 2.1rem; font-weight: 600; line-height: 1.15; }
+.lead { margin: 0 0 1.4rem; max-width: 52ch; color: var(--muted); font-size: 1.08rem; }
+.cta { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+.section-header h2, .how-title, .contributions h2 { margin: 0 0 .3rem; font-size: 1.4rem; font-weight: 600; }
+.section-header p { margin: 0; color: var(--muted); }
+.row-header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+
+/* 2. Chiffres clés */
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; }
+.tile {
+  display: grid;
+  gap: .1rem;
+  padding: .8rem .9rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: .9rem;
+  text-decoration: none;
+  transition: border-color .15s, background .15s;
+}
+.tile strong { color: var(--ink); font-family: var(--font-title); font-size: 1.7rem; line-height: 1.1; }
+.tile.main strong { color: var(--accent); }
+.tile:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+.progress-block { display: grid; gap: .5rem; }
+.progress-block .hint { margin: 0; }
+.progress { height: 10px; overflow: hidden; border-radius: 999px; background: var(--line); }
+.progress span { display: block; height: 100%; background: var(--accent); border-radius: inherit; transition: width .6s ease-out; }
+
+/* 3. Dangerosité : badge, barre, nombre */
+.levels { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.levels a {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr 2.5rem;
+  align-items: center;
+  gap: .75rem;
+  padding: .3rem .4rem;
+  border-radius: 6px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.levels a:hover { background: var(--accent-soft); }
+.levels .badge { justify-self: start; }
+.bar { height: 12px; overflow: hidden; border-radius: 999px; background: var(--line); }
+.bar span { display: block; height: 100%; min-width: 2px; border-radius: inherit; }
+.count { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* 4. Derniers signalements */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: .9rem; margin: 0; padding: 0; list-style: none; }
+.card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem;
+  height: 100%;
+  padding: .75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .15s, background .15s;
+}
+.card:hover { border-color: var(--accent); background: var(--accent-soft); }
+.card-body { display: grid; gap: .3rem; align-content: start; min-width: 0; }
+.card-title { font-family: var(--font-title); font-weight: 600; overflow-wrap: anywhere; }
+.card-meta { display: flex; flex-wrap: wrap; gap: .3rem; }
+.card .hint { font-size: .85rem; }
+
+/* 5. Mes contributions */
+.contributions p { margin: 0 0 1rem; }
+
+/* 6. Comment ça marche */
+.how-title { margin-bottom: 1rem; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.steps li { display: grid; gap: .3rem; align-content: start; }
+.step-number {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .cards, .steps { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .hero h1 { font-size: 1.7rem; }
+  .levels a { grid-template-columns: 6.5rem 1fr 2rem; }
+}

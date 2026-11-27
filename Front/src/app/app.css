@@ -14,7 +14,9 @@
   justify-content: space-between;
   gap: .75rem 1.5rem;
 }
-.brand { display: flex; align-items: center; gap: .75rem; }
+.brand { display: flex; align-items: center; gap: .75rem; color: var(--ink); text-decoration: none; }
+.brand:hover .brand-name { color: var(--accent); }
+.brand:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 4px; border-radius: 4px; }
 .logo circle { fill: var(--accent); }
 .logo path { fill: none; stroke: var(--on-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .brand-name {

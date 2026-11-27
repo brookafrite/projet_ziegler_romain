@@ -1,6 +1,7 @@
 <header class="site-header">
   <div class="inner">
-    <div class="brand">
+    <!-- Le logo ramène à la page d'accueil -->
+    <a class="brand" routerLink="/" aria-label="Carnet de terrain : accueil">
       <svg class="logo" viewBox="0 0 32 32" width="34" height="34" aria-hidden="true">
         <circle cx="16" cy="16" r="15" />
         <path d="M9.5 22.5C9.5 15 14.5 10 23 9.5c0 8.5-5 13.5-12.5 13.5" />
@@ -10,13 +11,12 @@
         <span class="brand-name">Carnet de terrain</span>
         <span class="brand-sub">Signalement de pollutions</span>
       </div>
-    </div>
+    </a>
 
     <nav class="nav" aria-label="Navigation principale">
       <a routerLink="/pollutions" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
          ariaCurrentWhenActive="page">Pollutions</a>
       <a routerLink="/pollutions/nouvelle" routerLinkActive="active" ariaCurrentWhenActive="page">Signaler</a>
-      <a routerLink="/foret" routerLinkActive="active" ariaCurrentWhenActive="page">La forêt</a>
       @if (isAdmin()) {
         <a routerLink="/utilisateurs" routerLinkActive="active" ariaCurrentWhenActive="page">Utilisateurs</a>
       }

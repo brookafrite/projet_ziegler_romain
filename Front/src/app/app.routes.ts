@@ -7,18 +7,20 @@ import { guestGuard } from './core/guards/guest.guard';
  * que lorsque l'utilisateur ouvre l'adresse correspondante.
  */
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'pollutions' },
+  // Page d'accueil : chiffres, forêt, derniers signalements
+  {
+    path: '',
+    pathMatch: 'full',
+    title: 'Carnet de terrain',
+    loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent),
+  },
   {
     path: 'pollutions',
     loadChildren: () =>
       import('./features/pollutions/pollution.routes').then((m) => m.POLLUTION_ROUTES),
   },
-  // Chaque pollution nettoyée fait pousser un arbre
-  {
-    path: 'foret',
-    title: 'La forêt',
-    loadComponent: () => import('./features/forest/forest.component').then((m) => m.ForestComponent),
-  },
+  // La forêt est maintenant sur l'accueil : l'ancienne adresse y mène
+  { path: 'foret', redirectTo: '' },
   // Réservées aux visiteurs non connectés (voir core/guards/guest.guard.ts)
   {
     path: 'inscription',

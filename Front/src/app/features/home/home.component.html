@@ -1,0 +1,147 @@
+<div class="home">
+  <!-- 1. Présentation et actions principales -->
+  <section class="sheet hero">
+    <h1>Repérez, signalez, nettoyez.</h1>
+    <p class="lead">
+      Chaque pollution signalée ici est suivie jusqu'à son nettoyage.
+      Et chaque nettoyage fait pousser un arbre dans notre forêt.
+    </p>
+    <div class="cta">
+      <a class="primary" routerLink="/pollutions/nouvelle">Signaler une pollution</a>
+      <a class="secondary" routerLink="/pollutions">Voir les pollutions</a>
+    </div>
+  </section>
+
+  @if (errorMessage(); as message) {
+    <p class="error api-error" role="alert">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <p class="hint loading" role="status">Chargement des signalements…</p>
+  } @else {
+    @let s = stats();
+
+    <!-- 2. La forêt et les chiffres clés -->
+    <section class="sheet stack" aria-labelledby="forest-title">
+      <header class="section-header">
+        <h2 id="forest-title">La forêt</h2>
+        <p>Chaque pollution nettoyée fait pousser un arbre. Plus on nettoie, plus elle grandit.</p>
+      </header>
+
+      <div class="tiles">
+        <a class="tile main" routerLink="/pollutions" [queryParams]="{ statut: 'nettoyee' }">
+          <strong>{{ s.cleaned }}</strong> nettoyée{{ s.cleaned > 1 ? 's' : '' }}
+        </a>
+        <a class="tile" routerLink="/pollutions" [queryParams]="{ statut: 'en-cours' }">
+          <strong>{{ s.inProgress }}</strong> en cours
+        </a>
+        <a class="tile" routerLink="/pollutions" [queryParams]="{ statut: 'signalee' }">
+          <strong>{{ s.reported }}</strong> à nettoyer
+        </a>
+        <a class="tile" routerLink="/pollutions">
+          <strong>{{ s.thisMonth }}</strong> observée{{ s.thisMonth > 1 ? 's' : '' }} ce mois-ci
+        </a>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress" role="img"
+             [attr.aria-label]="s.percentCleaned + ' % des pollutions signalées ont été nettoyées'">
+          <span [style.width.%]="s.percentCleaned"></span>
+        </div>
+        <p class="hint">{{ s.percentCleaned }} % des {{ s.total }} pollutions signalées ont été nettoyées.</p>
+      </div>
+
+      <app-forest-landscape [pollutions]="pollutions()" />
+      @if (s.cleaned === 0) {
+        <p class="hint">Aucune pollution n'a encore été nettoyée : la forêt attend son premier arbre.</p>
+      }
+    </section>
+
+    <!-- 3. Répartition par dangerosité : chaque niveau ouvre la liste filtrée -->
+    <section class="sheet stack" aria-labelledby="levels-title">
+      <header class="section-header">
+        <h2 id="levels-title">Par dangerosité</h2>
+        <p>Cliquez sur un niveau pour voir les pollutions correspondantes.</p>
+      </header>
+      <ul class="levels">
+        @for (level of s.levels; track level.value) {
+          <li>
+            <a [routerLink]="['/pollutions']" [queryParams]="{ niveau: level.value }"
+               [attr.aria-label]="level.label + ' : ' + level.count + ' pollution' + (level.count > 1 ? 's' : '')">
+              <span class="badge" [appHighlightPollution]="level.min">{{ level.label }}</span>
+              <span class="bar"><span [appHighlightPollution]="level.min" [style.width.%]="level.percent"></span></span>
+              <span class="count">{{ level.count }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- 4. Les derniers signalements -->
+    <section class="sheet stack" aria-labelledby="latest-title">
+      <header class="section-header row-header">
+        <h2 id="latest-title">Derniers signalements</h2>
+        <a class="link" routerLink="/pollutions">Tout voir</a>
+      </header>
+      @if (s.latest.length) {
+        <ul class="cards">
+          @for (pollution of s.latest; track pollution.id) {
+            <li>
+              <a class="card" [routerLink]="['/pollutions', pollution.id]">
+                <app-pollution-thumb [photoUrl]="pollution.photoUrl" />
+                <span class="card-body">
+                  <span class="card-title">{{ pollution.titre }}</span>
+                  <span class="card-meta">
+                    <span class="badge" [appHighlightPollution]="pollution.indice">{{ pollution.indice | pollutionLevel }}</span>
+                    <span [class]="'badge statut-' + (pollution.statut ?? 'signalee')">{{ statutLabel(pollution.statut) }}</span>
+                  </span>
+                  <span class="hint">{{ pollution.dateObservation | date: 'longDate' }} · {{ pollution.lieu }}</span>
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty">
+          Aucune pollution signalée pour l'instant.
+          <a routerLink="/pollutions/nouvelle">Signaler la première</a>
+        </p>
+      }
+    </section>
+
+    <!-- 5. Mes contributions : seulement une fois connecté -->
+    @if (user(); as me) {
+      <section class="sheet contributions" aria-labelledby="mine-title">
+        <h2 id="mine-title">Mes contributions</h2>
+        <p>
+          {{ me.prenom }}, vous avez signalé <strong>{{ mine().count }}</strong>
+          pollution{{ mine().count > 1 ? 's' : '' }}@if (mine().count) {, dont
+          <strong>{{ mine().cleaned }}</strong> déjà nettoyée{{ mine().cleaned > 1 ? 's' : '' }}}.
+        </p>
+        <a class="secondary" routerLink="/pollutions" [queryParams]="{ auteur: 'moi' }">Voir mes pollutions</a>
+      </section>
+    }
+  }
+
+  <!-- 6. Comment ça marche -->
+  <section class="sheet" aria-labelledby="how-title">
+    <h2 id="how-title" class="how-title">Comment ça marche</h2>
+    <ol class="steps">
+      <li>
+        <span class="step-number">1</span>
+        <strong>Observer</strong>
+        <span class="hint">Un dépôt sauvage, une eau suspecte, des déchets dans la nature ?</span>
+      </li>
+      <li>
+        <span class="step-number">2</span>
+        <strong>Signaler</strong>
+        <span class="hint">Une photo, l'adresse ou un point sur la carte, et un indice de dangerosité.</span>
+      </li>
+      <li>
+        <span class="step-number">3</span>
+        <strong>Nettoyer</strong>
+        <span class="hint">L'équipe prend en charge la pollution, puis un arbre pousse dans la forêt.</span>
+      </li>
+    </ol>
+  </section>
+</div>

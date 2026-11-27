@@ -17,10 +17,11 @@ export function pollutionLevel(indice: number | null | undefined): PollutionLeve
  * Les niveaux dans l'ordre, chacun avec sa valeur dans l'adresse (?niveau=elevee) :
  * sans accent ni espace, pour une adresse lisible.
  */
-export const POLLUTION_LEVELS: readonly { value: string; label: PollutionLevel }[] = [
-  { value: 'non-evalue', label: 'Non évalué' },
-  { value: 'faible', label: 'Faible' },
-  { value: 'moderee', label: 'Modérée' },
-  { value: 'elevee', label: 'Élevée' },
-  { value: 'dangereuse', label: 'Dangereuse' },
+export const POLLUTION_LEVELS: readonly { value: string; label: PollutionLevel; min: number | null }[] = [
+  // min : premier indice du niveau (sert d'exemple pour colorer un badge de légende)
+  { value: 'non-evalue', label: 'Non évalué', min: null },
+  { value: 'faible', label: 'Faible', min: 0 },
+  { value: 'moderee', label: 'Modérée', min: 21 },
+  { value: 'elevee', label: 'Élevée', min: 51 },
+  { value: 'dangereuse', label: 'Dangereuse', min: 101 },
 ];

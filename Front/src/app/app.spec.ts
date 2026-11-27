@@ -39,7 +39,7 @@ describe('App', () => {
   it('should link to the public pages, without the admin page', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    expect(navLinks(fixture)).toEqual(['/pollutions', '/pollutions/nouvelle', '/foret', '/connexion', '/inscription']);
+    expect(navLinks(fixture)).toEqual(['/pollutions', '/pollutions/nouvelle', '/connexion', '/inscription']);
   });
 
   it('should show the users page link to an admin only', async () => {
@@ -48,7 +48,7 @@ describe('App', () => {
     );
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    expect(navLinks(fixture)).toEqual(['/pollutions', '/pollutions/nouvelle', '/foret', '/utilisateurs']);
+    expect(navLinks(fixture)).toEqual(['/pollutions', '/pollutions/nouvelle', '/utilisateurs']);
   });
 
   it('should greet the logged-in user instead of the login links', async () => {
