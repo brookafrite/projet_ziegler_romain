@@ -63,6 +63,7 @@ une recherche se partage par lien ou se met en favori.
 | `recherche` | `?recherche=canal` | texte cherché dans le titre, le type, le lieu et la description (sans tenir compte des accents) |
 | `type` | `?type=Chimique` | type de pollution |
 | `du`, `au` | `?du=2026-10-01&au=2026-10-31` | période d'observation |
+| `statut` | `?statut=nettoyee` | avancement du traitement : `signalee`, `en-cours`, `nettoyee` |
 | `niveau` | `?niveau=elevee` | niveau de dangerosité : `non-evalue`, `faible`, `moderee`, `elevee`, `dangereuse` |
 | `auteur` | `?auteur=moi` | seulement les pollutions de l'utilisateur connecté (case « Seulement mes pollutions », ignorée si personne n'est connecté) |
 | `tri` | `?tri=dangereuses` | ordre : plus récentes (par défaut), `anciennes`, `dangereuses`, `moins-dangereuses` |
@@ -94,6 +95,22 @@ les vérifie pas encore. Le jeton JWT d'un prochain TP les fera vérifier par l'
 Le `ToastContainer` et le `ConfirmDialog` sont placés une seule fois, dans `app.html`.
 Les deux services sont dans `core/` (un seul exemplaire pour toute l'application), les composants
 qui les affichent dans `shared/`.
+
+## Statut de traitement et forêt
+
+Chaque pollution a un **statut** : Signalée → En cours → Nettoyée. Seul un **admin** le change, depuis
+la fiche (bloc « Avancement du traitement », sélecteur `AuthState.isAdmin`), via la route dédiée
+`PATCH /api/pollutions/:id/statut`. Le statut s'affiche en badge dans la liste et sur la fiche, et
+se filtre dans l'adresse (`?statut=…`).
+
+La page **La forêt** (`features/forest/`, `/foret`) fait pousser **un arbre par pollution nettoyée** :
+
+| Élément | Principe |
+|---|---|
+| `plantTrees()` (`forest-layout.ts`) | fonction pure : un arbre par pollution nettoyée, placé à partir de son id (la forêt ne bouge pas d'une visite à l'autre), plus petit au fond pour la perspective, 3 espèces, dessiné du fond vers l'avant |
+| Dessin | SVG : ciel, soleil, nuages qui dérivent, collines. En thème sombre : la nuit, avec lune et étoiles (couleurs `light-dark()`) |
+| Animation | les arbres poussent l'un après l'autre depuis leur pied (animation CSS, désactivée si l'utilisateur limite les animations) |
+| Interaction | chaque arbre est un lien vers sa fiche (souris ou clavier), avec une infobulle « titre, lieu, nettoyée le … » |
 
 ## Formulaire de signalement : photo, adresse et carte
 

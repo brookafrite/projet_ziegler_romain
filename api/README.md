@@ -31,6 +31,7 @@ src/
 | GET     | `/api/pollutions/:id` | Détail d'une pollution        | 200, 404           |
 | POST    | `/api/pollutions`     | Création                      | 201, 400           |
 | PUT     | `/api/pollutions/:id` | Modification                  | 200, 400, 404      |
+| PATCH   | `/api/pollutions/:id/statut` | Changement de statut (signalee, en-cours, nettoyee) | 200, 400, 404 |
 | DELETE  | `/api/pollutions/:id` | Suppression                   | 204, 404           |
 | GET     | `/api/users`          | Liste des utilisateurs        | 200                |
 | GET     | `/api/users/:id`      | Détail d'un utilisateur       | 200, 404           |
@@ -60,6 +61,8 @@ vérifie le login et le mot de passe et renvoie l'utilisateur, sans créer de je
 | `photoUrl`        | text      | non : adresse http(s) d'une image, **ou la photo elle-même en base64** (`data:image/jpeg;base64,…`) |
 | `indice`          | integer   | non (entier >= 0, vide = non évalué) |
 | `auteurId`        | integer   | non : clé étrangère vers `users.id`, vide = auteur inconnu |
+| `statut`          | varchar(20) | oui : `signalee` (par défaut), `en-cours` ou `nettoyee` |
+| `dateNettoyage`   | date      | non : remplie au passage en `nettoyee`, vidée si l'on revient en arrière |
 
 Les photos envoyées depuis l'appareil sont donc **stockées dans la base** (colonne `text`), pas
 dans des fichiers sur le serveur. Le Front les réduit et les compresse avant l'envoi ; l'API
@@ -83,6 +86,16 @@ mais deviennent « Auteur inconnu » (`ON DELETE SET NULL`). Les guillemets gard
 ```sql
 ALTER TABLE pollution ADD COLUMN "auteurId" integer REFERENCES users(id) ON DELETE SET NULL;
 ```
+
+Les colonnes `statut` et `"dateNettoyage"` (lot F) ont aussi été ajoutées dans pgAdmin :
+
+```sql
+ALTER TABLE pollution ADD COLUMN statut varchar(20) NOT NULL DEFAULT 'signalee';
+ALTER TABLE pollution ADD COLUMN "dateNettoyage" date;
+```
+
+Le statut ne change **que** par `PATCH /api/pollutions/:id/statut` avec `{ "statut": "nettoyee" }`
+(400 si la valeur est inconnue) : la modification classique (`PUT`) ne le touche pas.
 
 Côté Sequelize, deux **associations** relient les tables (`models/index.ts`) : une pollution
 `belongsTo` son auteur, un utilisateur `hasMany` pollutions. L'API renvoie ainsi chaque
