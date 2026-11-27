@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import db from "../models";
-import { PollutionCreationAttributes } from "../models/pollutions.model";
+import { POLLUTION_STATUTS, PollutionCreationAttributes, PollutionStatut } from "../models/pollutions.model";
 import { sendError } from "../utils/http";
 
 const Pollutions = db.pollutions;
@@ -16,6 +16,7 @@ const withAuteur = {
 /**
  * Champs que le client a le droit d'envoyer (l'id est attribué par la base).
  * L'auteur n'en fait pas partie : il est fixé à la création et ne change plus ensuite.
+ * Le statut non plus : il a sa propre route (PATCH /:id/statut), une nouvelle pollution est « signalee ».
  */
 function readBody(body: Record<string, unknown>): PollutionCreationAttributes {
   const { titre, type, description, dateObservation, lieu, latitude, longitude, photoUrl, indice } = body;
@@ -111,4 +112,32 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export default { getAll, getById, create, update, remove };
+/**
+ * PATCH /api/pollutions/:id/statut
+ * Change l'avancement du traitement : { "statut": "signalee" | "en-cours" | "nettoyee" }.
+ * Passer à « nettoyee » note la date du jour ; revenir en arrière l'efface.
+ * Réservé aux admins dans le Front ; l'API le vérifiera avec le jeton JWT (prochain TP).
+ */
+export const updateStatut = async (req: Request, res: Response): Promise<void> => {
+  const id = Number(req.params.id);
+  const statut = req.body?.statut as PollutionStatut;
+  if (!POLLUTION_STATUTS.includes(statut)) {
+    res.status(400).json({ message: `Statut invalide : attendu ${POLLUTION_STATUTS.join(", ")}.` });
+    return;
+  }
+  try {
+    const pollution = await Pollutions.findByPk(id);
+    if (!pollution) {
+      res.status(404).json({ message: `Aucune pollution trouvée avec l'id=${id}.` });
+      return;
+    }
+    const today = new Date().toISOString().slice(0, 10); // AAAA-MM-JJ
+    await pollution.update({ statut, dateNettoyage: statut === "nettoyee" ? today : null });
+    await pollution.reload(withAuteur);
+    res.status(200).json(pollution);
+  } catch (err: unknown) {
+    sendError(res, err, `Erreur lors du changement de statut de la pollution id=${id}`);
+  }
+};
+
+export default { getAll, getById, create, update, remove, updateStatut };

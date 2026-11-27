@@ -20,6 +20,9 @@ export default (app: Application): void => {
   // Route PUT /api/pollutions/:id
   router.put("/:id", pollutionController.update);
 
+  // Route PATCH /api/pollutions/:id/statut (avancement du traitement)
+  router.patch("/:id/statut", pollutionController.updateStatut);
+
   // Route DELETE /api/pollutions/:id
   router.delete("/:id", pollutionController.remove);
 

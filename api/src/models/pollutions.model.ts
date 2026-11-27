@@ -3,6 +3,10 @@ import { Sequelize, DataTypes, Model, Optional, ModelStatic } from "sequelize";
 // Mêmes types que dans le Front (Front/src/app/features/pollutions/models/pollution.model.ts)
 export const POLLUTION_TYPES = ["Plastique", "Chimique", "Dépôt sauvage", "Eau", "Air", "Autre"];
 
+/** Avancement du traitement : signalée → en cours → nettoyée (changé par un admin). */
+export const POLLUTION_STATUTS = ["signalee", "en-cours", "nettoyee"] as const;
+export type PollutionStatut = (typeof POLLUTION_STATUTS)[number];
+
 /** Adresse d'une image en ligne (http/https), ou photo envoyée en base64 (stockée dans la base). */
 const PHOTO_PATTERN = /^(https?:\/\/\S+|data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+)$/;
 
@@ -18,10 +22,12 @@ export interface PollutionAttributes {
   photoUrl?: string | null;
   indice?: number | null; // indice de dangerosité, null = non évalué
   auteurId?: number | null; // utilisateur qui a publié la pollution, null = auteur inconnu
+  statut: PollutionStatut;
+  dateNettoyage?: string | null; // AAAA-MM-JJ, rempli au passage en « nettoyee »
 }
 
 export interface PollutionCreationAttributes
-  extends Optional<PollutionAttributes, "id" | "photoUrl" | "indice" | "auteurId"> {}
+  extends Optional<PollutionAttributes, "id" | "photoUrl" | "indice" | "auteurId" | "statut" | "dateNettoyage"> {}
 
 export interface PollutionInstance
   extends Model<PollutionAttributes, PollutionCreationAttributes>,
@@ -96,6 +102,17 @@ export default function definePollutions(
         allowNull: true,
         references: { model: "users", key: "id" },
         onDelete: "SET NULL"
+      },
+      // Colonnes ajoutées à la main dans pgAdmin (lot F) : avancement du traitement
+      statut: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: "signalee",
+        validate: { isIn: [POLLUTION_STATUTS as unknown as string[]] }
+      },
+      dateNettoyage: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
       }
     },
     { tableName: "pollution" }
