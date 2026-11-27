@@ -1,5 +1,5 @@
 import { Pollution } from '../pollutions/models/pollution.model';
-import { plantTrees } from './forest-layout';
+import { BACK_HILL, buildDecor, hillTop, plantTrees } from './forest-layout';
 
 const base = { titre: 't', type: 'Eau', description: '', lieu: '', latitude: 0, longitude: 0, dateObservation: '2026-10-01' } as const;
 const pollutions: Pollution[] = [
@@ -32,5 +32,25 @@ describe('plantTrees', () => {
       expect(tree.y).toBeLessThanOrEqual(405);
     }
     expect(trees.map((t) => t.y)).toEqual([...trees.map((t) => t.y)].sort((a, b) => a - b));
+  });
+});
+
+describe('forest decor', () => {
+  it('should always build the same decor, inside the drawing', () => {
+    const decor = buildDecor();
+    expect(buildDecor()).toEqual(decor);
+    expect(decor.treeLine.length).toBeGreaterThan(40);
+    for (const tree of [...decor.treeLine, ...decor.midTrees, ...decor.bushes, ...decor.tufts]) {
+      expect(tree.x).toBeGreaterThanOrEqual(0);
+      expect(tree.x).toBeLessThanOrEqual(1000);
+      expect(tree.y).toBeLessThanOrEqual(420);
+    }
+  });
+
+  it('should follow the hill line', () => {
+    // Les deux extrémités de la colline du fond (voir le chemin SVG : M0,250 … 1000,200)
+    expect(Math.round(hillTop(BACK_HILL, 0))).toBe(250);
+    expect(Math.round(hillTop(BACK_HILL, 450))).toBe(205);
+    expect(Math.round(hillTop(BACK_HILL, 1000))).toBe(200);
   });
 });

@@ -16,11 +16,31 @@
     <g class="cloud drift-1"><ellipse cx="180" cy="80" rx="46" ry="16" /><ellipse cx="210" cy="68" rx="30" ry="18" /></g>
     <g class="cloud drift-2"><ellipse cx="520" cy="55" rx="38" ry="13" /><ellipse cx="545" cy="45" rx="24" ry="14" /></g>
     <g class="cloud drift-1"><ellipse cx="700" cy="140" rx="34" ry="11" /></g>
+    <!-- Oiseaux qui traversent le ciel (le jour seulement) -->
+    @for (bird of birds; track $index) {
+      <!-- La hauteur sur le groupe, le vol (animation CSS) sur le dessin : les deux ne s'écrasent pas -->
+      <g [attr.transform]="'translate(0 ' + bird.y + ')'">
+        <path class="bird" [style.animation-delay.s]="bird.delay" d="M-8,0 Q-4,-5 0,0 Q4,-5 8,0" />
+      </g>
+    }
+
+    <!-- Colline du fond, et sa ligne de sapins lointains en silhouette -->
     <path class="hill-back" d="M0,250 C150,190 300,230 450,205 C600,180 800,240 1000,200 L1000,420 L0,420 Z" />
+    <path class="tree-line" [attr.d]="treeLinePath" />
+
+    <!-- Colline de devant, avec quelques arbres discrets sur sa crête et des touffes d'herbe -->
     <path class="hill-front" d="M0,290 C200,250 400,300 600,265 C750,240 900,280 1000,260 L1000,420 L0,420 Z" />
+    @for (tree of decor.midTrees; track $index) {
+      <g class="decor-tree" [attr.transform]="'translate(' + tree.x + ' ' + tree.y + ') scale(' + tree.scale + ')'">
+        <ng-container [ngTemplateOutlet]="treeShape" [ngTemplateOutletContext]="{ $implicit: tree.kind }" />
+      </g>
+    }
+    @for (tuft of decor.tufts; track $index) {
+      <path class="tuft" [attr.transform]="'translate(' + tuft.x + ' ' + tuft.y + ')'" d="M-4,0 L-6,-7 M0,0 L0,-9 M4,0 L6,-7" />
+    }
 
     @if (trees().length === 0) {
-      <!-- Pas encore d'arbre : une petite pousse au milieu -->
+      <!-- Pas encore d'arbre planté : une petite pousse au milieu -->
       <g class="sprout" transform="translate(500 340)">
         <path d="M0,0 L0,-26" />
         <path d="M0,-14 C-12,-16 -18,-26 -18,-32 C-8,-30 0,-24 0,-14 Z" />
@@ -28,35 +48,57 @@
       </g>
     }
 
+    <!-- Les vrais arbres : un par pollution nettoyée, colorés et cliquables -->
     @for (tree of trees(); track tree.pollution.id) {
       <g class="tree" role="link" tabindex="0" [attr.aria-label]="label(tree)"
          [attr.transform]="'translate(' + tree.x + ' ' + tree.y + ') scale(' + tree.scale + ')'"
          (click)="open(tree)" (keydown.enter)="open(tree)">
         <title>{{ label(tree) }}</title>
-        <!-- La pousse : l'arbre grandit depuis son pied, l'un après l'autre -->
+        <!-- La pousse : l'arbre grandit depuis son pied, l'un après l'autre, puis se balance au vent -->
         <g class="grow" [style.animation-delay.ms]="tree.delay">
           <ellipse class="shadow" cx="0" cy="0" rx="20" ry="4" />
-          @switch (tree.kind) {
-            @case ('sapin') {
-              <rect class="trunk" x="-3" y="-14" width="6" height="14" />
-              <polygon class="leaves dark" points="0,-74 -22,-30 22,-30" />
-              <polygon class="leaves dark" points="0,-54 -19,-12 19,-12" />
-            }
-            @case ('feuillu') {
-              <rect class="trunk" x="-4" y="-28" width="8" height="28" />
-              <circle class="leaves" cx="-13" cy="-38" r="14" />
-              <circle class="leaves" cx="13" cy="-38" r="14" />
-              <circle class="leaves" cx="0" cy="-50" r="19" />
-            }
-            @case ('bouleau') {
-              <rect class="trunk birch" x="-3" y="-42" width="6" height="42" />
-              <path class="birch-mark" d="M-3,-30 h3 M0,-18 h3 M-3,-8 h3" />
-              <ellipse class="leaves light" cx="0" cy="-58" rx="15" ry="22" />
-            }
+          <g class="sway" [style.animation-delay.ms]="swayDelay(tree)">
+            <ng-container [ngTemplateOutlet]="treeShape" [ngTemplateOutletContext]="{ $implicit: tree.kind }" />
+          </g>
+          @if (isNew(tree)) {
+            <!-- Planté cette semaine -->
+            <path class="new-star" d="M0,-96 L3,-89 L10,-86 L3,-83 L0,-76 L-3,-83 L-10,-86 L-3,-89 Z" />
           }
         </g>
       </g>
     }
+
+    <!-- Premier plan : buissons, et lucioles la nuit -->
+    @for (bush of decor.bushes; track $index) {
+      <g class="bush" [attr.transform]="'translate(' + bush.x + ' ' + bush.y + ') scale(' + bush.scale + ')'">
+        <circle cx="-9" cy="-6" r="9" /><circle cx="8" cy="-7" r="10" /><circle cx="0" cy="-13" r="10" />
+      </g>
+    }
+    @for (fly of fireflies; track $index) {
+      <circle class="firefly" [attr.cx]="fly[0]" [attr.cy]="fly[1]" r="2.2" [style.animation-delay.ms]="$index * -450" />
+    }
+
+    <!-- Les 3 espèces, dessinées une seule fois : pour les vrais arbres et pour le décor -->
+    <ng-template #treeShape let-kind>
+      @switch (kind) {
+        @case ('sapin') {
+          <svg:rect class="trunk" x="-3" y="-14" width="6" height="14" />
+          <svg:polygon class="leaves dark" points="0,-74 -22,-30 22,-30" />
+          <svg:polygon class="leaves dark" points="0,-54 -19,-12 19,-12" />
+        }
+        @case ('feuillu') {
+          <svg:rect class="trunk" x="-4" y="-28" width="8" height="28" />
+          <svg:circle class="leaves" cx="-13" cy="-38" r="14" />
+          <svg:circle class="leaves" cx="13" cy="-38" r="14" />
+          <svg:circle class="leaves" cx="0" cy="-50" r="19" />
+        }
+        @case ('bouleau') {
+          <svg:rect class="trunk birch" x="-3" y="-42" width="6" height="42" />
+          <svg:path class="birch-mark" d="M-3,-30 h3 M0,-18 h3 M-3,-8 h3" />
+          <svg:ellipse class="leaves light" cx="0" cy="-58" rx="15" ry="22" />
+        }
+      }
+    </ng-template>
   </svg>
   <figcaption class="hint">
     Survolez un arbre pour voir la pollution qu'il représente, cliquez pour ouvrir sa fiche.

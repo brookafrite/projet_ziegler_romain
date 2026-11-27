@@ -13,6 +13,15 @@
   --leaves-light: light-dark(#78b45a, #5c9446);
   --birch: light-dark(#f1ede4, #cfc9bd);
   --cloud: light-dark(rgba(255, 255, 255, 0.85), rgba(70, 86, 104, 0.45));
+  /* Décor : tons sourds, pour le distinguer des vrais arbres */
+  --tree-line: light-dark(#9dbf92, #142b22);
+  --decor-leaves: light-dark(#86b07d, #22412f);
+  --decor-trunk: light-dark(#9a8571, #3e3328);
+  --bush: light-dark(#6fa565, #1c4230);
+  --tuft: light-dark(#5f9a55, #2b5a3c);
+  --bird: light-dark(#4e5d66, transparent);
+  --firefly: light-dark(transparent, #f5e38a);
+  --new-star: light-dark(#e2a72e, #f5d36b);
 }
 
 
@@ -41,6 +50,57 @@
   to   { transform: translateX(30px); }
 }
 .hill-front { fill: var(--hill-front); }
+
+/* Décor */
+.tree-line { fill: var(--tree-line); }
+.decor-tree .trunk, .decor-tree .trunk.birch { fill: var(--decor-trunk); }
+.decor-tree .leaves, .decor-tree .leaves.dark, .decor-tree .leaves.light { fill: var(--decor-leaves); }
+.decor-tree .birch-mark { stroke: none; }
+.tuft { fill: none; stroke: var(--tuft); stroke-width: 1.6; stroke-linecap: round; }
+.bush circle { fill: var(--bush); }
+
+/* Oiseaux : ils traversent le ciel en battant doucement */
+.bird {
+  fill: none;
+  stroke: var(--bird);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  animation: fly 28s linear infinite;
+}
+@keyframes fly {
+  from { transform: translateX(-30px); }
+  to   { transform: translateX(1030px); }
+}
+
+/* Lucioles : elles s'allument et s'éteignent la nuit */
+.firefly { fill: var(--firefly); animation: blink 3.2s ease-in-out infinite; }
+@keyframes blink {
+  0%, 100% { opacity: .15; }
+  50%      { opacity: 1; }
+}
+
+/* Étoile des arbres plantés cette semaine */
+.new-star {
+  fill: var(--new-star);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: twinkle 1.8s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { transform: scale(.8); opacity: .7; }
+  50%      { transform: scale(1.15); opacity: 1; }
+}
+
+/* Balancement des vrais arbres dans le vent, depuis leur pied */
+.sway {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: sway 4.5s ease-in-out infinite alternate;
+}
+@keyframes sway {
+  from { transform: rotate(-1.5deg); }
+  to   { transform: rotate(1.5deg); }
+}
 
 /* Arbres */
 .tree { cursor: pointer; outline: none; }
