@@ -10,7 +10,7 @@
           {{ deleting() ? 'Suppression…' : 'Supprimer' }}
         </button>
       }
-      <a class="secondary" routerLink="/pollutions">Retour à la liste</a>
+      <button type="button" class="secondary" (click)="listReturn.backToList()">Retour à la liste</button>
     </app-pollution-recap>
 
     <!-- Avancement du traitement : réservé aux admins -->
@@ -31,6 +31,6 @@
     }
   } @else {
     <p class="error" role="alert">{{ errorMessage() }}</p>
-    <p><a class="secondary" routerLink="/pollutions">Retour à la liste</a></p>
+    <p><button type="button" class="secondary" (click)="listReturn.backToList()">Retour à la liste</button></p>
   }
 </section>

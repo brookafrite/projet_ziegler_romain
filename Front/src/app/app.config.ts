@@ -2,7 +2,7 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { provideStore } from '@ngxs/store';
 import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
 import { routes } from './app.routes';
@@ -15,7 +15,9 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     // withComponentInputBinding : le paramètre :id de l'URL arrive dans un @Input() id
-    provideRouter(routes, withComponentInputBinding()),
+    // withInMemoryScrolling 'top' : chaque nouvelle page s'ouvre en haut
+    // (le retour à la liste retrouve sa position grâce à ListReturnService)
+    provideRouter(routes, withComponentInputBinding(), withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
     provideHttpClient(),
     { provide: LOCALE_ID, useValue: 'fr-FR' },
     // Store NGXS : l'état d'authentification (AuthState) est la source unique de « qui est connecté ».

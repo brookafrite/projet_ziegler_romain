@@ -11,6 +11,6 @@
     <p><a class="secondary" [routerLink]="['/pollutions', pollution.id]">Annuler</a></p>
   } @else {
     <p class="error" role="alert">{{ errorMessage() }}</p>
-    <p><a class="secondary" routerLink="/pollutions">Retour à la liste</a></p>
+    <p><button type="button" class="secondary" (click)="listReturn.backToList()">Retour à la liste</button></p>
   }
 </section>

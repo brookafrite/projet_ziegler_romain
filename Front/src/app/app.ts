@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { Store } from '@ngxs/store';
 import { Logout } from './core/states/auth/auth.actions';
 import { AuthState } from './core/states/auth/auth.state';
+import { ListReturnService } from './core/services/list-return.service';
 import { ThemeService } from './core/services/theme.service';
 import { ToastService } from './core/services/toast.service';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
@@ -33,6 +34,8 @@ export class App {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
   protected readonly themeService = inject(ThemeService);
+  // Démarré ici pour suivre toutes les navigations dès l'ouverture du site
+  private readonly listReturn = inject(ListReturnService);
 
   /** Texte du bouton de thème : le thème actuel, et ce que fera le prochain clic. */
   protected readonly themeLabels = {

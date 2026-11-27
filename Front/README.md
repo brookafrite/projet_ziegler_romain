@@ -69,6 +69,12 @@ une recherche se partage par lien ou se met en favori.
 | `auteur` | `?auteur=moi` | seulement les pollutions de l'utilisateur connecté (case « Seulement mes pollutions », ignorée si personne n'est connecté) |
 | `tri` | `?tri=dangereuses` | ordre : plus récentes (par défaut), `anciennes`, `dangereuses`, `moins-dangereuses` |
 
+**Retour à la liste** : `ListReturnService` (`core/services/`) se souvient de la dernière vue de la
+liste (adresse avec ses critères) et de la position dans la page. Depuis une fiche, « Retour à la
+liste » y ramène : si l'on venait de la liste, c'est un vrai retour arrière (comme le bouton du
+navigateur), et la position est retrouvée une fois les pollutions affichées ; sinon, la dernière vue
+de la liste s'ouvre. Toute nouvelle page s'ouvre en haut (`withInMemoryScrolling`).
+
 Le composant lit ces paramètres comme des entrées (`input()`), grâce à `withComponentInputBinding`.
 Changer un filtre met l'adresse à jour (`router.navigate` avec `queryParamsHandling: 'merge'`),
 et la liste se recalcule. Les pollutions non évaluées restent à la fin des tris par dangerosité.

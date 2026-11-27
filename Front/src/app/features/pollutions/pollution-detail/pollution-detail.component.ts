@@ -5,6 +5,7 @@ import { POLLUTION_STATUTS, Pollution, PollutionStatut } from '../models/polluti
 import { Store } from '@ngxs/store';
 import { AuthState } from '../../../core/states/auth/auth.state';
 import { ConfirmService } from '../../../core/services/confirm.service';
+import { ListReturnService } from '../../../core/services/list-return.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.component';
@@ -27,6 +28,8 @@ export class PollutionDetailComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly confirmService = inject(ConfirmService);
   private readonly router = inject(Router);
+  /** « Retour à la liste » : la liste telle qu'on l'avait laissée (filtres, tri, position). */
+  protected readonly listReturn = inject(ListReturnService);
 
   /** Paramètre :id de l'URL, transmis par le routeur (withComponentInputBinding). */
   @Input({ required: true }) id!: string;
@@ -75,7 +78,7 @@ export class PollutionDetailComponent implements OnInit {
     this.pollutionService.delete(Number(this.id)).subscribe({
       next: () => {
         this.toastService.success(`« ${pollution.titre} » a été supprimée.`);
-        this.router.navigate(['/pollutions']);
+        this.router.navigateByUrl(this.listReturn.listUrl);
       },
       error: () => {
         this.toastService.error('La pollution n’a pas pu être supprimée.');

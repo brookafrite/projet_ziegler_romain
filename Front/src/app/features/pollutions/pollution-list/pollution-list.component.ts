@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit, computed, inject, input, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Injector, OnInit, afterNextRender, computed, inject, input, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -7,6 +7,7 @@ import { POLLUTION_STATUTS, POLLUTION_TYPES, Pollution, statutLabel } from '../m
 import { Store } from '@ngxs/store';
 import { AuthState } from '../../../core/states/auth/auth.state';
 import { ConfirmService } from '../../../core/services/confirm.service';
+import { ListReturnService } from '../../../core/services/list-return.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { PollutionService } from '../services/pollution.service';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
@@ -68,6 +69,8 @@ export class PollutionListComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly listReturn = inject(ListReturnService);
+  private readonly injector = inject(Injector);
 
   readonly types = POLLUTION_TYPES;
   readonly levels = POLLUTION_LEVELS;
@@ -133,6 +136,8 @@ export class PollutionListComponent implements OnInit {
       next: (pollutions) => {
         this.pollutions.set(pollutions);
         this.loading.set(false);
+        // Une fois la liste affichée, on retrouve la position si l'on revient en arrière
+        afterNextRender(() => this.listReturn.restoreScroll(), { injector: this.injector });
       },
       error: () => {
         this.errorMessage.set('La liste des pollutions n’a pas pu être chargée.');
