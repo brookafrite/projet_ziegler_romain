@@ -40,12 +40,13 @@ session en dispatchant `Login`. Authentification toujours fictive : le JWT arriv
 
 | Adresse | Guard | Règle | Sinon |
 |---|---|---|---|
-| `/pollutions`, `/pollutions/:id` | aucun | ouvert à tous | |
+| `/` (accueil), `/pollutions`, `/pollutions/:id` | aucun | ouvert à tous | |
 | `/pollutions/nouvelle`, `/pollutions/:id/modifier` | `authGuard` (canActivate) | être connecté | `/connexion?retour=…`, puis retour sur la page demandée |
 | | `unsavedChangesGuard` (canDeactivate) | pas de saisie en cours | demande « Quitter quand même ? » |
 | `/pollutions/:id/modifier` | `pollutionAuthorGuard` (canActivate) | être l'auteur du signalement ou admin | la fiche de la pollution |
 | `/utilisateurs` | `adminGuard` (canMatch) | être admin | connexion si visiteur, liste des pollutions si simple utilisateur |
 | `/connexion`, `/inscription` | `guestGuard` (canActivate) | ne pas être connecté | liste des pollutions |
+| `/foret` (ancienne page de la forêt) | | | redirige vers l'accueil |
 | adresse inconnue | | | page 404 |
 
 `canMatch` est évalué **avant** le chargement à la demande : sans les droits, le code de la
@@ -103,7 +104,7 @@ la fiche (bloc « Avancement du traitement », sélecteur `AuthState.isAdmin`), 
 `PATCH /api/pollutions/:id/statut`. Le statut s'affiche en badge dans la liste et sur la fiche, et
 se filtre dans l'adresse (`?statut=…`).
 
-La page **La forêt** (`features/forest/`, `/foret`) fait pousser **un arbre par pollution nettoyée** :
+La **forêt** (`features/forest/`, composant `ForestLandscape`, au cœur de la page d'accueil) fait pousser **un arbre par pollution nettoyée** :
 
 | Élément | Principe |
 |---|---|
@@ -111,6 +112,22 @@ La page **La forêt** (`features/forest/`, `/foret`) fait pousser **un arbre par
 | Dessin | SVG : ciel, soleil, nuages qui dérivent, collines. En thème sombre : la nuit, avec lune et étoiles (couleurs `light-dark()`) |
 | Animation | les arbres poussent l'un après l'autre depuis leur pied (animation CSS, désactivée si l'utilisateur limite les animations) |
 | Interaction | chaque arbre est un lien vers sa fiche (souris ou clavier), avec une infobulle « titre, lieu, nettoyée le … » |
+
+## Page d'accueil
+
+La page d'accueil (`features/home/`, adresse `/`) : on y revient en cliquant sur le logo.
+
+| Bloc | Contenu |
+|---|---|
+| Présentation | « Repérez, signalez, nettoyez. », boutons Signaler une pollution / Voir les pollutions |
+| La forêt | chiffres clés (nettoyées, en cours, à nettoyer, observées ce mois-ci), barre de progression, puis le paysage `ForestLandscape` ; chaque chiffre mène à la liste filtrée |
+| Par dangerosité | une barre par niveau, aux couleurs des badges ; un clic ouvre `/pollutions?niveau=…` |
+| Derniers signalements | les 3 observations les plus récentes, avec leur miniature (`PollutionThumb`, partagée avec la liste) |
+| Mes contributions | une fois connecté : nombre de pollutions signalées et nettoyées, lien vers `?auteur=moi` |
+| Comment ça marche | Observer, Signaler, Nettoyer |
+
+Tous les chiffres viennent de `homeStats()` (`home-stats.ts`), une fonction pure testée : elle reçoit
+la liste des pollutions (et la date du jour) et ne modifie jamais la liste reçue.
 
 ## Formulaire de signalement : photo, adresse et carte
 
