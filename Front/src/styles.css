@@ -233,6 +233,11 @@ a.primary, a.secondary {
   white-space: nowrap;
 }
 
+/* Badge de statut (signalée / en cours / nettoyée) */
+.badge.statut-signalee { border-color: var(--line-strong); color: var(--muted); }
+.badge.statut-en-cours { border-style: dashed; }
+.badge.statut-nettoyee { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
 /* Fiches récapitulatives : en-tête, tampon et liste de détails */
 .fiche { display: grid; gap: 1.75rem; }
 

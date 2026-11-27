@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
-import { POLLUTION_TYPES, Pollution } from '../models/pollution.model';
+import { POLLUTION_STATUTS, POLLUTION_TYPES, Pollution, statutLabel } from '../models/pollution.model';
 import { Store } from '@ngxs/store';
 import { AuthState } from '../../../core/states/auth/auth.state';
 import { ConfirmService } from '../../../core/services/confirm.service';
@@ -13,7 +13,7 @@ import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
 import { POLLUTION_LEVELS, pollutionLevel } from '../../../shared/utils/pollution-level';
 
 /** Nom des critères de filtre, tels qu'ils apparaissent dans l'adresse (?recherche=…&type=…). */
-type FilterName = 'recherche' | 'type' | 'du' | 'au' | 'niveau' | 'auteur' | 'tri';
+type FilterName = 'recherche' | 'type' | 'du' | 'au' | 'niveau' | 'statut' | 'auteur' | 'tri';
 
 /** Ordres de tri proposés, avec leur valeur dans l'adresse (?tri=…). Vide : l'ordre par défaut. */
 const SORTS = [
@@ -71,6 +71,8 @@ export class PollutionListComponent implements OnInit {
   readonly types = POLLUTION_TYPES;
   readonly levels = POLLUTION_LEVELS;
   readonly sorts = SORTS;
+  readonly statuts = POLLUTION_STATUTS;
+  readonly statutLabel = statutLabel;
 
   // Données reçues de l'API et état de l'écran
   readonly pollutions = signal<Pollution[]>([]);
@@ -88,6 +90,7 @@ export class PollutionListComponent implements OnInit {
   readonly au = input<string>(); // date de fin, AAAA-MM-JJ
   readonly niveau = input<string>(); // niveau de dangerosité : faible, moderee… (voir POLLUTION_LEVELS)
   readonly tri = input<string>(); // ordre d'affichage (voir SORTS)
+  readonly statut = input<string>(); // avancement : signalee, en-cours, nettoyee
   readonly auteur = input<string>(); // « moi » : seulement les pollutions de l'utilisateur connecté
 
   /** Id de l'utilisateur dont on affiche les pollutions (?auteur=moi), ignoré si personne n'est connecté. */
@@ -105,11 +108,13 @@ export class PollutionListComponent implements OnInit {
     const level = POLLUTION_LEVELS.find((l) => l.value === this.niveau())?.label;
     const tri = this.tri();
     const authorId = this.onlyAuthorId();
+    const statut = this.statut();
 
     return this.pollutions()
       .filter((p) => !type || p.type === type)
       .filter((p) => !level || pollutionLevel(p.indice) === level)
       .filter((p) => authorId === undefined || p.auteurId === authorId)
+      .filter((p) => !statut || (p.statut ?? 'signalee') === statut)
       // Les dates AAAA-MM-JJ se comparent directement comme du texte
       .filter((p) => !from || p.dateObservation >= from)
       .filter((p) => !to || p.dateObservation <= to)
@@ -120,7 +125,7 @@ export class PollutionListComponent implements OnInit {
 
   readonly hasFilters = computed(
     () =>
-      !!(this.recherche() || this.type() || this.du() || this.au() || this.niveau()) ||
+      !!(this.recherche() || this.type() || this.du() || this.au() || this.niveau() || this.statut()) ||
       this.onlyAuthorId() !== undefined,
   );
 

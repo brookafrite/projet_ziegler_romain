@@ -1,0 +1,10 @@
+/* Bloc admin : changer l'avancement du traitement */
+.statut-admin {
+  margin-top: 1.5rem;
+  padding: 1rem 1.1rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 6px;
+}
+.statut-admin h2 { margin: 0 0 .75rem; font-size: 1.05rem; font-weight: 600; }
+.statut-buttons { display: flex; flex-wrap: wrap; gap: .6rem; }
+.statut-buttons .primary { min-width: 0; }

@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
-import { Pollution } from '../models/pollution.model';
+import { Pollution, PollutionStatut } from '../models/pollution.model';
 
 /**
  * Point d'entrée unique vers l'API des pollutions (CRUD).
@@ -32,6 +32,11 @@ export class PollutionService {
   /** Update : remplace la pollution existante. */
   update(id: number, pollution: Pollution): Observable<Pollution> {
     return this.http.put<Pollution>(`${this.baseUrl}/${id}`, pollution);
+  }
+
+  /** Change l'avancement du traitement (route dédiée de l'API). */
+  updateStatut(id: number, statut: PollutionStatut): Observable<Pollution> {
+    return this.http.patch<Pollution>(`${this.baseUrl}/${id}/statut`, { statut });
   }
 
   /** Delete : supprime la pollution. */

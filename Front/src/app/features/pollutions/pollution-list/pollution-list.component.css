@@ -1,9 +1,12 @@
 /* Les styles communs (feuille, champs, boutons, badge, liste...) sont dans src/styles.css */
 
 /* Filtres */
-.filters { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+/* 6 colonnes : recherche et case sur toute la largeur, 3 listes par ligne, 2 dates par ligne */
+.filters { grid-template-columns: repeat(6, 1fr); gap: 1rem; }
 .filters legend { margin-bottom: 0; }
-.search, .mine { grid-column: 1 / -1; }
+.filters > .field { grid-column: span 2; }
+.filters > .field.date { grid-column: span 3; }
+.filters > .search, .filters > .mine { grid-column: 1 / -1; }
 
 .summary { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
 .summary p { margin: 0; }
@@ -31,4 +34,5 @@
 
 @media (max-width: 560px) {
   .filters { grid-template-columns: 1fr; }
+  .filters > .field, .filters > .field.date { grid-column: 1 / -1; }
 }

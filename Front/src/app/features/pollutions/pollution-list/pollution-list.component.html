@@ -38,12 +38,22 @@
     </div>
 
     <div class="field">
+      <label for="statut">Avancement</label>
+      <select id="statut" [ngModel]="statut() ?? ''" (ngModelChange)="setFilter('statut', $event)">
+        <option value="">Tous les statuts</option>
+        @for (s of statuts; track s.value) {
+          <option [value]="s.value">{{ s.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field date">
       <label for="from">Observée depuis le</label>
       <input id="from" type="date" [max]="au() || null"
              [ngModel]="du() ?? ''" (ngModelChange)="setFilter('du', $event)" />
     </div>
 
-    <div class="field">
+    <div class="field date">
       <label for="to">Jusqu'au</label>
       <input id="to" type="date" [min]="du() || null"
              [ngModel]="au() ?? ''" (ngModelChange)="setFilter('au', $event)" />
@@ -105,6 +115,7 @@
                 <p class="entry-meta">
                   <span class="badge">{{ pollution.type }}</span>
                   <span class="badge" [appHighlightPollution]="pollution.indice">{{ pollution.indice | pollutionLevel }}</span>
+                  <span [class]="'badge statut-' + (pollution.statut ?? 'signalee')">{{ statutLabel(pollution.statut) }}</span>
                   <span>{{ pollution.dateObservation | date: 'longDate' }}</span>
                   <span>{{ pollution.lieu }}</span>
                   @if (pollution.auteur; as auteur) {

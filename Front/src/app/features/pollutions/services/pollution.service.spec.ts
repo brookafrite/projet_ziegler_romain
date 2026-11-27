@@ -59,4 +59,12 @@ describe('PollutionService', () => {
     service.delete(3).subscribe();
     expect(httpMock.expectOne(`${url}/3`).request.method).toBe('DELETE');
   });
+
+  it('should change the status with PATCH /pollutions/:id/statut', () => {
+    service.updateStatut(5, 'nettoyee').subscribe();
+    const req = httpMock.expectOne(`${environment.apiUrl}/pollutions/5/statut`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ statut: 'nettoyee' });
+    req.flush({});
+  });
 });

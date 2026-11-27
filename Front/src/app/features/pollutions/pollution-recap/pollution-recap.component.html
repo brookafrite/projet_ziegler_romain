@@ -6,6 +6,7 @@
       <p class="meta">
         <span class="badge">{{ pollution.type }}</span>
         <span class="badge" [appHighlightPollution]="pollution.indice">{{ pollution.indice | pollutionLevel }}</span>
+        <span [class]="'badge statut-' + (pollution.statut ?? 'signalee')">{{ statut }}</span>
         <span>Observée le {{ pollution.dateObservation | date: 'fullDate' }}</span>
       </p>
     </div>
@@ -33,6 +34,15 @@
           <span class="badge" [appHighlightPollution]="pollution.indice">{{ pollution.indice | pollutionLevel }}</span>
           @if (pollution.indice != null) {
             <span class="indice">Indice <strong>{{ pollution.indice }}</strong></span>
+          }
+        </dd>
+      </div>
+      <div class="item">
+        <dt>Avancement</dt>
+        <dd>
+          {{ statut }}
+          @if (pollution.dateNettoyage) {
+            <span class="hint">, nettoyée le {{ pollution.dateNettoyage | date: 'longDate' }}</span>
           }
         </dd>
       </div>

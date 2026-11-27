@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, Input, OnChanges, signal } from '@angular/core';
 import { HighlightPollutionDirective } from '../../../shared/directives/highlight-pollution.directive';
-import { Pollution } from '../models/pollution.model';
+import { Pollution, statutLabel } from '../models/pollution.model';
 import { PollutionLevelPipe } from '../../../shared/pipes/pollution-level.pipe';
 import { isUploadedPhoto } from '../../../shared/utils/image';
 
@@ -28,6 +28,11 @@ export class PollutionRecapComponent implements OnChanges {
   /** Numéro de fiche sur 3 chiffres : 1 → "001". */
   get numero(): string {
     return String(this.pollution.id ?? 0).padStart(3, '0');
+  }
+
+  /** Libellé du statut : « Signalée », « En cours » ou « Nettoyée ». */
+  get statut(): string {
+    return statutLabel(this.pollution.statut);
   }
 
   /** Photo stockée dans la base (base64) plutôt qu'une adresse en ligne. */

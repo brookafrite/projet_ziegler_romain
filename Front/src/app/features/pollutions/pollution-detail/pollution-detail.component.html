@@ -12,6 +12,23 @@
       }
       <a class="secondary" routerLink="/pollutions">Retour à la liste</a>
     </app-pollution-recap>
+
+    <!-- Avancement du traitement : réservé aux admins -->
+    @if (isAdmin()) {
+      <section class="statut-admin" aria-labelledby="statut-title">
+        <h2 id="statut-title">Avancement du traitement</h2>
+        <div class="statut-buttons">
+          @for (action of statutActions; track action.value) {
+            @if (action.value !== (pollution.statut ?? 'signalee')) {
+              <button type="button" [class]="action.value === 'nettoyee' ? 'primary' : 'secondary'"
+                      [disabled]="savingStatut()" (click)="changeStatut(pollution, action.value)">
+                {{ action.label }}
+              </button>
+            }
+          }
+        </div>
+      </section>
+    }
   } @else {
     <p class="error" role="alert">{{ errorMessage() }}</p>
     <p><a class="secondary" routerLink="/pollutions">Retour à la liste</a></p>
